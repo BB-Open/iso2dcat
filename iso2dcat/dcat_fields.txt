@@ -1,0 +1,46 @@
+        <dcat:Dataset>
+            <dct:title>
+            <dct:description>
+            <dcatde:contributorID>
+            <dct:identifier>
+            <dct:issued>
+            <dct:modified>
+
+        <dct:spatial>
+        <dct:Location>
+            <locn:geometry>
+
+        <dcat:contactPoint>
+
+        <dct:publisher>
+            <dcatde:maintainer>
+            <foaf:mbox>
+            <foaf:phone>
+            <foaf:homepage>
+
+        <dcat:distribution>
+            <dcat:landingPage>
+            <dcat:accessURL>
+            <dcat:downloadURL>
+            <dcatde:licenseAttributionByText>
+            <dct:issued>
+            <dct:modified>
+
+        <dct:language >
+
+        <dct:format>
+        <dcat:mediaType>
+
+        <dcat:keyword>
+
+        <dcat:theme>
+
+        <dct:license>
+        <dct:LicenseDocument>
+        <dct:RightsStatement>
+        <dct:accessRights>
+
+        <dct:provenance>
+            <dct:ProvenanceStatement>
+
+        <dct:accrualPeriodicity>

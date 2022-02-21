@@ -1,0 +1,20 @@
+[tool.poetry]
+name = "inspire"
+version = "0.1.0"
+description = ""
+authors = ["volker <volker.jaenisch@inqbus.de>"]
+
+[tool.poetry.dependencies]
+python = "^3.9"
+zeep = "^4.1.0"
+OWSLib = "^0.25.0"
+numpy = "^1.22.1"
+rdflib = "^6.1.1"
+beautifulsoup4 = "^4.10.0"
+
+[tool.poetry.dev-dependencies]
+pytest = "^5.2"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
