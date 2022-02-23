@@ -1,23 +1,20 @@
 import io
-from pprint import pprint
 
 from owslib.csw import CatalogueServiceWeb
 from lxml import etree
 from lxml import objectify
 
-from iso2dcat.component.interface import ILogger
-
 from owslib.fes import PropertyIsLike
 
-from iso2dcat.dcat import to_dcat
-from iso2dcat.entities.base import Base
+from iso2dcat.dcat import DCAT
+from iso2dcat.entities.base import BaseDCM
 from iso2dcat.exceptions import EntityFailed
 from iso2dcat.utils import print_error
 
 
 
 
-class CSWProcessor(Base):
+class CSWProcessor(BaseDCM):
 
     count = 0
 
@@ -63,7 +60,7 @@ class CSWProcessor(Base):
             self.count += 1
             self.logger.info(self.count)
             rec = records[uuid]
-            publisher = None
+            dcat = None
             try:
                 parser = etree.XMLParser(remove_blank_text=True)
                 lookup = etree.ElementNamespaceClassLookup(objectify.ObjectifyElementClassLookup())
@@ -75,7 +72,7 @@ class CSWProcessor(Base):
 
                 node = etree.parse(xml_file)
 
-                publisher = to_dcat(node)
+                dcat = DCAT(node).run()
             except EntityFailed:
                 print_error(rec)
 

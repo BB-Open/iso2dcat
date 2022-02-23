@@ -55,8 +55,14 @@ default:
   APPEND_LOG_FILE : False
 
 # :::::::::::::::::::
-# Logging
+# CSW Interface
 # :::::::::::::::::::
 
   CSW_URI : 'https://geoportal.brandenburg.de/csw-gdi-bb/service'
   CSW_OUTPUT_SCHEMA : 'http://www.isotc211.org/2005/gmd'
+
+# :::::::::::::::::::
+# DCM Interface
+# :::::::::::::::::::
+
+  DCM_URI : 'https://data.geobasis-bb.de/geobasis/daten/_datenadler/datenadler_opendata.csv'

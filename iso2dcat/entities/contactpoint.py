@@ -20,11 +20,7 @@ class ContactPoint(BaseEntity):
     ROLES = ['pointOfContact', 'publisher', 'owner']
 
     vcard = Namespace("http://www.w3.org/2006/vcard/ns#")
-
-    def __init__(self, node):
-        super(ContactPoint, self).__init__(node)
-        self.rdf = Graph()
-        self.rdf.bind("vcard", self.vcard)
+    namespaces = {'vcard' : vcard}
 
     def email(self):
     #         <xsl:template match="gmd:electronicMailAddress/*" mode="vcard">

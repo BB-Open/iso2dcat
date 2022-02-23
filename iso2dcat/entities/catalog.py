@@ -1,6 +1,7 @@
-from iso2dcat.entities.base import Base
+from iso2dcat.entities.base import BaseEntity
 
 
-class Catalog(Base):
+class Catalog(BaseEntity):
 
-    pass
+    def run(self):
+        pass

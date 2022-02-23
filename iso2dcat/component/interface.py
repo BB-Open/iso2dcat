@@ -38,4 +38,9 @@ class IDBConstructor(interface.Interface):
     Marker Interface for global test DB creator
     """
 
+class IDCM(interface.Interface):
+    """
+    Marker Interface for global Dataset catalog mapping
+    """
+
 

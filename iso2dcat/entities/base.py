@@ -1,7 +1,8 @@
 from lxml import etree
+from rdflib import Graph
 from zope import component
 
-from iso2dcat.component.interface import ILogger, ICfg
+from iso2dcat.component.interface import ILogger, ICfg, IDCM
 from iso2dcat.exceptions import EntityFailed
 
 
@@ -16,14 +17,27 @@ class Base:
         return component.queryUtility(ICfg)
 
 
-class BaseEntity(Base):
+class BaseDCM(Base):
+
+    @property
+    def dcm(self):
+        return component.queryUtility(IDCM)
+
+
+class BaseEntity(BaseDCM):
 
     good = None
     bad = None
     data = None
 
+    namespaces = None
+
     def __init__(self, node):
         self.node = node
+        self.rdf = Graph()
+        if self.namespaces is not None:
+            for namespace, URI in self.namespaces.items():
+                self.rdf.bind(namespace, URI)
 
     def run(self):
         pass

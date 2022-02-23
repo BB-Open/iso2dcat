@@ -1,12 +1,16 @@
+from iso2dcat.entities.base import Base
+from iso2dcat.entities.catalog import Catalog
 from iso2dcat.entities.contactpoint import ContactPoint
 from iso2dcat.entities.publisher import Publisher
 
 
-def to_dcat(node):
+class DCAT(Base):
 
-    publisher = Publisher(node).run()
-    print(publisher)
-    contact = ContactPoint(node).run()
-    print(contact)
+    def __init__(self, node):
+        self.node = node
 
-    return publisher
+    def run(self):
+        self.catalog = Catalog(self.node).run()
+        self.publisher = Publisher(self.node).run()
+        self.contact = ContactPoint(self.node).run()
+
