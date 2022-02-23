@@ -1,5 +1,5 @@
 from iso2dcat.entities.base import Base
-from iso2dcat.error import EntityFailed
+from iso2dcat.exceptions import EntityFailed
 
 
 class Publisher(Base):
