@@ -34,41 +34,39 @@ class Logger:
     db_log_level = None
 
     def __init__(self):
-        self.module_version = '4711'
-        self.meas_id = '20181017oh00'
         self.setup_logger()
 
     @property
     def cfg(self):
         return component.queryUtility(ICfg)
 
-    def log_message(self, prod_id, msg):
-        out_msg = '{}:{}: {}'.format(self.meas_id, prod_id, msg)
+    def log_message(self, msg, file_id=None):
+        out_msg = '{}{}'.format(file_id or '', msg)
         return out_msg
 
-    def critical(self, msg, prod_id=None):
-        self.logger.critical(self.log_message(prod_id, msg))
-        self.db_log(SYSLOG_ERROR, prod_id, msg)
+    def critical(self, msg, file_id=None):
+        self.logger.critical(self.log_message(msg, file_id))
+        self.db_log(SYSLOG_ERROR, msg, file_id)
 
-    def fatal(self, msg, prod_id=None):
-        self.logger.fatal(self.log_message(prod_id, msg))
-        self.db_log(SYSLOG_ERROR, prod_id, msg)
+    def fatal(self, msg, file_id=None):
+        self.logger.fatal(self.log_message(msg, file_id))
+        self.db_log(SYSLOG_ERROR, msg, file_id)
 
-    def error(self, msg, prod_id=None):
-        self.logger.error(self.log_message(prod_id, msg))
-        self.db_log(SYSLOG_ERROR, prod_id, msg)
+    def error(self, msg, file_id=None):
+        self.logger.error(self.log_message(msg, file_id))
+        self.db_log(SYSLOG_ERROR, msg, file_id)
 
-    def warning(self, msg, prod_id=None):
-        self.logger.warning(self.log_message(prod_id, msg))
-        self.db_log(SYSLOG_WARN, prod_id, msg)
+    def warning(self, msg, file_id=None):
+        self.logger.warning(self.log_message(msg, file_id))
+        self.db_log(SYSLOG_WARN, msg, file_id)
 
-    def info(self, msg, prod_id=None):
-        self.logger.info(self.log_message(prod_id, msg))
-        self.db_log(SYSLOG_INFO, prod_id, msg)
+    def info(self, msg, file_id=None):
+        self.logger.info(self.log_message(msg, file_id))
+        self.db_log(SYSLOG_INFO, msg, file_id)
 
-    def debug(self, msg, prod_id=None):
-        self.logger.debug(self.log_message(prod_id, msg))
-        self.db_log(SYSLOG_DEBUG, prod_id, msg)
+    def debug(self, msg, file_id=None):
+        self.logger.debug(self.log_message(msg, file_id))
+        self.db_log(SYSLOG_DEBUG, msg, file_id)
 
     def setLevel(self, level):
         # ToDo unclear how to manage levels here
@@ -147,12 +145,12 @@ class Logger:
         The db logger has to be brought up via an external call after the DB connection is ensured-
         """
         get_logger, formatter = self.get_logger_formatter()
-        self.logger = get_logger('ELDAmwl')
+        self.logger = get_logger('iso2dcat')
         self.logger.setLevel(self.cfg.log_level)
 
         self.setup_console_logger(formatter)
 
-    def db_log(self, level, prod_id, msg):
+    def db_log(self, level, msg, file_id):
         if self.db_log_func is None:
             return
         now = datetime.datetime.now()
@@ -160,7 +158,7 @@ class Logger:
             level,
             now,
             self.meas_id,
-            prod_id,
+            file_id,
             iso2dcat.__version__,
             msg)
 

@@ -15,6 +15,7 @@ beautifulsoup4 = "^4.10.0"
 "zope.component" = "^5.0.1"
 colorlog = "^6.6.0"
 dynaconf = "^3.1.7"
+joblib = "^1.1.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"

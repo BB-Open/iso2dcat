@@ -1,7 +1,7 @@
 from lxml import etree
 from zope import component
 
-from iso2dcat.component.interface import ILogger
+from iso2dcat.component.interface import ILogger, ICfg
 from iso2dcat.exceptions import EntityFailed
 
 
@@ -10,6 +10,10 @@ class Base:
     @property
     def logger(self):
         return component.queryUtility(ILogger)
+
+    @property
+    def cfg(self):
+        return component.queryUtility(ICfg)
 
 
 class BaseEntity(Base):

@@ -15,60 +15,63 @@ from iso2dcat.exceptions import EntityFailed
 from iso2dcat.utils import print_error
 
 
-BATCH_SIZE = 100
-TOTAL_COUNT = 10000
-
-
-CONSTRAINT = PropertyIsLike(propertyname='apiso:subject', literal='opendata')
 
 
 class CSWProcessor(Base):
 
+    count = 0
+
+    def __init__(self):
+        super(CSWProcessor, self).__init__()
+        self.csw = CatalogueServiceWeb(self.cfg.CSW_URI)
+
+    def get_constraint(self):
+        return PropertyIsLike(propertyname='apiso:subject', literal='opendata')
 
     def get_records(self):
 
-        csw = CatalogueServiceWeb('https://geoportal.brandenburg.de/csw-gdi-bb/service')
-
         batch_start = 0
         while True:
-            csw.getrecords2(constraints=[CONSTRAINT], startposition=batch_start, maxrecords=BATCH_SIZE, esn='full',
-                            outputschema="http://www.isotc211.org/2005/gmd")
-            batch_start += BATCH_SIZE
-            if batch_start > TOTAL_COUNT:
+            self.csw.getrecords2(
+                constraints=[self.get_constraint()],
+                startposition=batch_start,
+                maxrecords=self.cfg.BATCH_COUNT,
+                outputschema=self.cfg.CSW_OUTPUT_SCHEMA,
+                esn='full',
+            )
+
+            if len(self.csw.records) > 0:
+                yield self.csw.records
+            else:
                 break
 
-            yield csw.records
-#            for idx in csw.records:
-#                rec = csw.records[idx]
-#                yield rec, idx
+            batch_start += self.cfg.BATCH_COUNT
+            if batch_start >= self.cfg.TOTAL_COUNT_LIMIT:
+                break
 
     def dispatch_records(self):
-        if cfg.SERIAL:
-            for recs in self.get_records():
-                handle_recs(recs)
-        else:
+        if self.cfg.PARALLEL:
             from joblib import Parallel, delayed
-            Parallel(n_jobs=4)(delayed(handle_rec)(recs) for recs in self.get_records())
+            proc = Parallel(n_jobs=self.cfg.NUM_CPU, require='sharedmem')
+            proc(delayed(self.handle_records)(records) for records in self.get_records())
+        else:
+            for records in self.get_records():
+                self.handle_records(records)
 
-
-
-
-    def process_records():
-        histo = {}
-        good = 0
-        bad = 0
-        for rec, idx in get_records():
+    def handle_records(self, records):
+        for uuid in records:
+            self.count += 1
+            self.logger.info(self.count)
+            rec = records[uuid]
             publisher = None
             try:
                 parser = etree.XMLParser(remove_blank_text=True)
                 lookup = etree.ElementNamespaceClassLookup(objectify.ObjectifyElementClassLookup())
                 parser.setElementClassLookup(lookup)
-                with open('xml/rec_{}.xml'.format(idx),'wb') as outfile:
+                with open('xml/rec_{}.xml'.format(uuid),'wb') as outfile:
                     outfile.write(rec.xml)
 
                 xml_file = io.BytesIO(rec.xml)
-        #        soup = BS(xml_file, 'xml')
-        #        node = etree.parse(xml_file, parser=parser).getroot()
 
                 node = etree.parse(xml_file)
 
@@ -76,22 +79,25 @@ class CSWProcessor(Base):
             except EntityFailed:
                 print_error(rec)
 
-            if publisher is None:
-                print('Error')
-                bad += 1
-            else:
-                try:
-                    pub_name = publisher[0].text
-                    print(pub_name)
-                    if pub_name in histo:
-                        histo[pub_name] += 1
-                    else:
-                        histo[pub_name] = 1
+        #     if publisher is None:
+        #         print('Error')
+        #         bad += 1
+        #     else:
+        #         try:
+        #             pub_name = publisher[0].text
+        #             print(pub_name)
+        #             if pub_name in histo:
+        #                 histo[pub_name] += 1
+        #             else:
+        #                 histo[pub_name] = 1
+        #
+        #             good += 1
+        #         except Exception as e:
+        #             print('Error')
+        #             bad += 1
+        #
+        # print('good {} bad {}'.format(good, bad))
+        # pprint(histo)
 
-                    good += 1
-                except Exception as e:
-                    print('Error')
-                    bad += 1
-
-        print('good {} bad {}'.format(good, bad))
-        pprint(histo)
+    def run(self):
+        self.dispatch_records()

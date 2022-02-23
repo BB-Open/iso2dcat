@@ -2,11 +2,11 @@ from pprint import pprint
 
 from rdflib import Namespace, Graph, Literal
 
-from iso2dcat.entities.base import Base
+from iso2dcat.entities.base import BaseEntity
 from iso2dcat.utils import children_as_text
 
 
-class ContactPoint(Base):
+class ContactPoint(BaseEntity):
 
     simple_mapping = {
         'gmd:deliveryPoint': 'vcard:street-address',
