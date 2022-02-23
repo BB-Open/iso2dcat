@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from iso2dcat import __version__
 
 

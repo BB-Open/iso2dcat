@@ -1,21 +1,16 @@
 # -*- coding: utf-8 -*-
-import iso2dcat
-from iso2dcat.component.interface import ICfg, IDBFunc
-from iso2dcat.component.interface import ILogger
-from iso2dcat.exceptions import LogPathNotExists
-from iso2dcat.path_utils import dir_not_found_hint
-from logging import ERROR
-from logging import FileHandler
-from logging import Formatter
-from logging import getLogger
-from logging import StreamHandler
-from sys import stdout
-from zope import component
-
 import datetime
 import os
-import zope
+from logging import ERROR, FileHandler, Formatter, StreamHandler, getLogger
+from sys import stdout
 
+import zope
+from zope import component
+
+import iso2dcat
+from iso2dcat.component.interface import ICfg, IDBFunc, ILogger
+from iso2dcat.exceptions import LogPathNotExists
+from iso2dcat.path_utils import dir_not_found_hint
 
 # Log level codes according to DB-Definition and syslog
 SYSLOG_ERROR = 3
@@ -69,7 +64,6 @@ class Logger:
         self.db_log(SYSLOG_DEBUG, msg, file_id)
 
     def setLevel(self, level):
-        # ToDo unclear how to manage levels here
         self.logger.setLevel(level)
         self.db_log_level = level
 
@@ -78,9 +72,8 @@ class Logger:
         Check if a colored log is possible. Return get_logger and formatter instance.
         """
         try:
-            from colorlog import ColoredFormatter
-
-            import colorlog
+            import colorlog  # noqa: I001
+            from colorlog import ColoredFormatter  # noqa: I001
 
             formatter = ColoredFormatter(
                 '%(log_color)s%(asctime)s [%(process)d] '
@@ -169,7 +162,7 @@ def register_logger():
     if logger is not None:
         return logger
 
-    logger = Logger()  # ToDo Ina Where to get the module_version for logging ?
+    logger = Logger()
     component.provideUtility(logger, ILogger)
     return logger
 

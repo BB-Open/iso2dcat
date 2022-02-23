@@ -1,11 +1,12 @@
-from dynaconf import Dynaconf
-from iso2dcat.component.interface import ICfg
-from iso2dcat.exceptions import ConfigFileNotFound
-from iso2dcat.path_utils import abs_file_path
 from os.path import exists
 from pathlib import Path
 
 import zope
+from dynaconf import Dynaconf
+
+from iso2dcat.component.interface import ICfg
+from iso2dcat.exceptions import ConfigFileNotFound
+from iso2dcat.path_utils import abs_file_path
 
 
 def register_config(args, env=None):

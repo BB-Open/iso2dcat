@@ -2,7 +2,7 @@ from lxml import etree
 from rdflib import Graph
 from zope import component
 
-from iso2dcat.component.interface import ILogger, ICfg, IDCM
+from iso2dcat.component.interface import IDCM, ICfg, ILogger
 from iso2dcat.exceptions import EntityFailed
 
 

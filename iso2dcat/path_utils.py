@@ -1,5 +1,5 @@
-from logging import ERROR
-from logging import log
+# -*- coding: utf-8 -*-
+from logging import ERROR, log
 from pathlib import Path
 
 import iso2dcat

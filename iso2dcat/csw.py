@@ -1,17 +1,14 @@
+# -*- coding: utf-8 -*-
 import io
 
+from lxml import etree, objectify
 from owslib.csw import CatalogueServiceWeb
-from lxml import etree
-from lxml import objectify
-
 from owslib.fes import PropertyIsLike
 
 from iso2dcat.dcat import DCAT
 from iso2dcat.entities.base import BaseDCM
 from iso2dcat.exceptions import EntityFailed
 from iso2dcat.utils import print_error
-
-
 
 
 class CSWProcessor(BaseDCM):
@@ -65,7 +62,7 @@ class CSWProcessor(BaseDCM):
                 parser = etree.XMLParser(remove_blank_text=True)
                 lookup = etree.ElementNamespaceClassLookup(objectify.ObjectifyElementClassLookup())
                 parser.setElementClassLookup(lookup)
-                with open('xml/rec_{}.xml'.format(uuid),'wb') as outfile:
+                with open('xml/rec_{}.xml'.format(uuid), 'wb') as outfile:
                     outfile.write(rec.xml)
 
                 xml_file = io.BytesIO(rec.xml)
@@ -76,6 +73,7 @@ class CSWProcessor(BaseDCM):
             except EntityFailed:
                 print_error(rec)
 
+        return dcat
         #     if publisher is None:
         #         print('Error')
         #         bad += 1

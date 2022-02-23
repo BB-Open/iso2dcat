@@ -1,10 +1,11 @@
+# -*- coding: utf-8 -*-
 import urllib.request
 
+from pandas import read_csv
 from zope import component
 
 from iso2dcat.component.interface import IDCM
 from iso2dcat.entities.base import Base
-from pandas import read_csv
 
 
 class DCM(Base):

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from iso2dcat.entities.base import BaseEntity
 from iso2dcat.exceptions import EntityFailed
 
@@ -23,18 +24,17 @@ class Publisher(BaseEntity):
         # Find all gmd:CI_ResponsibleParty entities,
         # - which have a role "$role" (given as a parameter)
         # and then get their gmd:organisationName entity
-        PUBLISHER_ORG_EXPR = ".//gmd:CI_ResponsibleParty[gmd:role/gmd:CI_RoleCode/@codeListValue=$role]//gmd:organisationName"
+        PUBLISHER_ORG_EXPR = './/gmd:CI_ResponsibleParty[gmd:role/gmd:CI_RoleCode/@codeListValue=$role]//gmd:organisationName'
 #        PUBLISHER_ORG_EXPR = ".//gmd:CI_ResponsibleParty[gmd:role/gmd:CI_RoleCode/@codeListValue=$role]"
 
         # The list of roles defining the order to lookup
         roles = ['publisher', 'owner', 'pointOfContact']
 
-
         publisher = None
         # For each role
         for role in roles:
             # get a list of possible publishers
-            publishers = self.node.xpath(PUBLISHER_ORG_EXPR, role=role, namespaces={'gmd':"http://www.isotc211.org/2005/gmd"})
+            publishers = self.node.xpath(PUBLISHER_ORG_EXPR, role=role, namespaces={'gmd': 'http://www.isotc211.org/2005/gmd'})
 
             # if there is a result
             if len(publishers) > 0:
@@ -43,7 +43,7 @@ class Publisher(BaseEntity):
                 # We have an answer so leave the loop
                 break
 
-        if publisher == None:
+        if publisher is None:
             raise EntityFailed
 
         return publisher

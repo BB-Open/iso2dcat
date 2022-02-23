@@ -1,6 +1,7 @@
+# -*- coding: utf-8 -*-
 from iso2dcat.config import register_config
 from iso2dcat.csw import CSWProcessor
-from iso2dcat.dcm import DCM, register_dcm
+from iso2dcat.dcm import register_dcm
 from iso2dcat.entities.base import Base
 from iso2dcat.log.log import register_logger
 

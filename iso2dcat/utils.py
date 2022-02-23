@@ -1,5 +1,6 @@
+# -*- coding: utf-8 -*-
 def strip(in_str):
-    return in_str.replace('\n','').replace('\t','').replace(' ','')
+    return in_str.replace('\n', '').replace('\t', '').replace(' ', '')
 
 
 def children_as_text(node):
