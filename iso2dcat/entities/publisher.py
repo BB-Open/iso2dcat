@@ -28,7 +28,7 @@ class Publisher(BaseEntity):
 #        PUBLISHER_ORG_EXPR = ".//gmd:CI_ResponsibleParty[gmd:role/gmd:CI_RoleCode/@codeListValue=$role]"
 
         # The list of roles defining the order to lookup
-        roles = ['publisher', 'owner', 'pointOfContact']
+        roles = ['publisher', 'owner']
 
         publisher = None
         # For each role
@@ -44,6 +44,8 @@ class Publisher(BaseEntity):
                 break
 
         if publisher is None:
-            raise EntityFailed
+            Publisher.bad += 1
+        else:
+            Publisher.good += 1
 
         return publisher

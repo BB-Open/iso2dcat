@@ -14,11 +14,12 @@ class ContactPoint(BaseEntity):
         'gmd:postalCode': 'vcard:postal-code',
         'gmd:administrativeArea': 'vcard:region',
         'gmd:country': 'vcard:country-name',
+        'gmd:electronicMailAddress' : 'vcard:email',
     }
     PUBLISHER_ORG_EXPR = './/gmd:CI_ResponsibleParty[gmd:role/gmd:CI_RoleCode/@codeListValue=$role]'
 
     # The list of roles defining the order to lookup
-    ROLES = ['pointOfContact', 'publisher', 'owner']
+    ROLES = ['pointOfContact']
 
     vcard = Namespace('http://www.w3.org/2006/vcard/ns#')
     namespaces = {'vcard': vcard}
@@ -63,14 +64,15 @@ class ContactPoint(BaseEntity):
                     hits = result.xpath('.//' + selector, namespaces={'gmd': 'http://www.isotc211.org/2005/gmd'})
 
                     for hit in hits:
-                        res = children_as_text(hits)
+                        res = children_as_text(hit)
                         self.rdf.add((self.rdf, self.vcard[target], Literal(res)))
 
                         break
 
         if len(self.rdf) == 0:
-            pass
+            ContactPoint.bad += 1
+        else:
             self.logger.info(self.rdf.serialize(format='turtle'))
+            ContactPoint.good += 1
 
-        self.logger.info(self.rdf.serialize(format='turtle'))
         return self.rdf

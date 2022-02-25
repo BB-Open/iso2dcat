@@ -7,6 +7,7 @@ from iso2dcat.exceptions import EntityFailed
 
 
 class Base:
+    """Base class of all instances. Gains access to logger and configuration"""
 
     @property
     def logger(self):
@@ -18,6 +19,7 @@ class Base:
 
 
 class BaseDCM(Base):
+    """Base class of all instances using the DCM data"""
 
     @property
     def dcm(self):
@@ -25,9 +27,10 @@ class BaseDCM(Base):
 
 
 class BaseEntity(BaseDCM):
+    """Base class of all entities."""
 
-    good = None
-    bad = None
+    good = 0
+    bad = 0
     data = None
 
     namespaces = None
@@ -51,6 +54,10 @@ class BaseEntity(BaseDCM):
             raise(e)
 
         return res
+
+    @classmethod
+    def show_stats(cls):
+        print('{}: good:{} bad:{}'.format(cls.__name__, cls.good, cls.bad))
 
     def __str__(self):
         etree.tostring(self.data, pretty_print=True)

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import urllib.request
 
-from pandas import read_csv
+import pandas as pd
 from zope import component
 
 from iso2dcat.component.interface import IDCM
@@ -15,7 +15,8 @@ class DCM(Base):
 
     def run(self):
         dcm_file = urllib.request.urlopen(self.cfg.DCM_URI)
-        self.dcm = read_csv(dcm_file, sep=';', index_col=0).to_dict(orient='index')
+        dcm_pandas = pd.read_csv(dcm_file, sep=';', index_col=0)
+        self.dcm = dcm_pandas.to_dict(orient='index')
         pass
 
 

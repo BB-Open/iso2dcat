@@ -3,6 +3,9 @@ from iso2dcat.config import register_config
 from iso2dcat.csw import CSWProcessor
 from iso2dcat.dcm import register_dcm
 from iso2dcat.entities.base import Base
+from iso2dcat.entities.catalog import Catalog
+from iso2dcat.entities.contactpoint import ContactPoint
+from iso2dcat.entities.publisher import Publisher
 from iso2dcat.log.log import register_logger
 
 
@@ -37,6 +40,9 @@ class Main(Base):
         self.logger.info('ISO files processed')
 
         self.logger.info('iso2dcat finished')
+        self.logger.info('iso2dcat statistics')
+        for klass in [Catalog, Publisher, ContactPoint] :
+            klass.show_stats()
 
 
 if __name__ == '__main__':

@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import io
+from pathlib import Path
 
 from lxml import etree, objectify
 from owslib.csw import CatalogueServiceWeb
@@ -9,6 +10,7 @@ from iso2dcat.dcat import DCAT
 from iso2dcat.entities.base import BaseDCM
 from iso2dcat.exceptions import EntityFailed
 from iso2dcat.utils import print_error
+from more_itertools import chunked
 
 
 class CSWProcessor(BaseDCM):
@@ -24,6 +26,21 @@ class CSWProcessor(BaseDCM):
 
     def get_records(self):
 
+        if self.cfg.FROM_DISK :
+            batch_start = 0
+            files = Path(self.cfg.CSW_PATH).glob('*')
+            batch = {}
+            for record_file_names in chunked(files, self.cfg.BATCH_COUNT):
+                batch = {}
+                for record_file_name in record_file_names:
+                    with open(record_file_name, 'rb') as rf:
+                        batch[record_file_name] = rf.read()
+                yield batch
+                batch_start += self.cfg.BATCH_COUNT
+                if batch_start >= self.cfg.TOTAL_COUNT_LIMIT:
+                    break
+            return
+
         batch_start = 0
         while True:
             self.csw.getrecords2(
@@ -35,7 +52,7 @@ class CSWProcessor(BaseDCM):
             )
 
             if len(self.csw.records) > 0:
-                yield self.csw.records
+                yield {uuid : rec.xml for uuid,rec in self.csw.records.items()}
             else:
                 break
 
@@ -62,12 +79,13 @@ class CSWProcessor(BaseDCM):
                 parser = etree.XMLParser(remove_blank_text=True)
                 lookup = etree.ElementNamespaceClassLookup(objectify.ObjectifyElementClassLookup())
                 parser.setElementClassLookup(lookup)
-                with open('xml/rec_{}.xml'.format(uuid), 'wb') as outfile:
-                    outfile.write(rec.xml)
+                if self.cfg.SAVE_DATASETS:
+                    with open('{}/{}{}.xml'.format(self.cfg.CSW_PATH, self.cfg.CSW_PREFIX, uuid), 'wb') as outfile:
+                        outfile.write(rec)
 
-                xml_file = io.BytesIO(rec.xml)
+                xml_file = io.BytesIO(rec)
 
-                node = etree.parse(xml_file)
+                node = objectify.parse(xml_file).getroot()
 
                 dcat = DCAT(node).run()
             except EntityFailed:
