@@ -43,3 +43,19 @@ class IDCM(interface.Interface):
     """
     Marker Interface for global Dataset catalog mapping
     """
+
+
+class IStat(interface.Interface):
+    """
+    Statistical information
+    """
+
+
+class IEntity(interface.Interface):
+    """
+    MArker interface fpr all entities
+    """
+
+
+class ICatalog(IEntity):
+    pass

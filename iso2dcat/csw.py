@@ -35,6 +35,7 @@ class CSWProcessor(BaseDCM):
                 for record_file_name in record_file_names:
                     with open(record_file_name, 'rb') as rf:
                         batch[record_file_name] = rf.read()
+                        self.inc('processed', no_uuid=True)
                 yield batch
                 batch_start += self.cfg.BATCH_COUNT
                 if batch_start >= self.cfg.TOTAL_COUNT_LIMIT:

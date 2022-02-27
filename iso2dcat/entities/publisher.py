@@ -28,7 +28,7 @@ class Publisher(BaseEntity):
 #        PUBLISHER_ORG_EXPR = ".//gmd:CI_ResponsibleParty[gmd:role/gmd:CI_RoleCode/@codeListValue=$role]"
 
         # The list of roles defining the order to lookup
-        roles = ['publisher', 'owner']
+        roles = ['publisher', 'owner', 'distributor', 'custodian', 'pointOfContact']
 
         publisher = None
         # For each role
@@ -41,11 +41,12 @@ class Publisher(BaseEntity):
                 # the publisher is the first entry (this can be refined)
                 publisher = publishers[0]
                 # We have an answer so leave the loop
+                self.inc(role)
                 break
 
         if publisher is None:
-            Publisher.bad += 1
+            self.inc('bad')
         else:
-            Publisher.good += 1
+            self.inc('good')
 
         return publisher

@@ -17,6 +17,7 @@ colorlog = "^6.6.0"
 dynaconf = "^3.1.7"
 joblib = "^1.1.0"
 pandas = "^1.4.1"
+prettytable = "^3.1.1"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"

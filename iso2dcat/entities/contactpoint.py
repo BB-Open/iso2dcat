@@ -70,9 +70,8 @@ class ContactPoint(BaseEntity):
                         break
 
         if len(self.rdf) == 0:
-            ContactPoint.bad += 1
+            self.inc('bad')
         else:
-            self.logger.info(self.rdf.serialize(format='turtle'))
-            ContactPoint.good += 1
+            self.inc('good')
 
         return self.rdf
