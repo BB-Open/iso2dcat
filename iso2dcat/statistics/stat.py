@@ -22,11 +22,12 @@ class Stat:
         if cls_name not in self.data:
             return
         table = pt.PrettyTable()
-        table.field_names = [cls_name,"#", "uuids"]
+        table.field_names = [cls_name,"#", "Sample uuid"]
+        table.align[cls_name] = 'l'
+        table.align['#'] = 'r'
 
         keys = self.data[cls_name]
         sorted_keys = sorted(keys)
-        yield '{}: '.format(cls_name)
         for key in sorted_keys:
             val = self.data[cls_name][key]
             if isinstance(val, int):
