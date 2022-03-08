@@ -8,7 +8,7 @@ default:
   # Save all CSW-Datasets to disk for caching
   SAVE_DATASETS : False
   # Read data not from CSW but from cached datasets on disk
-  FROM_DISK : False
+  FROM_DISK : True
   # Batch size of files to get in one request
   BATCH_COUNT : 100
   # Limit Total number of files
@@ -77,5 +77,5 @@ default:
 # DATABASE SETTINGS, RDF4J
 # :::::::::::::::::::
 
-  WRITO_TO : 'test_db'
+  WRITE_TO : 'test_db'
   RDF4J_BASE : 'http://192.168.122.193:8080/rdf4j-server/'

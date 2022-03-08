@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+from zope import component
+
+from iso2dcat.component.interface import IRDFDatabase
 from iso2dcat.entities.base import Base
 from iso2dcat.entities.catalog import Catalog
 from iso2dcat.entities.contactpoint import ContactPoint
@@ -17,3 +20,10 @@ class DCAT(Base):
         self.publisher = Publisher(self.node).run()
         self.contact = ContactPoint(self.node).run()
         self.hirarchy = Hirarchy(self.node).run()
+
+        self.logger.info('Writing Results')
+        # todo: is this correct here or should be handled somewhere else
+        # contact
+        db = component.queryUtility(IRDFDatabase)
+        data = self.contact.serialize(format='turtle')
+        db.insert_data(data, 'text/turtle')

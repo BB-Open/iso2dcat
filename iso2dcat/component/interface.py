@@ -59,3 +59,10 @@ class IEntity(interface.Interface):
 
 class ICatalog(IEntity):
     pass
+
+
+
+class IRDFDatabase(interface.Interface):
+    """
+    Marker interface for RDF Database
+    """

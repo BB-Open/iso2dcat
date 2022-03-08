@@ -12,6 +12,7 @@ from iso2dcat.entities.contactpoint import ContactPoint
 from iso2dcat.entities.hierarchy import Hirarchy
 from iso2dcat.entities.publisher import Publisher
 from iso2dcat.log.log import register_logger
+from iso2dcat.rdf_database.db import register_db
 from iso2dcat.statistics.stat import register_stat
 
 
@@ -32,6 +33,9 @@ class Main(Base):
 
         # Register statistics
         register_stat()
+
+        # Register RDF Database to write final results
+        self.db = register_db()
 
         # Register the DCM-Interface
         self.dcm = register_dcm()
@@ -56,6 +60,7 @@ class Main(Base):
         for klass in [CSWProcessor, Catalog, Publisher, ContactPoint, Hirarchy]:
             for line in stat.get_stats(klass):
                 self.logger.info(line)
+
 
 
 if __name__ == '__main__':
