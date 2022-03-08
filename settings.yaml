@@ -72,3 +72,10 @@ default:
 # :::::::::::::::::::
 
   DCM_URI : 'https://data.geobasis-bb.de/geobasis/daten/_datenadler/datenadler_opendata.csv'
+
+# :::::::::::::::::::
+# DATABASE SETTINGS, RDF4J
+# :::::::::::::::::::
+
+  WRITO_TO : 'test_db'
+  RDF4J_BASE : 'http://192.168.122.193:8080/rdf4j-server/'
