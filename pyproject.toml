@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "inspire"
+name = "iso2dcat"
 version = "0.1.0"
 description = ""
 authors = ["volker <volker.jaenisch@inqbus.de>"]
