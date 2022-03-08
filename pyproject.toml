@@ -5,7 +5,7 @@ description = ""
 authors = ["volker <volker.jaenisch@inqbus.de>"]
 
 [tool.poetry.dependencies]
-python = "^3.9"
+python = "^3.8"
 zeep = "^4.1.0"
 OWSLib = "^0.25.0"
 numpy = "^1.22.1"
