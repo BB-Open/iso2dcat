@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
+import zope
 from zope import component
 
-from iso2dcat.component.interface import IStat
+from iso2dcat.component.interface import IStat, ICfg
 from iso2dcat.config import register_config
 from iso2dcat.csw import CSWProcessor
 from iso2dcat.dcm import register_dcm
@@ -19,12 +20,15 @@ class Main(Base):
     dcm = None
     csw_proc = None
 
-    def setup_components(self, args=None, env='Production'):
+    def setup_components(self, args=None, env='Production', visitor=None, cfg=None):
         # Get the configuration
-        register_config(args, env=env)
+        if cfg:
+            zope.component.provideUtility(cfg, ICfg)
+        else:
+            register_config(args, env=env)
 
         # Setup the logging facility for this measurement ID
-        register_logger()
+        register_logger(visitor=visitor)
 
         # Register statistics
         register_stat()
@@ -32,10 +36,8 @@ class Main(Base):
         # Register the DCM-Interface
         self.dcm = register_dcm()
 
-
-
-    def run(self):
-        self.setup_components()
+    def run(self, visitor=None, cfg=None):
+        self.setup_components(visitor=visitor, cfg=cfg)
         self.logger.info('iso2dcat starting')
 
 

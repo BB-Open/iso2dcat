@@ -28,8 +28,9 @@ class Logger:
     db_log_func = None
     db_log_level = None
 
-    def __init__(self):
+    def __init__(self, visitor=None):
         self.setup_logger()
+        self.visitor = visitor
 
     @property
     def cfg(self):
@@ -42,26 +43,34 @@ class Logger:
     def critical(self, msg, file_id=None):
         self.logger.critical(self.log_message(msg, file_id))
         self.db_log(SYSLOG_ERROR, msg, file_id)
+        self.plone_log('error', msg, file_id)
 
     def fatal(self, msg, file_id=None):
         self.logger.fatal(self.log_message(msg, file_id))
         self.db_log(SYSLOG_ERROR, msg, file_id)
+        self.plone_log('error', msg, file_id)
 
     def error(self, msg, file_id=None):
         self.logger.error(self.log_message(msg, file_id))
         self.db_log(SYSLOG_ERROR, msg, file_id)
+        self.plone_log('error', msg, file_id)
+
 
     def warning(self, msg, file_id=None):
         self.logger.warning(self.log_message(msg, file_id))
         self.db_log(SYSLOG_WARN, msg, file_id)
+        self.plone_log('warn', msg, file_id)
+
 
     def info(self, msg, file_id=None):
         self.logger.info(self.log_message(msg, file_id))
         self.db_log(SYSLOG_INFO, msg, file_id)
+        self.plone_log('info', msg, file_id)
 
     def debug(self, msg, file_id=None):
         self.logger.debug(self.log_message(msg, file_id))
         self.db_log(SYSLOG_DEBUG, msg, file_id)
+        self.plone_log(SYSLOG_DEBUG, msg, file_id)
 
     def setLevel(self, level):
         self.logger.setLevel(level)
@@ -155,14 +164,21 @@ class Logger:
             iso2dcat.__version__,
             msg)
 
+    def plone_log(self, level, msg, file_id):
+        if self.visitor:
+            self.visitor.scribe.write(
+                level=level,
+                msg=msg,
+            )
 
-def register_logger():
+
+def register_logger(visitor=None):
     # prohibit more than one logger instance
     logger = component.queryUtility(ILogger)
     if logger is not None:
         return logger
 
-    logger = Logger()
+    logger = Logger(visitor=visitor)
     component.provideUtility(logger, ILogger)
     return logger
 
