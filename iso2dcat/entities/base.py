@@ -33,10 +33,6 @@ class BaseDCM(Base):
     def dcm(self):
         return component.queryUtility(IDCM)
 
-    @property
-    def uuid(self):
-        return self.node.fileIdentifier.getchildren()[0]
-
     def inc(self, stat, no_uuid=False):
         self.stat.inc(self, stat, no_uuid)
 
@@ -53,6 +49,10 @@ class BaseEntity(BaseDCM):
         if self.namespaces is not None:
             for namespace, URI in self.namespaces.items():
                 self.rdf.bind(namespace, URI)
+
+    @property
+    def uuid(self):
+        return self.node.fileIdentifier.getchildren()[0]
 
     def run(self):
         pass

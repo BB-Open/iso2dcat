@@ -9,6 +9,19 @@ from iso2dcat.entities.hierarchy import Hirarchy
 from iso2dcat.entities.publisher import Publisher
 
 
+class CatalogBuilder(Base):
+
+    def __init__(self):
+        pass
+
+    def run(self):
+        self.catalog = Catalog(None).run()
+        db = component.queryUtility(IRDFDatabase)
+        data = self.catalog.serialize(format='turtle')
+        print(data)
+        db.insert_data(data, 'text/turtle')
+
+
 class DCAT(Base):
 
     def __init__(self, node):
@@ -16,7 +29,7 @@ class DCAT(Base):
 
     def run(self):
         self.logger.info('processing: {}'.format(self.node.fileIdentifier.getchildren()[0]))
-        self.catalog = Catalog(self.node).run()
+
         self.publisher = Publisher(self.node).run()
         self.contact = ContactPoint(self.node).run()
         self.hirarchy = Hirarchy(self.node).run()

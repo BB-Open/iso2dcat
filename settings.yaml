@@ -71,7 +71,7 @@ default:
 # DCM Interface
 # :::::::::::::::::::
 
-  DCM_URI : 'https://data.geobasis-bb.de/geobasis/daten/_datenadler/datenadler_opendata.csv'
+  DCM_URI : 'https://data.geobasis-bb.de/geobasis/daten/_datenadler/dataset-catalog-mapping.json'
 
 # :::::::::::::::::::
 # DATABASE SETTINGS, RDF4J

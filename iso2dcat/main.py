@@ -5,6 +5,7 @@ from zope import component
 from iso2dcat.component.interface import IStat, ICfg
 from iso2dcat.config import register_config
 from iso2dcat.csw import CSWProcessor
+from iso2dcat.dcat import CatalogBuilder
 from iso2dcat.dcm import register_dcm
 from iso2dcat.entities.base import Base
 from iso2dcat.entities.catalog import Catalog
@@ -48,6 +49,11 @@ class Main(Base):
         self.logger.info('loading DCM file')
         self.dcm.run()
         self.logger.info('DCM file loaded')
+
+        self.logger.info('Build Catalogs')
+        self.catalog_builder = CatalogBuilder()
+        self.catalog_builder.run()
+        self.logger.info('Catalogs build')
 
         self.logger.info('processing ISO files')
         self.csw_proc = CSWProcessor()
