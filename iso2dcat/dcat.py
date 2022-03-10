@@ -30,14 +30,9 @@ class DCAT(Base):
 
     def run(self):
         self.logger.info('processing: {}'.format(self.node.fileIdentifier.getchildren()[0]))
-
-        self.publisher = Publisher(self.node).run()
-        self.contact = ContactPoint(self.node).run()
         self.hirarchy = Hirarchy(self.node).run()
 
         self.logger.info('Writing Results')
-        # todo: is this correct here or should be handled somewhere else
-        # contact
         db = component.queryUtility(IRDFDatabase)
-        data = self.contact.serialize(format='turtle')
-        db.insert_data(data, 'text/turtle')
+        ttl = self.hirarchy.serialize(format='turtle')
+        db.insert_data(ttl, 'text/turtle')

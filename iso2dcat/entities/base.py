@@ -1,5 +1,5 @@
 from lxml import etree
-from rdflib import Graph, URIRef, RDF
+from rdflib import Graph, URIRef, RDF, DCAT, FOAF, DCTERMS
 from zope import component
 
 from iso2dcat.component.interface import IDCM, ICfg, ILogger, IStat
@@ -40,7 +40,22 @@ class BaseEntity(BaseDCM):
     """Base class of all entities."""
 
     data = None
-    namespaces = None
+    namespaces = {
+        'gmd': 'http://www.isotc211.org/2005/gmd',
+        'csw' : 'http://www.opengis.net/cat/csw/2.0.2',
+        'dc': 'http://purl.org/dc/elements/1.1/',
+        'gco': 'http://www.isotc211.org/2005/gco',
+        'gml': 'http://www.opengis.net/gml/3.2',
+        'gmx': 'http://www.isotc211.org/2005/gmx',
+        'gts': 'http://www.isotc211.org/2005/gts',
+        'ogc': 'http://www.opengis.net/ogc',
+        'ows': 'http://www.opengis.net/ows',
+        'srv': 'http://www.isotc211.org/2005/srv',
+        'dcat': str(DCAT._NS),
+        'dcatde': 'http://dcat-ap.de/def/dcatde/',
+        'foaf': str(FOAF._NS),
+        'dct': str(DCTERMS._NS),
+    }
     _uuid = None
     _base_uri = None
     _uri = None

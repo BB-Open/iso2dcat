@@ -25,8 +25,8 @@ class ContactPoint(BaseEntity):
 
     vcard = Namespace('http://www.w3.org/2006/vcard/ns#')
     namespaces = {'vcard': vcard}
-
     entity_type = vcard.Kind
+
 
     def email(self):
         #         <xsl:template match="gmd:electronicMailAddress/*" mode="vcard">

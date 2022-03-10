@@ -1,10 +1,16 @@
 # -*- coding: utf-8 -*-
+from rdflib import DCAT
+
 from iso2dcat.entities.resource import DcatResource
 
 
 class DcatDataService(DcatResource):
 
+    dcat_class = 'dcat_DataService'
+    entity_type = DCAT.DataService
+
     def run(self):
+        super(DcatDataService, self).run()
         SERVICE_DATASET_LINK_EXPR = './/srv:operatesOn'
         res = self.node.xpath(
             SERVICE_DATASET_LINK_EXPR,
@@ -17,3 +23,4 @@ class DcatDataService(DcatResource):
             self.inc('service:has_parent')
         else:
             self.inc('service:no_parent')
+        return self.rdf

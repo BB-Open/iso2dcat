@@ -77,13 +77,10 @@ class Hirarchy(BaseEntity):
 #                                     <gmd:URL>https://geobroker.geobasis-bb.de/gbss.php?MODE=GetProductInformation&amp;PRODUCTID=121181a5-3b7b-44db-9436-a0906f1f5d7c</gmd:URL>
 #                             </gmd:linkage>
 
-
         if hirarchy == 'tile':
-            return Tile(self.node)
+            return Tile(self.node).run()
         elif hirarchy == 'service':
-            return DcatDataService(self.node)
+            return DcatDataService(self.node).run()
         elif hirarchy == 'series':
-            return DcatDataset(self.node)
-        return DcatDataset(self.node)
-
-
+            return DcatDataset(self.node).run()
+        return DcatDataset(self.node).run()
