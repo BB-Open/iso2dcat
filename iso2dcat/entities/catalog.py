@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
-from rdflib import FOAF, URIRef, RDF, Literal, DCAT, DCTERMS
-
-from iso2dcat.component.interface import IStat, ICatalog
-from iso2dcat.entities.base import BaseEntity
 import zope
+from rdflib import URIRef, Literal
+from rdflib.namespace import FOAF, RDF, DCAT, DCTERMS
+
+from iso2dcat.component.interface import ICatalog
+from iso2dcat.entities.base import BaseEntity
 
 
 @zope.interface.implementer(ICatalog)
