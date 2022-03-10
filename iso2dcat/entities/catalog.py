@@ -6,6 +6,7 @@ from rdflib.namespace import FOAF, RDF, DCTERMS, Namespace
 from iso2dcat.component.interface import ICatalog
 from iso2dcat.entities.base import BaseEntity
 
+DCAT = Namespace('http://www.w3.org/ns/dcat#')
 
 @zope.interface.implementer(ICatalog)
 class Catalog(BaseEntity):
@@ -13,7 +14,7 @@ class Catalog(BaseEntity):
     catalog = {}
     namespaces = {
         'foaf': FOAF,
-        'dcat': Namespace('http://www.w3.org/ns/dcat#'),
+        'dcat': DCAT,
         'dct': DCTERMS
     }
 
