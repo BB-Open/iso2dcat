@@ -2,7 +2,7 @@
 from iso2dcat.entities.resource import DcatResource
 
 
-class DcatService(DcatResource):
+class DcatDataService(DcatResource):
 
     def run(self):
         SERVICE_DATASET_LINK_EXPR = './/srv:operatesOn'
