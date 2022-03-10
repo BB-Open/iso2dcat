@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import zope
 from rdflib import URIRef, Literal
-from rdflib.namespace import FOAF, RDF, DCTERMS
+from rdflib.namespace import FOAF, RDF, DCTERMS, Namespace
 
 from iso2dcat.component.interface import ICatalog
 from iso2dcat.entities.base import BaseEntity
