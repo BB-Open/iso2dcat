@@ -1,12 +1,14 @@
 # -*- coding: utf-8 -*-
 
-from rdflib import Literal, Namespace
+from rdflib import Literal, Namespace, URIRef
 
 from iso2dcat.entities.base import BaseEntity
 from iso2dcat.utils import children_as_text
 
 
 class ContactPoint(BaseEntity):
+
+    dcat_class = 'vcard_Kind'
 
     simple_mapping = {
         'gmd:deliveryPoint': 'vcard:street-address',
@@ -23,6 +25,8 @@ class ContactPoint(BaseEntity):
 
     vcard = Namespace('http://www.w3.org/2006/vcard/ns#')
     namespaces = {'vcard': vcard}
+
+    entity_type = vcard.Kind
 
     def email(self):
         #         <xsl:template match="gmd:electronicMailAddress/*" mode="vcard">
@@ -65,7 +69,7 @@ class ContactPoint(BaseEntity):
 
                     for hit in hits:
                         res = children_as_text(hit)
-                        self.rdf.add((self.rdf, self.vcard[target], Literal(res)))
+                        self.rdf.add((URIRef(self.uri), self.vcard[target], Literal(res)))
 
                         break
 

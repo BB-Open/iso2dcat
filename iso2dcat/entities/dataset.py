@@ -5,6 +5,8 @@ from iso2dcat.exceptions import EntityFailed
 
 class DcatDataset(DcatResource):
 
+    dcat_class = 'dcat_Dataset'
+
     def run(self):
 
         pass

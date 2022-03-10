@@ -19,7 +19,7 @@ joblib = "^1.1.0"
 pandas = "^1.4.1"
 prettytable = "^3.1.1"
 more-itertools = "^8.12.0"
-pyrdf4j = { path = "../datenadler/datenadler_rdf4j", develop = true }
+pyrdf4j = { path = "../pyrdf4j", develop = true }
 
 
 [tool.poetry.dev-dependencies]
