@@ -53,7 +53,7 @@ class Main(Base):
         self.logger.info('Build Catalogs')
         self.catalog_builder = CatalogBuilder()
         self.catalog_builder.run()
-        self.logger.info('Catalogs build')
+        self.logger.info('Build Catalogs finished')
 
         self.logger.info('processing ISO files')
         self.csw_proc = CSWProcessor()

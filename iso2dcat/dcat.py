@@ -16,10 +16,11 @@ class CatalogBuilder(Base):
 
     def run(self):
         self.catalog = Catalog(None).run()
+        self.logger.info('Write Data to store')
         db = component.queryUtility(IRDFDatabase)
         data = self.catalog.serialize(format='turtle')
-        print(data)
         db.insert_data(data, 'text/turtle')
+        self.logger.info('Data written')
 
 
 class DCAT(Base):

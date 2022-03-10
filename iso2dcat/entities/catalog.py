@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from rdflib import FOAF, URIRef, RDF, Literal
+from rdflib import FOAF, URIRef, RDF, Literal, DCAT, DCTERMS
 
 from iso2dcat.component.interface import IStat, ICatalog
 from iso2dcat.entities.base import BaseEntity
@@ -11,7 +11,9 @@ class Catalog(BaseEntity):
 
     catalog = {}
     namespaces = {
-        'foaf': FOAF
+        'foaf': FOAF,
+        'dcat': DCAT,
+        'dct': DCTERMS
     }
 
     def run(self):
@@ -28,6 +30,14 @@ class Catalog(BaseEntity):
             uri_pub = URIRef(foaf_agent_url)
             self.rdf.add((uri_pub, RDF.type, FOAF.Agent))
             self.rdf.add((uri_pub, FOAF.name, Literal(name, lang='de')))
+            self.logger.info('Publisher Created')
+            self.logger.info('Create Catalog')
+            uri_cat = URIRef(catalog_url)
+            self.rdf.add((uri_cat, RDF.type, DCAT.Catalog))
+            self.rdf.add((uri_cat, DCTERMS.title, Literal(name, lang='de')))
+            self.rdf.add((uri_cat, DCTERMS.publisher, uri_pub))
+            self.logger.info('Catalog Created')
+
 
         return self.rdf
 
