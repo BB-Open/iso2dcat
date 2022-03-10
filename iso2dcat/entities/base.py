@@ -3,11 +3,10 @@ from rdflib import Graph
 from zope import component
 
 from iso2dcat.component.interface import IDCM, ICfg, ILogger, IStat
-from iso2dcat.exceptions import EntityFailed
 
 
 class Base:
-    """Base class of all instances. Gains access to logger and configuration"""
+    """Base class of all instances. Gives access to logger, configuration and statistics"""
 
     _stat = None
 
@@ -42,6 +41,8 @@ class BaseEntity(BaseDCM):
 
     data = None
     namespaces = None
+    _uuid = None
+    _base_uri = None
 
     def __init__(self, node):
         self.node = node
@@ -52,11 +53,18 @@ class BaseEntity(BaseDCM):
 
     @property
     def uuid(self):
-        return self.node.fileIdentifier.getchildren()[0]
+        if self._uuid is None:
+            self._uuid = self.node.fileIdentifier.getchildren()[0]
+        return self._uuid
+
+    @property
+    def base_uri(self):
+        if self._uuid is None:
+            self._base_uri = self.dcm.file_id_to_baseurl(self.uuid)
+        return self._base_uri
 
     def run(self):
         pass
-
 
     def __str__(self):
         etree.tostring(self.data, pretty_print=True)

@@ -63,7 +63,7 @@ class Hirarchy(BaseEntity):
 
         self.inc(dcat_type)
 
-        self.process(hirarchy)
+        return self.process(hirarchy)
 
     def process(self, hirarchy):
 # <gmd:transferOptions>
@@ -73,27 +73,14 @@ class Hirarchy(BaseEntity):
 #                             <gmd:linkage>
 #                                     <gmd:URL>https://geobroker.geobasis-bb.de/gbss.php?MODE=GetProductInformation&amp;PRODUCTID=121181a5-3b7b-44db-9436-a0906f1f5d7c</gmd:URL>
 #                             </gmd:linkage>
-        TILE_DATASET_LINK_EXPR = './/gmd:parentIdentifier'
+
 
         if hirarchy == 'tile':
-            res = self.node.xpath(TILE_DATASET_LINK_EXPR, namespaces={'gmd': 'http://www.isotc211.org/2005/gmd'})
-            if len(res) > 0:
-                self.inc('tile:has_parent')
-            else:
-                self.inc('tile:no_parent')
+            return Tile(self.node)
         elif hirarchy == 'service':
-            SERVICE_DATASET_LINK_EXPR = './/srv:operatesOn'
-            res = self.node.xpath(
-                SERVICE_DATASET_LINK_EXPR,
-                namespaces={
-                    'gmd': 'http://www.isotc211.org/2005/gmd',
-                    'srv' : 'http://www.isotc211.org/2005/srv'
-                }
-            )
-            if len(res) > 0:
-                self.inc('service:has_parent')
-            else:
-                self.inc('service:no_parent')
+            return DataService(self.node)
         elif hirarchy == 'series':
-            a = 10
+            return Dataset(self.node)
+        return Dataset(self.node)
+
 
