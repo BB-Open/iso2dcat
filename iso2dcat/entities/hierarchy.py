@@ -22,6 +22,9 @@ from iso2dcat.entities.base import BaseEntity
 # <CodeDefinition gml:id="MD_ScopeCode_service">
 # <CodeDefinition gml:id="MD_ScopeCode_model">
 # <CodeDefinition gml:id="MD_ScopeCode_tile">
+from iso2dcat.entities.tile import Tile
+from iso2dcat.entities.dataset import DcatDataset
+from iso2dcat.entities.dataservice import DcatDataService
 
 SCOPE_CODE_MAPPING = {
     'dataset': 'dcat:Dataset',
@@ -78,9 +81,9 @@ class Hirarchy(BaseEntity):
         if hirarchy == 'tile':
             return Tile(self.node)
         elif hirarchy == 'service':
-            return DataService(self.node)
+            return DcatDataService(self.node)
         elif hirarchy == 'series':
-            return Dataset(self.node)
-        return Dataset(self.node)
+            return DcatDataset(self.node)
+        return DcatDataset(self.node)
 
 
