@@ -70,7 +70,6 @@ class Logger:
     def debug(self, msg, file_id=None):
         self.logger.debug(self.log_message(msg, file_id))
         self.db_log(SYSLOG_DEBUG, msg, file_id)
-        self.plone_log(SYSLOG_DEBUG, msg, file_id)
 
     def setLevel(self, level):
         self.logger.setLevel(level)
