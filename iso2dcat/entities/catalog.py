@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import zope
 from rdflib import URIRef, Literal
-from rdflib.namespace import FOAF, RDF, DCAT, DCTERMS
+from rdflib.namespace import FOAF, RDF, DCTERMS
 
 from iso2dcat.component.interface import ICatalog
 from iso2dcat.entities.base import BaseEntity
@@ -13,7 +13,7 @@ class Catalog(BaseEntity):
     catalog = {}
     namespaces = {
         'foaf': FOAF,
-        'dcat': DCAT,
+        'dcat': Namespace('http://www.w3.org/ns/dcat#'),
         'dct': DCTERMS
     }
 
