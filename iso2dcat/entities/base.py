@@ -87,11 +87,7 @@ class BaseEntity(BaseDCM):
     @property
     def base_uri(self):
         if self._uuid is None:
-            try:
-                self._base_uri = self.dcm.file_id_to_baseurl[self.uuid]
-            except KeyError:
-                self._base_uri = 'https://datenadler.de'
-                self.logger.error('Dataset "{}" not in DCM'.format(self.uuid))
+            self._base_uri = self.dcm.file_id_to_baseurl(self.uuid)
         return self._base_uri
 
     @property

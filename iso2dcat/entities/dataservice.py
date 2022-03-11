@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
+from rdflib import URIRef
+
 from iso2dcat.entities.base import DCAT
+from iso2dcat.entities.dataset import DcatDataset
 
 from iso2dcat.entities.resource import DcatResource
 
@@ -12,15 +15,28 @@ class DcatDataService(DcatResource):
     def run(self):
         super(DcatDataService, self).run()
         SERVICE_DATASET_LINK_EXPR = './/srv:operatesOn'
-        res = self.node.xpath(
+        results = self.node.xpath(
             SERVICE_DATASET_LINK_EXPR,
             namespaces={
                 'gmd': 'http://www.isotc211.org/2005/gmd',
-                'srv': 'http://www.isotc211.org/2005/srv'
+                'srv': 'http://www.isotc211.org/2005/srv',
+                'xlink': 'http://www.w3.org/1999/xlink',
             }
         )
-        if len(res) > 0:
+        if len(results) > 0:
             self.inc('service:has_parent')
         else:
             self.inc('service:no_parent')
+
+        for res in results:
+            for item in res.items():
+                if item[0] != '{http://www.w3.org/1999/xlink}href':
+                    continue
+                link =item[1]
+                uuid = link.split('/')[-1]
+
+                base_uri = self.dcm.file_id_to_baseurl(uuid)
+                dataset_uri = base_uri + '#' + DcatDataset.dcat_class + '_' + uuid
+                self.rdf.add([URIRef(self.uri), DCAT.servesDataset, URIRef(dataset_uri)])
+
         return self.rdf
