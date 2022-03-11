@@ -1,8 +1,11 @@
 from lxml import etree
-from rdflib import Graph, URIRef, RDF, DCAT, FOAF, DCTERMS
+from rdflib import Graph, URIRef
+from rdflib.namespace import RDF, FOAF, DCTERMS, Namespace
 from zope import component
 
 from iso2dcat.component.interface import IDCM, ICfg, ILogger, IStat
+
+DCAT = Namespace('http://www.w3.org/ns/dcat#')
 
 
 class Base:

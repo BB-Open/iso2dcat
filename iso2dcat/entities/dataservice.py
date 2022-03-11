@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from rdflib import DCAT
+from iso2dcat.entities.base import DCAT
 
 from iso2dcat.entities.resource import DcatResource
 

@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
-from rdflib import URIRef, DCTERMS, Literal, DCAT
+from rdflib import URIRef, Literal
+from rdflib.namespace import DCTERMS
+from iso2dcat.entities.base import DCAT
 
 from iso2dcat.entities.base import BaseEntity
 from iso2dcat.entities.contactpoint import ContactPoint
