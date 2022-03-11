@@ -20,8 +20,8 @@ class Catalog(BaseEntity):
             name = pub['publisher_name']
             self.logger.info('Working on ' + name)
             base_url = pub['publisher_url']
-            foaf_agent_url = base_url + '#foafagent'
-            catalog_url = base_url + '#catalog'
+            foaf_agent_url = base_url + '#foaf_Agent'
+            catalog_url = base_url + '#dcat_Catalog'
             self.logger.info('Create Publisher')
             uri_pub = URIRef(foaf_agent_url)
             self.rdf.add((uri_pub, RDF.type, FOAF.Agent))

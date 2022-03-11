@@ -40,4 +40,8 @@ class DcatResource(BaseEntity):
         self.rdf += rdf
         self.rdf.add([URIRef(self.uri), DCAT.contactPoint, URIRef(contact.uri)])
 
+        # catalog link
+        catalog = self.base_uri + '#dcat_Catalog'
+        self.rdf.add([URIRef(catalog), DCAT.dataset, URIRef(self.uri)])
+
         return self.rdf
