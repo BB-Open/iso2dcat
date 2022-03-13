@@ -35,6 +35,9 @@ class RDFDatabase(Base):
             self.logger.error(data)
             self.logger.error(e.args)
 
+    def query_repository(self, repo_id, query):
+        return self.rdf4j.query_repository(repo_id, query, self.auth)
+
 
 def register_db():
     db = RDFDatabase()

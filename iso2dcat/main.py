@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+import pprint
+
 import zope
 from zope import component
 
@@ -13,14 +15,18 @@ from iso2dcat.entities.contactpoint import ContactPoint
 from iso2dcat.entities.hierarchy import Hirarchy
 from iso2dcat.entities.publisher import Publisher
 from iso2dcat.log.log import register_logger
+from iso2dcat.namespace import register_nsmanager
 from iso2dcat.rdf_database.db import register_db
+from iso2dcat.solr.rdf2solr import RDF2SOLR
 from iso2dcat.statistics.stat import register_stat
 
 
 class Main(Base):
 
-    dcm = None
+    db = None
     csw_proc = None
+    dcm = None
+    nsm = None
 
     def setup_components(self, args=None, env='Production', visitor=None, cfg=None):
         # Get the configuration
@@ -31,6 +37,9 @@ class Main(Base):
 
         # Setup the logging facility for this measurement ID
         register_logger(visitor=visitor)
+
+        # Register the namespace manager
+        self.nsm = register_nsmanager()
 
         # Register statistics
         register_stat()
@@ -44,7 +53,6 @@ class Main(Base):
     def run(self, visitor=None, cfg=None):
         self.setup_components(visitor=visitor, cfg=cfg)
         self.logger.info('iso2dcat starting')
-
 
         self.logger.info('loading DCM file')
         self.dcm.run()
@@ -60,14 +68,17 @@ class Main(Base):
         self.csw_proc.run()
         self.logger.info('ISO files processed')
 
-        self.logger.info('iso2dcat finished')
         self.logger.info('iso2dcat statistics')
         stat = component.queryUtility(IStat)
         for klass in [CSWProcessor, Catalog, Publisher, ContactPoint, Hirarchy]:
             for line in stat.get_stats(klass):
                 self.logger.info(line)
 
-
+        self.logger.info('RDF2Solr')
+        self.rdf2solr = RDF2SOLR()
+        self.rdf2solr.run()
+        pprint.pprint(self.rdf2solr.test1().docs)
+        self.logger.info('iso2dcat finished')
 
 if __name__ == '__main__':
     Main().run()

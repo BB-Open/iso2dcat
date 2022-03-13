@@ -6,11 +6,11 @@ default:
   # CSW Processing paramters
   # :::::::::::::::::::
   # Save all CSW-Datasets to disk for caching
-  SAVE_DATASETS : True
+  SAVE_DATASETS : False
   # Read data not from CSW but from cached datasets on disk
-  FROM_DISK : False
+  FROM_DISK : True
   # Batch size of files to get in one request
-  BATCH_COUNT : 100
+  BATCH_COUNT : 0
   # Limit Total number of files
   TOTAL_COUNT_LIMIT : 10000
 
@@ -79,3 +79,10 @@ default:
 
   WRITE_TO : 'test_db'
   RDF4J_BASE : 'http://192.168.1.211:8080/rdf4j-server/'
+
+
+# :::::::::::::::::::
+# Solr Indexer settings
+# :::::::::::::::::::
+
+  SOLR_URI : 'http://192.168.1.211:8983/solr/test1'

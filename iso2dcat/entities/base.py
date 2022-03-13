@@ -3,7 +3,7 @@ from rdflib import Graph, URIRef
 from rdflib.namespace import RDF, FOAF, DCTERMS, Namespace
 from zope import component
 
-from iso2dcat.component.interface import IDCM, ICfg, ILogger, IStat
+from iso2dcat.component.interface import IDCM, ICfg, ILogger, IStat, IRDFDatabase, INamespaceManager
 
 DCAT = Namespace('http://www.w3.org/ns/dcat#')
 
@@ -27,38 +27,46 @@ class Base:
             self._stat = component.queryUtility(IStat)
         return self._stat
 
+    def inc(self, stat, no_uuid=False):
+        self.stat.inc(self, stat, no_uuid)
+
 
 class BaseDCM(Base):
     """Base class of all instances using the DCM data"""
 
+    _dcm = None
+    _nsm = None
+    _rdf4j = None
+
     @property
     def dcm(self):
-        return component.queryUtility(IDCM)
+        if self._dcm is None:
+            self._dcm = component.queryUtility(IDCM)
+        return self._dcm
 
-    def inc(self, stat, no_uuid=False):
-        self.stat.inc(self, stat, no_uuid)
+    @property
+    def rdf4j(self):
+        if self._rdf4j is None:
+            self._rdf4j = component.queryUtility(IRDFDatabase)
+        return self._rdf4j
+
+    @property
+    def nsm(self):
+        if self._nsm is None:
+            self._nsm = component.queryUtility(INamespaceManager)
+        return self._nsm
+
+    def to_rdf4j(self, rdf):
+        self.logger.info('Write Data to RDF4J store')
+        rdf_ttl = rdf.serialize(format='turtle')
+        self.rdf4j.insert_data(rdf_ttl, 'text/turtle')
+        self.logger.info('Data written')
 
 
 class BaseEntity(BaseDCM):
     """Base class of all entities."""
 
     data = None
-    namespaces = {
-        'gmd': 'http://www.isotc211.org/2005/gmd',
-        'csw' : 'http://www.opengis.net/cat/csw/2.0.2',
-        'dc': 'http://purl.org/dc/elements/1.1/',
-        'gco': 'http://www.isotc211.org/2005/gco',
-        'gml': 'http://www.opengis.net/gml/3.2',
-        'gmx': 'http://www.isotc211.org/2005/gmx',
-        'gts': 'http://www.isotc211.org/2005/gts',
-        'ogc': 'http://www.opengis.net/ogc',
-        'ows': 'http://www.opengis.net/ows',
-        'srv': 'http://www.isotc211.org/2005/srv',
-        'dcat': str(DCAT._NS),
-        'dcatde': 'http://dcat-ap.de/def/dcatde/',
-        'foaf': str(FOAF._NS),
-        'dct': str(DCTERMS._NS),
-    }
     _uuid = None
     _base_uri = None
     _uri = None
@@ -68,9 +76,9 @@ class BaseEntity(BaseDCM):
     def __init__(self, node):
         self.node = node
         self.rdf = Graph()
-        if self.namespaces is not None:
-            for namespace, URI in self.namespaces.items():
-                self.rdf.bind(namespace, URI)
+
+        for prefix, URI in self.nsm.nsm.namespaces():
+            self.rdf.bind(prefix, URI)
 
         if self.entity_type is not None:
             self.add_entity_type()
@@ -104,3 +112,4 @@ class BaseEntity(BaseDCM):
 
     def __str__(self):
         etree.tostring(self.data, pretty_print=True)
+

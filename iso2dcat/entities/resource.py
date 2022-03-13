@@ -16,19 +16,14 @@ class DcatResource(BaseEntity):
     def run(self):
         super(DcatResource, self).run()
 
-        title = self.node.xpath(TITLE, namespaces=self.namespaces)
-        description = self.node.xpath(DESCRIPTION, namespaces=self.namespaces)
+        titles = self.node.xpath(TITLE, namespaces=self.nsm.namespaces)
+        descriptions = self.node.xpath(DESCRIPTION, namespaces=self.nsm.namespaces)
 
-        if title is not None:
-            try:
-                self.rdf.add((URIRef(self.uri), DCTERMS.title, Literal(title)))
-            except Exception:
-                pass
-        if description is not None:
-            try:
-                self.rdf.add((URIRef(self.uri), DCTERMS.description, Literal(description)))
-            except Exception:
-                pass
+        for title in titles:
+            self.rdf.add((URIRef(self.uri), DCTERMS.title, Literal(title)))
+
+        for description in descriptions:
+            self.rdf.add((URIRef(self.uri), DCTERMS.description, Literal(description)))
 
 #        publisher = Publisher(self.node)
 #        rdf = publisher.run()

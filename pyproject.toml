@@ -20,6 +20,8 @@ pandas = "^1.4.1"
 prettytable = "^3.1.1"
 more-itertools = "^8.12.0"
 pyrdf4j = { path = "../pyrdf4j", develop = true }
+pysolr = "*"
+progressbar2 = "^4.0.0"
 
 
 [tool.poetry.dev-dependencies]

@@ -53,16 +53,23 @@ class IStat(interface.Interface):
 
 class IEntity(interface.Interface):
     """
-    MArker interface fpr all entities
+    Marker interface for all entities
     """
 
 
 class ICatalog(IEntity):
+    """
+    Marker interface for Catalog entities
+    """
     pass
-
 
 
 class IRDFDatabase(interface.Interface):
     """
     Marker interface for RDF Database
+    """
+
+class INamespaceManager(interface.Interface):
+    """
+    Marker interface for NamespaceManager
     """

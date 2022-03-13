@@ -12,9 +12,6 @@ class Tile(DcatDataset):
         TILE_DATASET_LINK_EXPR = './/gmd:parentIdentifier'
         results = self.node.xpath(TILE_DATASET_LINK_EXPR, namespaces={'gmd': 'http://www.isotc211.org/2005/gmd'})
 
-        # base_uri = self.dcm.file_id_to_baseurl(uuid)
-        # dataset_uri = base_uri + '#' + DcatDataset.dcat_class + '_' + uuid
-
         for res in results:
             parent_uuid = res.getchildren()[0]
             base_uri = self.dcm.file_id_to_baseurl(parent_uuid)
