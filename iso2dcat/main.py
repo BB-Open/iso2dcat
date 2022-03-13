@@ -75,8 +75,11 @@ class Main(Base):
                 self.logger.info(line)
 
         self.logger.info('RDF2Solr')
-        self.rdf2solr = RDF2SOLR()
-        self.rdf2solr.run()
+        try:
+            self.rdf2solr = RDF2SOLR()
+            self.rdf2solr.run()
+        except Exception:
+            pass
         pprint.pprint(self.rdf2solr.test1().docs)
         self.logger.info('iso2dcat finished')
 
