@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-import pprint
 
 import zope
 from zope import component
@@ -13,11 +12,11 @@ from iso2dcat.entities.base import Base
 from iso2dcat.entities.catalog import Catalog
 from iso2dcat.entities.contactpoint import ContactPoint
 from iso2dcat.entities.hierarchy import Hirarchy
-from iso2dcat.entities.publisher import Publisher
+from iso2dcat.entities.languagemapper import register_languagemapper
+from iso2dcat.entities.publisher import Publisher, Contributor, Maintainer
 from iso2dcat.log.log import register_logger
 from iso2dcat.namespace import register_nsmanager
 from iso2dcat.rdf_database.db import register_db
-from iso2dcat.solr.rdf2solr import RDF2SOLR
 from iso2dcat.statistics.stat import register_stat
 
 
@@ -50,9 +49,16 @@ class Main(Base):
         # Register the DCM-Interface
         self.dcm = register_dcm()
 
+        # register language mapper
+        self.language_mapper = register_languagemapper()
+
     def run(self, visitor=None, cfg=None):
         self.setup_components(visitor=visitor, cfg=cfg)
         self.logger.info('iso2dcat starting')
+
+        self.logger.info('loading Languages')
+        self.language_mapper.run()
+        self.logger.info('Languages file loaded')
 
         self.logger.info('loading DCM file')
         self.dcm.run()
@@ -70,17 +76,18 @@ class Main(Base):
 
         self.logger.info('iso2dcat statistics')
         stat = component.queryUtility(IStat)
-        for klass in [CSWProcessor, Catalog, Publisher, ContactPoint, Hirarchy]:
+        for klass in [CSWProcessor, Catalog, Publisher, ContactPoint, Hirarchy, Contributor, Maintainer]:
             for line in stat.get_stats(klass):
                 self.logger.info(line)
 
-        self.logger.info('RDF2Solr')
-        try:
-            self.rdf2solr = RDF2SOLR()
-            self.rdf2solr.run()
-        except Exception:
-            pass
-        pprint.pprint(self.rdf2solr.test1().docs)
+        # todo: RDF2Solr should be in scheduler, part of flask package
+        # self.logger.info('RDF2Solr')
+        # try:
+        #     self.rdf2solr = RDF2SOLR()
+        #     self.rdf2solr.run()
+        # except Exception:
+        #     pass
+        # pprint.pprint(self.rdf2solr.test1().docs)
         self.logger.info('iso2dcat finished')
 
 if __name__ == '__main__':

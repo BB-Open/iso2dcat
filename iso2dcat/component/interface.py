@@ -73,3 +73,8 @@ class INamespaceManager(interface.Interface):
     """
     Marker interface for NamespaceManager
     """
+
+class ILanguageMapper(interface.Interface):
+    """
+    Marker Interface for global Language Mapping
+    """

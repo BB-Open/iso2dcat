@@ -21,7 +21,7 @@ class ContactPoint(BaseEntity):
     PUBLISHER_ORG_EXPR = './/gmd:CI_ResponsibleParty[gmd:role/gmd:CI_RoleCode/@codeListValue=$role]'
 
     # The list of roles defining the order to lookup
-    ROLES = ['pointOfContact']
+    ROLES = ['pointOfContact',  'distributor', 'custodian', 'publisher', 'owner']
 
     vcard = Namespace('http://www.w3.org/2006/vcard/ns#')
     namespaces = {'vcard': vcard}
@@ -56,23 +56,27 @@ class ContactPoint(BaseEntity):
 
         :return: vcard
         """
+        languages = self.get_languages()
         # For each role
         for role in self.ROLES:
             # get a list of possible publishers
             results = self.node.xpath(self.PUBLISHER_ORG_EXPR, role=role, namespaces={'gmd': 'http://www.isotc211.org/2005/gmd'})
 
-            for result in results:
-                # For each simple mapping
-                for selector, target in self.simple_mapping.items():
-                    # get a list of possible publishers
-                    hits = result.xpath('.//' + selector, namespaces={'gmd': 'http://www.isotc211.org/2005/gmd'})
+            if not results:
+                continue
+            else:
+                self.inc(role)
+                for result in results:
+                    # For each simple mapping
+                    for selector, target in self.simple_mapping.items():
+                        # get a list of possible publishers
+                        hits = result.xpath('.//' + selector + '/gco:CharacterString[text()]', namespaces=self.nsm.namespaces)
 
-                    for hit in hits:
-                        res = children_as_text(hit)
-                        self.rdf.add((URIRef(self.uri), self.vcard[target], Literal(res)))
-
-                        break
-
+                        for hit in hits:
+                            if hit:
+                                for lang in languages:
+                                    self.rdf.add((URIRef(self.uri), self.vcard[target], Literal(hit, lang=lang)))
+                break
         if len(self.rdf) == 0:
             self.inc('bad')
         else:

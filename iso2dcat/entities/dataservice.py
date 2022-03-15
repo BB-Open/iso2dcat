@@ -35,7 +35,7 @@ class DcatDataService(DcatResource):
                 link =item[1]
                 uuid = link.split('/')[-1]
 
-                base_uri = self.dcm.file_id_to_baseurl(uuid)
+                base_uri = self.dcm.file_id_to_baseurl(uuid, return_fallback=True)
                 dataset_uri = base_uri + '#' + DcatDataset.dcat_class + '_' + uuid
                 self.rdf.add([URIRef(self.uri), DCAT.servesDataset, URIRef(dataset_uri)])
 

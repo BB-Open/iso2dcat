@@ -3,9 +3,12 @@ from rdflib import Graph, URIRef
 from rdflib.namespace import RDF, FOAF, DCTERMS, Namespace
 from zope import component
 
-from iso2dcat.component.interface import IDCM, ICfg, ILogger, IStat, IRDFDatabase, INamespaceManager
+from iso2dcat.component.interface import IDCM, ICfg, ILogger, IStat, IRDFDatabase, INamespaceManager, ILanguageMapper
 
 DCAT = Namespace('http://www.w3.org/ns/dcat#')
+ADMS = Namespace('http://www.w3.org/ns/adms#')
+
+LANGUAGE = './/gmd:language/*[string-length(@codeListValue) = 3]'
 
 
 class Base:
@@ -37,12 +40,19 @@ class BaseDCM(Base):
     _dcm = None
     _nsm = None
     _rdf4j = None
+    _language_mapper = None
 
     @property
     def dcm(self):
         if self._dcm is None:
             self._dcm = component.queryUtility(IDCM)
         return self._dcm
+
+    @property
+    def language_mapper(self):
+        if self._language_mapper is None:
+            self._language_mapper = component.queryUtility(ILanguageMapper)
+        return self._language_mapper
 
     @property
     def rdf4j(self):
@@ -83,6 +93,15 @@ class BaseEntity(BaseDCM):
         if self.entity_type is not None:
             self.add_entity_type()
 
+    def get_languages(self):
+        languages = self.node.xpath(LANGUAGE, namespaces=self.nsm.namespaces)
+        if languages:
+            clean_languages = self.language_mapper.convert(languages)
+        else:
+            # untagged
+            clean_languages = ['']
+        return clean_languages
+
     def add_entity_type(self):
         self.rdf.add([URIRef(self.uri), RDF.type, self.entity_type])
 
@@ -94,8 +113,8 @@ class BaseEntity(BaseDCM):
 
     @property
     def base_uri(self):
-        if self._uuid is None:
-            self._base_uri = self.dcm.file_id_to_baseurl(self.uuid)
+        if self._base_uri is None:
+            self._base_uri = self.dcm.file_id_to_baseurl(self.uuid, return_fallback=True)
         return self._base_uri
 
     @property

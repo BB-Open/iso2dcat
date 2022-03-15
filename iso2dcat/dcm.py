@@ -30,11 +30,14 @@ class DCM(Base):
         for file in files:
             self._file_id_to_baseurl[file['fileidentifier']] = self._id_to_baseurl[file['publisher_id']]
 
-    def file_id_to_baseurl(self, file_id):
+    def file_id_to_baseurl(self, file_id, return_fallback=False):
         try:
             res = self._file_id_to_baseurl[file_id]
         except KeyError:
-            res = self.cfg.CSW_URI
+            if return_fallback:
+                res = self.cfg.FALLBACK_CATALOG_URL
+            else:
+                res = None
             self.logger.error('ISO-Dataset ID "{}" not in DCM'.format(file_id))
         return res
 
