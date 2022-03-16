@@ -81,7 +81,6 @@ class CategoryKeywordMapper(BaseEntity):
 
         self.logger.info('Set Additional Categories')
         # additional categories
-        # todo: Load in Big meta-Data-Storage and get URIs from database
         additional_cat_found = False
         for node in results_theme_label:
             label = node.xpath('gmd:thesaurusName/gmd:CI_Citation/gmd:title/gco:CharacterString[text()]', namespaces=self.nsm.namespaces)
