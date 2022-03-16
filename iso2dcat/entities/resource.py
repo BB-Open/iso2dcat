@@ -4,6 +4,7 @@ from rdflib.namespace import DCTERMS, Namespace
 from iso2dcat.entities.base import DCAT, ADMS
 
 from iso2dcat.entities.base import BaseEntity
+from iso2dcat.entities.categories import CategoryKeywordMapper
 from iso2dcat.entities.contactpoint import ContactPoint
 from iso2dcat.entities.publisher import Publisher, Contributor, Maintainer
 from iso2dcat.exceptions import EntityFailed
@@ -92,5 +93,14 @@ class DcatResource(BaseEntity):
         else:
             self.rdf += rdf
             self.rdf.add([URIRef(self.uri), DCTERMS.contributor, URIRef(contributor.uri)])
+
+        # categories
+        categories = CategoryKeywordMapper(self.node, self.uri)
+        try:
+            rdf = categories.run()
+        except EntityFailed:
+            self.logger.warning('No Keywords or Categories found')
+        else:
+            self.rdf += rdf
 
         return self.rdf

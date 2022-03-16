@@ -1210,7 +1210,7 @@
     </xsl:template>
 
     <xsl:template name="dcatTheme">
-        <xsl:variable name="topicCategories" select="gmd:identificationInfo[1]/*/gmd:topicCategory/*"/>
+        <xsl:variable name="topicCategories" select=""/>
 
         <xsl:variable name="inspireThemesLabels" select="gmd:identificationInfo/*/gmd:descriptiveKeywords/*[starts-with(gmd:thesaurusName/gmd:CI_Citation/gmd:title/gco:CharacterString, 'GEMET - INSPIRE themes')]/gmd:keyword/gco:CharacterString/lower-case(text())"/>
 

@@ -10,6 +10,7 @@ from iso2dcat.dcat import CatalogBuilder
 from iso2dcat.dcm import register_dcm
 from iso2dcat.entities.base import Base
 from iso2dcat.entities.catalog import Catalog
+from iso2dcat.entities.categories import CategoryKeywordMapper
 from iso2dcat.entities.contactpoint import ContactPoint
 from iso2dcat.entities.hierarchy import Hirarchy
 from iso2dcat.entities.languagemapper import register_languagemapper
@@ -21,7 +22,6 @@ from iso2dcat.statistics.stat import register_stat
 
 
 class Main(Base):
-
     db = None
     csw_proc = None
     dcm = None
@@ -76,7 +76,8 @@ class Main(Base):
 
         self.logger.info('iso2dcat statistics')
         stat = component.queryUtility(IStat)
-        for klass in [CSWProcessor, Catalog, Publisher, ContactPoint, Hirarchy, Contributor, Maintainer]:
+        for klass in [CSWProcessor, Catalog, Publisher, ContactPoint, Hirarchy, Contributor, Maintainer,
+                      CategoryKeywordMapper]:
             for line in stat.get_stats(klass):
                 self.logger.info(line)
 
@@ -89,6 +90,7 @@ class Main(Base):
         #     pass
         # pprint.pprint(self.rdf2solr.test1().docs)
         self.logger.info('iso2dcat finished')
+
 
 if __name__ == '__main__':
     Main().run()
