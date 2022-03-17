@@ -12,6 +12,7 @@ from iso2dcat.entities.base import Base
 from iso2dcat.entities.catalog import Catalog
 from iso2dcat.entities.categories import CategoryKeywordMapper
 from iso2dcat.entities.contactpoint import ContactPoint
+from iso2dcat.entities.dates import DateMapper
 from iso2dcat.entities.hierarchy import Hirarchy
 from iso2dcat.entities.languagemapper import register_languagemapper
 from iso2dcat.entities.publisher import Publisher, Contributor, Maintainer
@@ -77,7 +78,7 @@ class Main(Base):
         self.logger.info('iso2dcat statistics')
         stat = component.queryUtility(IStat)
         for klass in [CSWProcessor, Catalog, Publisher, ContactPoint, Hirarchy, Contributor, Maintainer,
-                      CategoryKeywordMapper]:
+                      CategoryKeywordMapper, DateMapper]:
             for line in stat.get_stats(klass):
                 self.logger.info(line)
 

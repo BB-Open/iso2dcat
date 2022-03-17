@@ -1,6 +1,3 @@
-import urllib
-from urllib.parse import urlencode
-
 from pyrdf4j.errors import QueryFailed
 from rdflib import Literal, URIRef
 from rdflib.namespace import RDF, SKOS, DCTERMS
@@ -14,29 +11,38 @@ INSPIRE_THEME_LABELS = "gmd:identificationInfo/*/gmd:descriptiveKeywords/*"
 
 
 class CategoryKeywordMapper(BaseEntity):
+    cached_keywords = {}
 
     def __init__(self, node, parent_uri):
         super().__init__(node)
         self.parent_ressource_uri = parent_uri
-        self.dcat_themes = {"AGRI": ['farming', 'imageryBaseMapsEarthCover', 'inlandWaters', 'oceans'],
-                            "EDUC": ['society'],
-                            "ENVI": ['biota', 'climatologyMeteorologyAtmosphere', 'elevation', 'environment',
-                                     'imageryBaseMapsEarthCover', 'inlandWaters', 'oceans', 'geoscientificInformation',
-                                     'farming', 'utilitiesCommunication'],
-                            "ENER": ['utilitiesCommunication'],
-                            "TRAN": ['transportation', 'inlandWaters', 'oceans', 'structure'],
-                            "TECH": ['climatologyMeteorologyAtmosphere', 'elevation', 'geoscientificInformation',
-                                     'imageryBaseMapsEarthCover'],
-                            "ECON": ['economy'],
-                            "SOCI": ['society'],
-                            "HEAL": ['health'],
-                            "GOVE": ['boundaries', 'elevation', 'imageryBaseMapsEarthCover', 'location',
-                                     'planningCadastre', 'utilitiesCommunication'],
-                            "REGI": ['boundaries', 'location', 'planningCadastre', 'geoscientificInformation',
-                                     'structure', 'imageryBaseMapsEarthCover'],
-                            "JUST": ['intelligenceMilitary'],
-                            "INTR": [],
-                            }
+        self.dcat_themes = [
+            "AGRI", "EDUC", "ENVI", "ENER",
+            "TRAN", "TECH", "ECON", "SOCI",
+            "HEAL", "GOVE", "REGI", "JUST",
+            "INTR"
+        ]
+        self.keywords_to_themes = {
+            'farming': ['AGRI', 'ENVI'],
+            'imageryBaseMapsEarthCover': ['AGRI', 'ENVI', 'TECH', 'GOVE', 'REGI'],
+            'inlandWaters': ['AGRI', 'ENVI', 'TRAN'],
+            'oceans': ['AGRI', 'ENVI', 'TRAN'],
+            'society': ["EDUC", 'SOCI'],
+            'biota': ["ENVI"],
+            'climatologyMeteorologyAtmosphere': ['ENVI', 'TECH'],
+            'elevation': ['ENVI', 'TECH', 'GOVE'],
+            'environment': ['ENVI'],
+            'geoscientificInformation': ['ENVI', 'TECH', 'REGI'],
+            'utilitiesCommunication': ['ENVI', 'ENER', 'GOVE'],
+            'transportation': ['TRAN'],
+            'structure': ['TRAN', 'REGI'],
+            'economy': ['ECON'],
+            'health': ['HEAL'],
+            'boundaries': ['GOVE', 'REGI'],
+            'location': ['GOVE', 'REGI'],
+            'planningCadastre': ['GOVE', 'REGI'],
+            'intelligenceMilitary': ["JUST"]
+        }
 
     def run(self):
         results_kw = self.node.xpath(KEYWORDS,
@@ -56,11 +62,6 @@ class CategoryKeywordMapper(BaseEntity):
         else:
             self.inc('bad_cat')
 
-        # if results_theme_label:
-        #     self.inc('good_label')
-        # else:
-        #     self.inc('bad_label')
-
         languages = self.get_languages()
 
         # create keywords as keyword
@@ -74,8 +75,9 @@ class CategoryKeywordMapper(BaseEntity):
         # create categories
         self.logger.info('Set Default Categories')
         for keyword in results_cat:
-            for cat in self.dcat_themes:
-                if keyword in self.dcat_themes[cat]:
+            if keyword in self.keywords_to_themes:
+                cats = self.keywords_to_themes[keyword]
+                for cat in cats:
                     self.rdf.add((URIRef(self.parent_ressource_uri), DCAT.theme, URIRef(
                         'http://publications.europa.eu/resource/authority/data-theme/' + cat)))
 
@@ -83,7 +85,8 @@ class CategoryKeywordMapper(BaseEntity):
         # additional categories
         additional_cat_found = False
         for node in results_theme_label:
-            label = node.xpath('gmd:thesaurusName/gmd:CI_Citation/gmd:title/gco:CharacterString[text()]', namespaces=self.nsm.namespaces)
+            label = node.xpath('gmd:thesaurusName/gmd:CI_Citation/gmd:title/gco:CharacterString[text()]',
+                               namespaces=self.nsm.namespaces)
             keywords = node.xpath('gmd:keyword/gco:CharacterString', namespaces=self.nsm.namespaces)
             if label:
                 label = label[0]
@@ -120,16 +123,22 @@ class CategoryKeywordMapper(BaseEntity):
 
     def keyword_to_uri(self, keyword):
         # todo: why is there a problem with utf-8 character?
+        if keyword in self.cached_keywords:
+            return self.cached_keywords[keyword]
         query = """
         PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
-        SELECT ?s WHERE { ?s skos:prefLabel ?label FILTER (lcase(str(?label)) = '""" + str(keyword).lower().encode('utf-8').decode("iso-8859-1") + """').}"""
+        SELECT ?s WHERE { ?s skos:prefLabel ?label FILTER (lcase(str(?label)) = '""" + str(keyword).lower().encode(
+            'utf-8').decode("iso-8859-1") + """').}"""
         try:
             res = self.rdf4j.query_repository(META_REPO_ID, query)
         except QueryFailed:
             self.logger.error('Query failed')
             self.logger.error(query)
-            return None
-        if res['results']['bindings']:
-            return res['results']['bindings'][0]['s']['value']
+            uri = None
         else:
-            return None
+            if res['results']['bindings']:
+                uri = res['results']['bindings'][0]['s']['value']
+            else:
+                uri = None
+        self.cached_keywords[keyword] = uri
+        return uri

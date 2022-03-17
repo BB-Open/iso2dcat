@@ -6,6 +6,7 @@ from iso2dcat.entities.base import DCAT, ADMS
 from iso2dcat.entities.base import BaseEntity
 from iso2dcat.entities.categories import CategoryKeywordMapper
 from iso2dcat.entities.contactpoint import ContactPoint
+from iso2dcat.entities.dates import DateMapper
 from iso2dcat.entities.publisher import Publisher, Contributor, Maintainer
 from iso2dcat.exceptions import EntityFailed
 
@@ -100,6 +101,15 @@ class DcatResource(BaseEntity):
             rdf = categories.run()
         except EntityFailed:
             self.logger.warning('No Keywords or Categories found')
+        else:
+            self.rdf += rdf
+
+        # issued/modified
+        dates = DateMapper(self.node, self.uri)
+        try:
+            rdf = dates.run()
+        except EntityFailed:
+            self.logger.warning('No Dates found')
         else:
             self.rdf += rdf
 
