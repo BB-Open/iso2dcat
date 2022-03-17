@@ -7,6 +7,7 @@ from iso2dcat.entities.base import BaseEntity
 from iso2dcat.entities.categories import CategoryKeywordMapper
 from iso2dcat.entities.contactpoint import ContactPoint
 from iso2dcat.entities.dates import DateMapper
+from iso2dcat.entities.locationboundingbox import LocationBoundingbox
 from iso2dcat.entities.publisher import Publisher, Contributor, Maintainer
 from iso2dcat.exceptions import EntityFailed
 
@@ -112,5 +113,15 @@ class DcatResource(BaseEntity):
             self.logger.warning('No Dates found')
         else:
             self.rdf += rdf
+
+        # dct:spatial
+        spatial = LocationBoundingbox(self.node)
+        try:
+            rdf = spatial.run()
+        except EntityFailed:
+            self.logger.warning('No Dates found')
+        else:
+            self.rdf += rdf
+            self.rdf.add((URIRef(self.uri), DCTERMS.spatial, URIRef(spatial.uri)))
 
         return self.rdf
