@@ -15,8 +15,10 @@ class DateMapper(BaseEntity):
         # modified
         roles = ['creation', 'revision']
         for role in roles:
-            results = self.node.xpath(DATE_QUERY, role=role,
-                                      namespaces=self.nsm.namespaces)
+            # results = self.node.xpath(DATE_QUERY, role=role,
+            #                          namespaces=self.nsm.namespaces)
+            # print(results)
+            pass
 
         # issued
         roles = ['revision', 'publication']
