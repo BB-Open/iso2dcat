@@ -22,3 +22,4 @@ class DateMapper(BaseEntity):
 
         # issued
         roles = ['revision', 'publication']
+        return self.rdf
