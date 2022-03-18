@@ -82,9 +82,9 @@ class DcatResource(BaseEntity):
 
         # contributorID
         self.rdf.add((URIRef(self.uri), DCATDE.contributorID, URIRef('http://dcat-ap.de/def/contributors/landBrandenburg')))
-        # identifier
-        self.rdf.add((URIRef(self.uri), DCTERMS.identifier, Literal(self.uri)))
-        self.rdf.add((URIRef(self.uri), ADMS.identifier, Literal(self.uri)))
+        # identifier is uuid
+        self.rdf.add((URIRef(self.uri), DCTERMS.identifier, Literal(self.uuid)))
+        self.rdf.add((URIRef(self.uri), ADMS.identifier, Literal(self.uuid)))
 
         # contributor
         contributor = Contributor(self.node)
