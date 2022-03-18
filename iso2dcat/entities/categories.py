@@ -5,7 +5,7 @@ from rdflib.namespace import RDF, SKOS, DCTERMS
 from iso2dcat.entities.base import BaseEntity, DCAT
 from iso2dcat.meta_data_database import KNOWN_THESAURI, META_REPO_ID
 
-KEYWORDS = 'gmd:identificationInfo/*/gmd:descriptiveKeywords/*[not(gmd:thesaurusName)]/gmd:keyword/gco:CharacterString'
+KEYWORDS = 'gmd:identificationInfo/*/gmd:descriptiveKeywords/*/gmd:keyword/gco:CharacterString'
 CATEGORIES = 'gmd:identificationInfo[1]/*/gmd:topicCategory/*'
 INSPIRE_THEME_LABELS = "gmd:identificationInfo/*/gmd:descriptiveKeywords/*"
 

@@ -94,5 +94,33 @@ class Main(Base):
         self.logger.info('iso2dcat finished')
 
 
+ALL_PREFIXES = [
+    'dct: <http://purl.org/dc/terms/>',
+    'skos: <http://www.w3.org/2004/02/skos/core#>',
+    'rdfs: <http://www.w3.org/2000/01/rdf-schema#>',
+    'dcat: <http://www.w3.org/ns/dcat#>',
+    'dcatde: <http://dcat-ap.de/def/dcatde/>',
+    'foaf: <http://xmlns.com/foaf/0.1/>',
+    'rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>',
+    'adms: <http://www.w3.org/ns/adms#>',
+    'owl: <http://www.w3.org/2002/07/owl>',
+    'schema: <http://schema.org/>',
+    'spdx: <http://spdx.org/rdf/terms#>',
+    'xsd: <http://www.w3.org/2001/XMLSchema#>',
+    'vcard: <http://www.w3.org/2006/vcard/ns#>',
+]
+
 if __name__ == '__main__':
-    Main().run()
+    m = Main()
+    m.run()
+    # m.setup_components()
+    # prefixes = 'PREFIX ' + '\nPREFIX '.join(ALL_PREFIXES)
+    #
+    # obj_id = 'https://geobasis-bb.de#dcat_DataService_ea942e1e-8d54-4f9a-963a-764070c455ca'
+    #
+    # query = prefixes + "\nCONSTRUCT { ?s ?p ?o } WHERE {?s ?p ?o. FILTER(?s = <" \
+    #         + obj_id + "> || ?p = <" + obj_id + "> || ?o = <" + obj_id + "> )}"
+    # data = m.db.rdf4j.get_turtle_from_query(m.cfg.WRITE_TO, query, auth=m.db.auth)
+    #
+    # with open('test.ttl', 'bw') as f:
+    #     f.write(data)
