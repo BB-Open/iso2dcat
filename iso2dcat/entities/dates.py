@@ -26,7 +26,7 @@ class DateMapper(BaseEntity):
 
         if results:
             self.inc('modified_good')
-            self.rdf.add((URIRef(self.parent_ressource_uri), DCTERMS.modified, Literal(results[0])))
+            self.rdf.add((URIRef(self.parent_ressource_uri), DCTERMS.modified, Literal(results[0], datatype=XSD.dateTimeStamp)))
         else:
             self.inc('modified_bad')
 
