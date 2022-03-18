@@ -22,7 +22,7 @@ class Main(Base):
 
     def run(self):
         self.logger.info('Create Database')
-        self.rdf4j.create_repository(META_REPO_ID, overwrite=True, auth=self.auth)
+        self.rdf4j.create_repository(META_REPO_ID, overwrite=True, auth=self.auth, repo_type='native')
         for thesaurus in KNOWN_THESAURI:
             source = KNOWN_THESAURI[thesaurus]['source']
             format = KNOWN_THESAURI[thesaurus]['format']
