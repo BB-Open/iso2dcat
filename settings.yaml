@@ -80,13 +80,10 @@ default:
   WRITE_TO : 'test_db'
   RDF4J_BASE : 'http://192.168.1.211:8080/rdf4j-server/'
 
+  FALLBACK_CATALOG_URL : "http://lgb.de"
 
 # :::::::::::::::::::
 # Solr Indexer settings
 # :::::::::::::::::::
 
-  SOLR_URI : 'http://192.168.1.211:8983/solr/LGB3'
-
-
-  FALLBACK_CATALOG_URL : "http://lgb.de"
-
+  SOLR_URI : 'http://192.168.1.211:8983/solr/test1'
