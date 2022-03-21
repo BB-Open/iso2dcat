@@ -58,7 +58,8 @@ class Hirarchy(BaseEntity):
         hirarchy = res[0]
 
         if hirarchy not in SCOPE_CODE_MAPPING:
-            self.inc('bad')
+            self.inc('other')
+            self.inc('good')
         else:
             self.inc('good')
 
