@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from rdflib import Literal, URIRef
 from rdflib.namespace import DCTERMS, XSD
 
@@ -15,34 +17,8 @@ class DateMapper(BaseEntity):
         self.roles = ['revision', 'creation', 'publication']
 
     def run(self):
-        # modified
-        roles = ['creation', 'revision']
-        results = None
-        for role in roles:
-            results = self.node.xpath(DATE_QUERY, role=role,
-                                      namespaces=self.nsm.namespaces)
-            if results:
-                break
-
-        if results:
-            self.inc('modified_good')
-            self.rdf.add((URIRef(self.parent_ressource_uri), DCTERMS.modified, Literal(results[0], datatype=XSD.dateTimeStamp)))
-        else:
-            self.inc('modified_bad')
-
-        # issued
-        roles = ['revision', 'publication']
-        results = None
-        for role in roles:
-            results = self.node.xpath(DATE_QUERY, role=role,
-                                      namespaces=self.nsm.namespaces)
-            if results:
-                break
-
-        if results:
-            self.inc('issued_good')
-            self.rdf.add((URIRef(self.parent_ressource_uri), DCTERMS.issued, Literal(results[0], datatype=XSD.dateTimeStamp)))
-        else:
-            self.inc('issued_bad')
+        # todo: Role fields as fields on data
+        self.rdf.add((URIRef(self.parent_ressource_uri), DCTERMS.modified, Literal(datetime.now(), datatype=XSD.dateTimeStamp)))
+        self.rdf.add((URIRef(self.parent_ressource_uri), DCTERMS.issued, Literal(datetime.now(), datatype=XSD.dateTimeStamp)))
 
         return self.rdf

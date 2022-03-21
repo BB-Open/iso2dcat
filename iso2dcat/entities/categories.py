@@ -9,6 +9,11 @@ KEYWORDS = 'gmd:identificationInfo/*/gmd:descriptiveKeywords/*/gmd:keyword/gco:C
 CATEGORIES = 'gmd:identificationInfo[1]/*/gmd:topicCategory/*'
 INSPIRE_THEME_LABELS = "gmd:identificationInfo/*/gmd:descriptiveKeywords/*"
 
+QUERYS = ["""
+        PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+        SELECT ?s WHERE {{ ?s skos:prefLabel ?label FILTER (lcase(str(?label)) = '{keyword}').}}""",
+]
+
 
 class CategoryKeywordMapper(BaseEntity):
     cached_keywords = {}
@@ -125,20 +130,21 @@ class CategoryKeywordMapper(BaseEntity):
         # todo: why is there a problem with utf-8 character?
         if keyword in self.cached_keywords:
             return self.cached_keywords[keyword]
-        query = """
-        PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
-        SELECT ?s WHERE { ?s skos:prefLabel ?label FILTER (lcase(str(?label)) = '""" + str(keyword).lower().encode(
-            'utf-8').decode("iso-8859-1") + """').}"""
-        try:
-            res = self.rdf4j.query_repository(META_REPO_ID, query)
-        except QueryFailed:
-            self.logger.error('Query failed')
-            self.logger.error(query)
-            uri = None
-        else:
-            if res['results']['bindings']:
-                uri = res['results']['bindings'][0]['s']['value']
-            else:
+        keyword_clean = str(keyword).lower().encode(
+            'utf-8').decode("iso-8859-1")
+        uri = None
+        for query in QUERYS:
+            try:
+                res = self.rdf4j.query_repository(META_REPO_ID, query)
+            except QueryFailed:
+                self.logger.error('Query failed')
+                self.logger.error(query)
                 uri = None
+            else:
+                if res['results']['bindings']:
+                    uri = res['results']['bindings'][0]['s']['value']
+                    break
+                else:
+                    uri = None
         self.cached_keywords[keyword] = uri
         return uri

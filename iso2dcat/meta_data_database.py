@@ -22,11 +22,13 @@ class Main(Base):
 
     def run(self):
         self.logger.info('Create Database')
-        self.rdf4j.create_repository(META_REPO_ID, overwrite=True, auth=self.auth, repo_type='native')
+        self.rdf4j.create_repository(META_REPO_ID, overwrite=False, accept_existing=True, auth=self.auth, repo_type='native')
         for thesaurus in KNOWN_THESAURI:
             source = KNOWN_THESAURI[thesaurus]['source']
             format = KNOWN_THESAURI[thesaurus]['format']
+            self.logger.info('Load ' + thesaurus)
             self.rdf4j.bulk_load_from_uri(META_REPO_ID, source, content_type=format, clear_repository=False, auth=self.auth)
+            self.logger.info('Loaded')
 
 
 
