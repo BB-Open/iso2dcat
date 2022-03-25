@@ -2,7 +2,6 @@
 import json
 import urllib.request
 
-import pandas as pd
 from zope import component
 
 from iso2dcat.component.interface import IDCM
@@ -18,8 +17,6 @@ class DCM(Base):
 
     def run(self):
         dcm_file = urllib.request.urlopen(self.cfg.DCM_URI)
-        # dcm_pandas = pd.read_csv(dcm_file, sep=';', index_col=0)
-        # self.dcm = dcm_pandas.to_dict(orient='index')
         self.dcm = json.loads(dcm_file.read())
         publishers = self.dcm['publisher']['mapping']
         self.logger.info('Mapping publishers to Base Url')
