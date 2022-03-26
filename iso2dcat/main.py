@@ -1,9 +1,12 @@
 # -*- coding: utf-8 -*-
 
 import zope
+from globalconfig.interface import IGlobalCfg
+
 from zope import component
 
-from iso2dcat.component.interface import IStat, ICfg
+import iso2dcat
+from iso2dcat.component.interface import IStat
 from iso2dcat.config import register_config
 from iso2dcat.csw import CSWProcessor
 from iso2dcat.dcat import CatalogBuilder
@@ -29,12 +32,12 @@ class Main(Base):
     dcm = None
     nsm = None
 
-    def setup_components(self, args=None, env='Production', visitor=None, cfg=None):
-        # Get the configuration
-        if cfg:
-            zope.component.provideUtility(cfg, ICfg)
-        else:
-            register_config(args, env=env)
+    def setup_components(self, args=None, env='Production', visitor=None):
+        # Get the local configuration
+        register_config(iso2dcat, env=env)
+
+        # Get the global configuration
+        # register_config(config_file_dir='/etc/pkan/iso2dcat', env=env, interface=IGlobalCfg)
 
         # Setup the logging facility for this measurement ID
         register_logger(visitor=visitor)
@@ -55,7 +58,7 @@ class Main(Base):
         self.language_mapper = register_languagemapper()
 
     def run(self, visitor=None, cfg=None):
-        self.setup_components(visitor=visitor, cfg=cfg)
+        self.setup_components(visitor=visitor)
         self.logger.info('iso2dcat starting')
 
         self.logger.info('loading Languages')

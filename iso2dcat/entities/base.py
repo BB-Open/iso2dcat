@@ -1,3 +1,4 @@
+from globalconfig.interface import IGlobalCfg
 from lxml import etree
 from rdflib import Graph, URIRef
 from rdflib.namespace import RDF, FOAF, DCTERMS, Namespace
@@ -23,6 +24,10 @@ class Base:
     @property
     def cfg(self):
         return component.queryUtility(ICfg)
+
+    @property
+    def global_cfg(self):
+        return component.queryUtility(IGlobalCfg)
 
     @property
     def stat(self):
