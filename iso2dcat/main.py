@@ -46,6 +46,9 @@ class Main(Base):
         # Setup the logging facility for this measurement ID
         register_logger(visitor=visitor)
 
+
+        self.logger.info('iso2dcat starting')
+
         # Register the namespace manager
         self.nsm = register_nsmanager()
 
@@ -59,15 +62,13 @@ class Main(Base):
         self.dcm = register_dcm()
 
         # register language mapper
+        self.logger.info('loading Languages')
         self.language_mapper = register_languagemapper()
+        self.logger.info('Languages file loaded')
+
 
     def run(self, visitor=None, cfg=None):
         self.setup_components(visitor=visitor, cfg=cfg)
-        self.logger.info('iso2dcat starting')
-
-        self.logger.info('loading Languages')
-        self.language_mapper.run()
-        self.logger.info('Languages file loaded')
 
         self.logger.info('loading DCM file')
         self.dcm.run()

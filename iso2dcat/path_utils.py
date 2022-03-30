@@ -16,7 +16,7 @@ def dir_not_found_hint(path_str):
 
 def abs_file_path(*file_path):
     """
-    Make a relative file_path absolute in respect to the ELDAmwl projekt directory.
+    Make a relative file_path absolute in respect to the projekt directory.
     Absolute path wil not be changed
     """
     path = Path(*file_path)

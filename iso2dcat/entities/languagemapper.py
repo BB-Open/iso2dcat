@@ -1,4 +1,5 @@
 import os
+import pickle
 from pathlib import Path
 
 from rdflib import Graph, Namespace
@@ -9,7 +10,8 @@ from iso2dcat.component.interface import ILanguageMapper
 from iso2dcat.entities.base import Base
 from iso2dcat.path_utils import abs_file_path
 
-LANGUAGE_SOURCE_FILE = 'languages.rdf'
+LANGUAGE_SOURCE_FILE = abs_file_path('iso2dcat/data/languages.rdf')
+LANGUAGE_MAPPER_PICKLE_FILE = abs_file_path('iso2dcat/data/language_mapper.pickle')
 
 
 class LanguageMapper(Base):
@@ -20,7 +22,7 @@ class LanguageMapper(Base):
         self._subject_to_new = {}
 
     def run(self):
-        file = Path(os.path.abspath(__file__)).parent.parent / 'data' / LANGUAGE_SOURCE_FILE
+        file = LANGUAGE_SOURCE_FILE
         g = Graph()
         g.parse(str(file))
 
@@ -82,6 +84,13 @@ class LanguageMapper(Base):
 
 
 def register_languagemapper():
-    language = LanguageMapper()
-    component.provideUtility(language, ILanguageMapper)
-    return language
+    try:
+        with open(LANGUAGE_MAPPER_PICKLE_FILE, 'rb') as in_file:
+            language_mapper = pickle.load(in_file)
+    except FileNotFoundError:
+        language_mapper = LanguageMapper()
+        language_mapper.run()
+        with open(LANGUAGE_MAPPER_PICKLE_FILE, 'wb') as out_file:
+            pickle.dump(language_mapper, out_file)
+    component.provideUtility(language_mapper, ILanguageMapper)
+    return language_mapper
