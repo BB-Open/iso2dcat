@@ -1,3 +1,5 @@
+import json
+
 import progressbar
 import pysolr
 import zope
@@ -10,7 +12,7 @@ from iso2dcat.namespace import register_nsmanager
 from iso2dcat.rdf_database.db import register_db
 from iso2dcat.statistics.stat import register_stat
 
-ALL_ENTITIES = """
+ALL_DATASETS = """
 prefix bds: <http://www.bigdata.com/rdf/search#>
 PREFIX dcat: <http://www.w3.org/ns/dcat#>
 PREFIX dct: <http://purl.org/dc/terms/>
@@ -20,10 +22,26 @@ prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 
 SELECT DISTINCT ?s ?p ?o
     WHERE {
-        VALUES ?type {dcat:Dataset dcat:DataService dcat:Distribution dcat:Catalog foaf:Agent}
+        VALUES ?type {dcat:Dataset}
         ?s ?p ?o .
         ?s a ?type .
     }
+"""
+
+DISTRIBUTIONS_FOR_DATASET = """
+prefix bds: <http://www.bigdata.com/rdf/search#>
+PREFIX dcat: <http://www.w3.org/ns/dcat#>
+PREFIX dct: <http://purl.org/dc/terms/>
+prefix foaf: <http://xmlns.com/foaf/0.1/>
+prefix skos: <http://www.w3.org/2004/02/skos/core#>
+prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+SELECT DISTINCT ?s ?d ?p ?o
+    WHERE {{
+        VALUES ?s {{ <{}>  }}
+        ?s dcat:distribution ?d .
+        ?d ?p ?o .
+    }}
 """
 
 
@@ -45,6 +63,7 @@ class RDF2SOLR(BaseDCM):
         # Setup the logging facility for this measurement ID
         register_logger(visitor=visitor)
 
+        self.logger.info('rdf2solr starting')
         # Register the namespace manager
         nsm = register_nsmanager()
 
@@ -54,28 +73,25 @@ class RDF2SOLR(BaseDCM):
         # Register RDF Database to write final results
         db = register_db()
 
-#        # Register the DCM-Interface
-#        dcm = register_dcm()
-
-#        # register language mapper
-#        language_mapper = register_languagemapper()
-
     def run(self, db_name=None):
+        self.logger.info('Loading rdf datasets')
         data_sets = self.format_data(db_name)
+        self.logger.info('rdf datasets loaded')
         self.solr = pysolr.Solr(self.cfg.SOLR_URI, auth=('writer','Sas242!!'))
-#        self.solr.delete(q='*:*', commit=True)
-#        self.solr.commit()
-        data_len = len(data_sets)
+        self.logger.info('writing datasets to solr')
         for key, data_set in progressbar.progressbar(data_sets.items()):
             self.solr.add(data_set)
         self.solr.commit()
+        self.logger.info('datasets written to solr')
+        self.logger.info('rdf2solr finished')
 
     def format_data(self, db_name):
         if db_name is None:
-            db_name = self.cfg.WRITE_TO
-        results = self.rdf4j.query_repository(db_name, ALL_ENTITIES)
+            db_name = self.cfg.RDF2SOLR_SOURCE
+        results = self.rdf4j.query_repository(db_name, ALL_DATASETS)
         triples = results['results']['bindings']
         res_dict = {}
+        # For all datasets collect all attributes
         for res in triples:
             s_uri = res['s']['value']
             if s_uri not in res_dict:
@@ -92,31 +108,39 @@ class RDF2SOLR(BaseDCM):
 
             res_dict[s_uri][tag] = value
 
+        distribution_tags = ['dcterms_title', 'dcterms_license', 'dcat_accessURL', 'dcat_downloadURL', 'dcterms_format']
+
+
+        # For all datasets collect all Distributions
+        for dataset_uri in res_dict:
+            sparql = DISTRIBUTIONS_FOR_DATASET.format(dataset_uri)
+            results = self.rdf4j.query_repository(db_name, sparql)
+
+            distributions = {}
+            for res in results['results']['bindings']:
+                distribution = res['d']['value']
+                if distribution not in distributions:
+                    distributions[distribution] = {}
+
+                predicate = res['p']['value']
+                if res['p']['type'] == 'uri':
+                    tag = self.nsm.uri2prefix_name(predicate)
+                else:
+                    tag = predicate
+                if tag in distribution_tags:
+                    distributions[distribution][tag] = res['o']['value']
+
+
+            distributions_json = json.dumps(distributions)
+            res_dict[dataset_uri]['dcat_distribution'] = distributions_json
+
         return res_dict
-
-    def search(self, query_string, **kwargs):
-        self.solr = pysolr.Solr(self.cfg.SOLR_URI, always_commit=True, auth=('reader','Sas242!!'),)
-        return self.solr.search(query_string, **kwargs)
-
-    def test1(self):
-#        'facet.query': 'dcterms_isPartOf=ns1_dcat_Dataset_121181a5-3b7b-44db-9436-a0906f1f5d7c'
-
-        add_params = {
-            'suggest.dictionary' : 'mySuggester',
-            'suggest.q' :'Beer',
-        }
-        res = self.search(
-            '*Beer*',
-#            defType='edismax',
-#            qf='dcterms_title dcterms_description',
-#            facet='true',
-            **add_params)
-        return res
 
 
 def main():
     rdf2solr = RDF2SOLR()
     rdf2solr.run()
+
 
 if __name__ == '__main__':
     main()
