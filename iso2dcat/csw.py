@@ -25,6 +25,7 @@ class CSWProcessor(BaseDCM):
         return PropertyIsLike(propertyname='apiso:subject', literal='opendata')
 
     def get_records(self):
+        self.logger.info(self.cfg.FROM_DISK)
 
         if self.cfg.FROM_DISK :
             batch_start = 0

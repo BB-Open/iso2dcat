@@ -744,7 +744,7 @@
 
     <xsl:template
         match="gmd:date/*[gmd:dateType/*/@codeListValue = 'creation']/gmd:date/*[text() castable as xs:date or text() castable as xs:dateTime]"
-        mode="serviceDistribution">
+        mode="serviceDistributionserviceDistribution">
         <xsl:if
             test="not(ancestor::gmd:MD_Metadata/gmd:identificationInfo[1]/*/gmd:citation/*/gmd:date/*[gmd:dateType/*/@codeListValue = 'revision']/gmd:date/* or ancestor::gmd:MD_Metadata/gmd:identificationInfo[1]/*/gmd:citation/*/gmd:date/*[gmd:dateType/*/@codeListValue = 'publication']/gmd:date/*)">
             <dct:modified>

@@ -1,10 +1,10 @@
-from globalconfig.interface import IGlobalCfg
+# from globalconfig.interface import IGlobalCfg
 from lxml import etree
 from rdflib import Graph, URIRef
 from rdflib.namespace import RDF, FOAF, DCTERMS, Namespace
 from zope import component
 
-from iso2dcat.component.interface import IDCM, ICfg, ILogger, IStat, IRDFDatabase, INamespaceManager, ILanguageMapper
+from iso2dcat.component.interface import IDCM, ILogger, IStat, IRDFDatabase, INamespaceManager, ILanguageMapper, IIsoCfg
 
 DCAT = Namespace('http://www.w3.org/ns/dcat#')
 ADMS = Namespace('http://www.w3.org/ns/adms#')
@@ -23,11 +23,11 @@ class Base:
 
     @property
     def cfg(self):
-        return component.queryUtility(ICfg)
+        return component.queryUtility(IIsoCfg)
 
-    @property
-    def global_cfg(self):
-        return component.queryUtility(IGlobalCfg)
+    # @property
+    # def global_cfg(self):
+    #     return component.queryUtility(IGlobalCfg)
 
     @property
     def stat(self):

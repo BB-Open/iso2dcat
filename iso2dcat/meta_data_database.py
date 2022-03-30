@@ -1,7 +1,7 @@
+from pkan_config.config import register_config
 from pyrdf4j.rdf4j import RDF4J
 from requests.auth import HTTPBasicAuth
 
-from iso2dcat.config import register_config
 from iso2dcat.entities.base import Base
 from iso2dcat.log.log import register_logger
 
@@ -15,7 +15,7 @@ KNOWN_THESAURI = {
 class Main(Base):
 
     def __init__(self, env='Production', args=None):
-        register_config(args, env=env)
+        register_config(env=env)
         register_logger()
         self.rdf4j = RDF4J(rdf4j_base=self.cfg.RDF4J_BASE)
         self.auth = HTTPBasicAuth(self.cfg.ADMIN_USER, self.cfg.ADMIN_PASS)

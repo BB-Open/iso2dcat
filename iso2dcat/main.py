@@ -1,13 +1,12 @@
 # -*- coding: utf-8 -*-
 
 import zope
-from globalconfig.interface import IGlobalCfg
+from pkan_config.config import register_config, get_config
 
 from zope import component
 
 import iso2dcat
-from iso2dcat.component.interface import IStat
-from iso2dcat.config import register_config
+from iso2dcat.component.interface import IStat, IIsoCfg
 from iso2dcat.csw import CSWProcessor
 from iso2dcat.dcat import CatalogBuilder
 from iso2dcat.dcm import register_dcm
@@ -32,9 +31,14 @@ class Main(Base):
     dcm = None
     nsm = None
 
-    def setup_components(self, args=None, env='Production', visitor=None):
+    def setup_components(self, args=None, env='Production', cfg=None, visitor=None):
         # Get the local configuration
-        register_config(iso2dcat, env=env)
+        if cfg:
+            pass
+        else:
+            register_config(env=env)
+            cfg = get_config()
+        zope.component.provideUtility(cfg, IIsoCfg)
 
         # Get the global configuration
         # register_config(config_file_dir='/etc/pkan/iso2dcat', env=env, interface=IGlobalCfg)
@@ -58,7 +62,7 @@ class Main(Base):
         self.language_mapper = register_languagemapper()
 
     def run(self, visitor=None, cfg=None):
-        self.setup_components(visitor=visitor)
+        self.setup_components(visitor=visitor, cfg=cfg)
         self.logger.info('iso2dcat starting')
 
         self.logger.info('loading Languages')

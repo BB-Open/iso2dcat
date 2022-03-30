@@ -8,7 +8,7 @@ import zope
 from zope import component
 
 import iso2dcat
-from iso2dcat.component.interface import ICfg, IDBFunc, ILogger
+from iso2dcat.component.interface import IDBFunc, ILogger, IIsoCfg
 from iso2dcat.exceptions import LogPathNotExists
 from iso2dcat.path_utils import dir_not_found_hint
 
@@ -34,7 +34,7 @@ class Logger:
 
     @property
     def cfg(self):
-        return component.queryUtility(ICfg)
+        return component.queryUtility(IIsoCfg)
 
     def log_message(self, msg, file_id=None):
         out_msg = '{}{}'.format(file_id or '', msg)

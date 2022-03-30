@@ -3,15 +3,15 @@
 from zope import interface
 
 
-class ICfg(interface.Interface):
-    """
-    Marker Interface for Config utility
-    """
-
-
 class IDBFunc(interface.Interface):
     """
     Marker Interface for DBFunc utility
+    """
+
+class IIsoCfg(interface.Interface):
+    """
+    Marker Interface for Config utility
+    Special Interface to mark given config or loaded default config
     """
 
 

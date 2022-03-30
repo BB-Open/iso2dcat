@@ -1,12 +1,10 @@
 import progressbar
 import pysolr
 import zope
+from pkan_config.config import register_config, get_config
 
-from iso2dcat.component.interface import ICfg
-from iso2dcat.config import register_config
-from iso2dcat.dcm import register_dcm
+from iso2dcat.component.interface import IIsoCfg
 from iso2dcat.entities.base import BaseDCM
-from iso2dcat.entities.languagemapper import register_languagemapper
 from iso2dcat.log.log import register_logger
 from iso2dcat.namespace import register_nsmanager
 from iso2dcat.rdf_database.db import register_db
@@ -38,9 +36,11 @@ class RDF2SOLR(BaseDCM):
     def setup_components(self, args=None, env='Production', visitor=None, cfg=None):
         # Get the configuration
         if cfg:
-            zope.component.provideUtility(cfg, ICfg)
+            pass
         else:
-            register_config(args, env=env)
+            register_config(env=env)
+            cfg = get_config()
+        zope.component.provideUtility(cfg, IIsoCfg)
 
         # Setup the logging facility for this measurement ID
         register_logger(visitor=visitor)

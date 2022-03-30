@@ -22,7 +22,7 @@ class LanguageMapper(Base):
     def run(self):
         file = Path(os.path.abspath(__file__)).parent.parent / 'data' / LANGUAGE_SOURCE_FILE
         g = Graph()
-        g.parse(file)
+        g.parse(str(file))
 
         language_query = """
         SELECT DISTINCT ?s ?p ?o
