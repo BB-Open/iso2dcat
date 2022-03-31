@@ -55,9 +55,9 @@ class Distribution(DcatResource):
             else:
                 uri = self.make_uri(accessURL, None)
 
-                self.rdf.add([URIRef(uri), RDF.type, self.entity_type])
-                self.rdf.add((URIRef(uri), DCAT.accessURL, URIRef(accessURL)))
-                self.rdf.add([URIRef(self.parent), DCAT.distribution, URIRef(uri)])
+            self.rdf.add([URIRef(uri), RDF.type, self.entity_type])
+            self.rdf.add((URIRef(uri), DCAT.accessURL, URIRef(accessURL)))
+            self.rdf.add([URIRef(self.parent), DCAT.distribution, URIRef(uri)])
 
             if downloadURLs:
                 self.rdf.add((URIRef(uri), DCAT.downloadURL, URIRef(downloadURLs[0])))
