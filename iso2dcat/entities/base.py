@@ -88,8 +88,9 @@ class BaseEntity(BaseDCM):
     dcat_class = None
     entity_type = None
 
-    def __init__(self, node):
+    def __init__(self, node, parent=None):
         self.node = node
+        self.parent = parent
         self.rdf = Graph()
 
         for prefix, URI in self.nsm.nsm.namespaces():
