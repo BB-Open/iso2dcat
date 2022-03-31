@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from rdflib import URIRef, RDF
-
+from urllib.parse import quote
 from iso2dcat.entities.resource import DcatResource
 from iso2dcat.exceptions import EntityFailed
 from iso2dcat.entities.base import DCAT
@@ -26,9 +26,9 @@ class Distribution(DcatResource):
 
     def make_uri(self, accessURL, downloadURL=None):
         if downloadURL is not None:
-            return downloadURL
+            return quote(downloadURL.text)
         else:
-            return accessURL
+            return quote(accessURL.text)
 
     def run(self):
         accessURLs = self.node.xpath(ACCESS_URL, namespaces=self.nsm.namespaces)
@@ -56,11 +56,14 @@ class Distribution(DcatResource):
                 uri = self.make_uri(accessURL, None)
 
             self.rdf.add([URIRef(uri), RDF.type, self.entity_type])
-            self.rdf.add((URIRef(uri), DCAT.accessURL, URIRef(accessURL)))
+            self.rdf.add((URIRef(uri), DCAT.accessURL, URIRef(quote(accessURL.text))))
             self.rdf.add([URIRef(self.parent), DCAT.distribution, URIRef(uri)])
 
             if downloadURLs:
-                self.rdf.add((URIRef(uri), DCAT.downloadURL, URIRef(downloadURLs[0])))
+                self.rdf.add((URIRef(uri), DCAT.downloadURL, URIRef(quote(downloadURLs[0].text))))
 
-        self.to_rdf4j(self.rdf)
+        try:
+            self.to_rdf4j(self.rdf)
+        except Exception as e:
+            a=10
         return self.rdf
