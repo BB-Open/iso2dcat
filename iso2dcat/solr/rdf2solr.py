@@ -36,11 +36,14 @@ prefix foaf: <http://xmlns.com/foaf/0.1/>
 prefix skos: <http://www.w3.org/2004/02/skos/core#>
 prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 
-SELECT DISTINCT ?s ?d ?p ?o
+SELECT DISTINCT ?s ?p ?d ?f ?ft
     WHERE {{
         VALUES ?s {{ <{}>  }}
         ?s dcat:distribution ?d .
-        ?d ?p ?o .
+        ?d ?p ?f .
+        OPTIONAL {{
+           ?f dct:title ?ft
+           }}
     }}
 """
 
@@ -103,10 +106,8 @@ class RDF2SOLR(BaseDCM):
             else:
                 tag = predicate
 
-            object = res['o']['value']
-            value = object
-
-            res_dict[s_uri][tag] = value
+            obj = res['o']['value']
+            res_dict[s_uri][tag] = obj
 
         distribution_tags = ['dcterms_title', 'dcterms_license', 'dcat_accessURL', 'dcat_downloadURL', 'dcterms_format']
 
@@ -128,8 +129,14 @@ class RDF2SOLR(BaseDCM):
                 else:
                     tag = predicate
                 if tag in distribution_tags:
-                    distributions[distribution][tag] = res['o']['value']
+                    distributions[distribution][tag] = res['f']['value']
 
+                if tag == 'dcterms_format':
+                    format_string = res['f']['value']
+                    if 'ft' in res:
+                        format_string = res['ft']['value']
+
+                    distributions[distribution]['dcterms_format'] = format_string
 
             distributions_json = json.dumps(distributions)
             res_dict[dataset_uri]['dcat_distribution'] = distributions_json
