@@ -111,7 +111,6 @@ class RDF2SOLR(BaseDCM):
 
         distribution_tags = ['dcterms_title', 'dcterms_license', 'dcat_accessURL', 'dcat_downloadURL', 'dcterms_format']
 
-
         # For all datasets collect all Distributions
         for dataset_uri in res_dict:
             sparql = DISTRIBUTIONS_FOR_DATASET.format(dataset_uri)

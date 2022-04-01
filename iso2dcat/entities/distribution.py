@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
-from rdflib import URIRef, RDF
-from urllib.parse import quote
+from rdflib import URIRef, RDF, DCTERMS, Literal
+from urllib.parse import quote, urlparse
 from iso2dcat.entities.resource import DcatResource
 from iso2dcat.exceptions import EntityFailed
 from iso2dcat.entities.base import DCAT
 
-ACCESS_URL = ".//gmd:transferOptions/*/gmd:onLine/gmd:CI_OnlineResource[not(gmd:function/*/@codeListValue = 'download')]/gmd:linkage/*"
-DOWNLOAD_URL = ".//gmd:transferOptions/*/gmd:onLine/gmd:CI_OnlineResource[gmd:function/*/@codeListValue = 'download']/gmd:linkage/*"
+ACCESS = ".//gmd:transferOptions/*/gmd:onLine/gmd:CI_OnlineResource[not(gmd:function/*/@codeListValue = 'download')]"
+DOWNLOAD = ".//gmd:transferOptions/*/gmd:onLine/gmd:CI_OnlineResource[gmd:function/*/@codeListValue = 'download']"
 
 class Distribution(DcatResource):
 
@@ -24,43 +24,55 @@ class Distribution(DcatResource):
     def base_uri(self):
         return None
 
-    def make_uri(self, accessURL, downloadURL=None):
-        if downloadURL is not None:
-            return quote(downloadURL.text)
-        else:
-            return quote(accessURL.text)
+    def make_uri(self, accessURL):
+        return self.sanitize_url(accessURL)
+
+    def sanitize_url(self, url):
+        parsed_url = urlparse(url.text)
+        if '|' in parsed_url.query:
+            out_url = parsed_url._replace(query=quote(parsed_url.query))
+            return out_url.geturl()
+        return url.text
+
+    def add_distribution(self, title, accessURL, downloadURL=None):
+        uri = self.make_uri(accessURL)
+        self.rdf.add([URIRef(uri), RDF.type, self.entity_type])
+        self.rdf.add([URIRef(uri), DCTERMS.title, Literal(title)])
+        self.rdf.add((URIRef(uri), DCAT.accessURL, URIRef(self.sanitize_url(accessURL))))
+        self.rdf.add([URIRef(self.parent), DCAT.distribution, URIRef(uri)])
+
+        if downloadURL:
+            self.rdf.add((URIRef(uri), DCAT.downloadURL, URIRef(self.sanitize_url(downloadURL))))
 
     def run(self):
-        accessURLs = self.node.xpath(ACCESS_URL, namespaces=self.nsm.namespaces)
-
-        downloadURLs = self.node.xpath(DOWNLOAD_URL, namespaces=self.nsm.namespaces)
-
-        if downloadURLs:
-            self.inc('dcat:downloadURL')
-        if not accessURLs:
-            if not downloadURLs:
-                self.inc('no dcat:accessURL')
-                raise EntityFailed('dcat:Distribution incomplete: Missing accessURL')
-            else:
-                self.inc('dcat:downloadURL -> accessURL')
-
-            accessURLs = downloadURLs
-            downloadURLs = []
-        else:
+        access_nodes = self.node.xpath(ACCESS, namespaces=self.nsm.namespaces)
+        download_nodes = self.node.xpath(DOWNLOAD, namespaces=self.nsm.namespaces)
+        if access_nodes :
             self.inc('dcat:accessURL')
+        else:
+            if not download_nodes:
+                self.inc('no dcat:accessURL')
 
-        for accessURL in accessURLs :
-            if downloadURLs:
-                uri = self.make_uri(accessURL, downloadURLs[0])
+        if download_nodes :
+             self.inc('dcat:downloadURL')
+
+        for access_node in access_nodes:
+            accessURL = access_node.xpath('gmd:linkage/*', namespaces =self.nsm.namespaces)
+            title = access_node.xpath('gmd:description/gco:CharacterString[text()]', namespaces =self.nsm.namespaces)
+            if not title:
+                title = 'Zugang'
             else:
-                uri = self.make_uri(accessURL, None)
+                title = title[0]
+            self.add_distribution(title, accessURL[0])
 
-            self.rdf.add([URIRef(uri), RDF.type, self.entity_type])
-            self.rdf.add((URIRef(uri), DCAT.accessURL, URIRef(quote(accessURL.text))))
-            self.rdf.add([URIRef(self.parent), DCAT.distribution, URIRef(uri)])
-
-            if downloadURLs:
-                self.rdf.add((URIRef(uri), DCAT.downloadURL, URIRef(quote(downloadURLs[0].text))))
+        for download_node in download_nodes:
+            downloadURL = download_node.xpath('gmd:linkage/*', namespaces =self.nsm.namespaces)
+            title = download_node.xpath('gmd:description/gco:CharacterString[text()]', namespaces =self.nsm.namespaces)
+            if not title:
+                title = 'Download'
+            else:
+                title = title[0]
+            self.add_distribution(title, downloadURL[0], downloadURL[0])
 
         try:
             self.to_rdf4j(self.rdf)

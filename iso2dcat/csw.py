@@ -31,7 +31,7 @@ class CSWProcessor(BaseDCM):
             batch_start = 0
             files = Path(self.cfg.CSW_PATH).glob('*')
             batch = {}
-#            files = ['xml/968B5069-38E2-4772-B2D5-AEDD32B7A5DE.xml']
+#            files = ['xml/d3583349-09f6-40ce-adb8-87efcaae1e93.xml']
             for record_file_names in chunked(files, self.cfg.BATCH_COUNT):
                 batch = {}
                 for record_file_name in record_file_names:

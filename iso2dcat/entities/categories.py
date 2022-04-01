@@ -100,12 +100,12 @@ class CategoryKeywordMapper(BaseEntity):
 
                 label_uri = self.label_to_uri(label)
                 if not label_uri:
-                    self.logger.error('Missing Data for Thesauri ' + label)
+                    self.logger.warning('Missing Data for Thesauri ' + label)
                     continue
                 for keyword in keywords:
                     keyword_uri = self.keyword_to_uri(keyword)
                     if not keyword_uri:
-                        self.logger.error('Keyword not found in store: ' + keyword)
+                        self.logger.warning('Keyword not found in store: ' + keyword)
                         continue
                     additional_cat_found = True
                     self.logger.debug('Additional Categorie found for: ' + keyword)

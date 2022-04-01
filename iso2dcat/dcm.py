@@ -35,7 +35,7 @@ class DCM(Base):
                 res = self.cfg.FALLBACK_CATALOG_URL
             else:
                 res = None
-            self.logger.error('ISO-Dataset ID "{}" not in DCM'.format(file_id))
+            self.logger.warning('ISO-Dataset ID "{}" not in DCM'.format(file_id))
         return res
 
 
