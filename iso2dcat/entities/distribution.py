@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-from rdflib import URIRef, RDF, DCTERMS, Literal
+from rdflib import URIRef, RDF, Literal
+from rdflib.namespace import DCTERMS
 from urllib.parse import quote, urlparse
 from iso2dcat.entities.resource import DcatResource
 from iso2dcat.exceptions import EntityFailed
@@ -50,8 +51,10 @@ class Distribution(DcatResource):
         if access_nodes :
             self.inc('dcat:accessURL')
         else:
+            self.inc('no dcat:accessURL')
             if not download_nodes:
                 self.inc('no dcat:accessURL')
+                raise EntityFailed('No AccessURL for Distribution')
 
         if download_nodes :
              self.inc('dcat:downloadURL')
