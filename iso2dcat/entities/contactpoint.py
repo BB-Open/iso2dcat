@@ -11,12 +11,12 @@ class ContactPoint(BaseEntity):
     dcat_class = 'vcard_Kind'
 
     simple_mapping = {
-        'gmd:deliveryPoint': 'vcard:street-address',
-        'gmd:city': 'vcard:locality',
-        'gmd:postalCode': 'vcard:postal-code',
-        'gmd:administrativeArea': 'vcard:region',
-        'gmd:country': 'vcard:country-name',
-        'gmd:electronicMailAddress' : 'vcard:email',
+        'gmd:deliveryPoint': 'street-address',
+        'gmd:city': 'locality',
+        'gmd:postalCode': 'postal-code',
+        'gmd:administrativeArea': 'region',
+        'gmd:country': 'country-name',
+        'gmd:electronicMailAddress' : 'email',
     }
     PUBLISHER_ORG_EXPR = './/gmd:CI_ResponsibleParty[gmd:role/gmd:CI_RoleCode/@codeListValue=$role]'
 
@@ -26,29 +26,6 @@ class ContactPoint(BaseEntity):
     vcard = Namespace('http://www.w3.org/2006/vcard/ns#')
     namespaces = {'vcard': vcard}
     entity_type = vcard.Kind
-
-
-    def email(self):
-        #         <xsl:template match="gmd:electronicMailAddress/*" mode="vcard">
-        #     <vcard:hasEmail rdf:resource="{concat('mailto:', .)}"/>
-        # </xsl:template>
-        pass
-
-    def phone(self):
-        # <xsl:template match="gmd:contactInfo/*/gmd:phone/*/gmd:voice/*" mode="vcard">
-        #     <vcard:hasTelephone rdf:parseType="Resource">
-        #         <vcard:hasValue rdf:resource="{concat('tel:+',
-        #         translate(translate(translate(translate(translate(normalize-space(.),' ',''),'(',''),')',''),'+',''),'.',''))}"/>
-        #         <rdf:type rdf:resource="http://www.w3.org/2006/vcard/ns#Voice"/>
-        #     </vcard:hasTelephone>
-        # </xsl:template>
-        pass
-
-    def url(self):
-        # <xsl:template match="gmd:contactInfo/*/gmd:onlineResource/*/gmd:linkage/*" mode="vcard">
-        #     <vcard:hasURL rdf:resource="{.}"/>
-        # </xsl:template>
-        pass
 
     def run(self):
         """

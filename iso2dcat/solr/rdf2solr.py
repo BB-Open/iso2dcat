@@ -41,7 +41,6 @@ prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 
 SELECT DISTINCT ?s ?p ?d ?f ?ft
     WHERE {{
-        VALUES ?s {{ <{}>  }}
         ?s dcat:distribution ?d .
         ?d ?p ?f .
         OPTIONAL {{
@@ -58,14 +57,28 @@ prefix foaf: <http://xmlns.com/foaf/0.1/>
 prefix skos: <http://www.w3.org/2004/02/skos/core#>
 prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 
-SELECT DISTINCT ?c ?s ?p ?pt
+SELECT DISTINCT ?s ?p ?pt
     WHERE {{
-        VALUES ?s {{ <{}>  }}
         ?c dcat:dataset ?s .
         ?c dct:publisher ?p .
         OPTIONAL {{
            ?p foaf:name ?pt
            }}
+    }}
+"""
+
+CONTACT_FOR_DATASET = """
+prefix bds: <http://www.bigdata.com/rdf/search#>
+PREFIX dcat: <http://www.w3.org/ns/dcat#>
+PREFIX dct: <http://purl.org/dc/terms/>
+prefix foaf: <http://xmlns.com/foaf/0.1/>
+prefix skos: <http://www.w3.org/2004/02/skos/core#>
+prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+SELECT DISTINCT ?s ?c ?p ?o
+    WHERE {{
+        ?s dcat:contactPoint ?c.
+        ?c ?p ?o .
     }}
 """
 
@@ -112,14 +125,15 @@ class RDF2SOLR(BaseDCM):
         self.logger.info('rdf2solr finished')
 
     def format_data(self, db_name):
+        self.logger.info('Process Datasets')
+
         if db_name is None:
             db_name = self.cfg.RDF2SOLR_SOURCE
         results = self.rdf4j.query_repository(db_name, ALL_DATASETS)
         triples = results['results']['bindings']
         res_dict = {}
-
         # For all datasets collect all attributes
-        for res in triples:
+        for res in progressbar.progressbar(triples):
             s_uri = res['s']['value']
             if s_uri not in res_dict:
                 res_dict[s_uri] = {'id': s_uri}
@@ -127,57 +141,86 @@ class RDF2SOLR(BaseDCM):
             res_dict[s_uri]['dcterms_title'] = res['dt']['value']
             res_dict[s_uri]['dcterms_description'] = res['dd']['value']
 
+        self.logger.info('Datasets processed')
+
         self.format_distribution(res_dict, db_name)
         self.format_publisher(res_dict, db_name)
+        self.format_contact(res_dict, db_name)
         return res_dict
 
     def format_distribution(self, res_dict, db_name):
+        self.logger.info('Process Distributions')
         if db_name is None:
             db_name = self.cfg.RDF2SOLR_SOURCE
 
-        distribution_tags = ['dcterms_title', 'dcterms_license', 'dcat_accessURL', 'dcat_downloadURL', 'dcterms_format']
+        sparql = DISTRIBUTIONS_FOR_DATASET
+        results = self.rdf4j.query_repository(db_name, sparql)
 
-        # For all datasets collect all Distributions
-        for dataset_uri in res_dict:
-            sparql = DISTRIBUTIONS_FOR_DATASET.format(dataset_uri)
-            results = self.rdf4j.query_repository(db_name, sparql)
+        datasets = {}
+        for res in progressbar.progressbar(results['results']['bindings']):
+            dataset_uri = res['s']['value']
+            if dataset_uri not in datasets:
+                datasets[dataset_uri] = {}
 
-            distributions = {}
-            for res in results['results']['bindings']:
-                distribution = res['d']['value']
-                if distribution not in distributions:
-                    distributions[distribution] = {}
+            distribution = res['d']['value']
+            if distribution not in datasets[dataset_uri]:
+                datasets[dataset_uri][distribution] = {}
 
-                predicate = res['p']['value']
-                if res['p']['type'] == 'uri':
-                    tag = self.nsm.uri2prefix_name(predicate)
-                else:
-                    tag = predicate
-                if tag in distribution_tags:
-                    distributions[distribution][tag] = res['f']['value']
+            predicate = self.nsm.uri2prefix_name(res['p']['value'])
+            value = res['f']['value']
+            if 'ft' in res:
+                value = res['ft']['value']
+            datasets[dataset_uri][distribution][predicate] = value
 
-                if tag == 'dcterms_format':
-                    format_string = res['f']['value']
-                    if 'ft' in res:
-                        format_string = res['ft']['value']
+        self.logger.info('Distributions processed')
+        self.logger.info('Merge Distributions')
 
-                    distributions[distribution]['dcterms_format'] = format_string
-
+        for dataset_uri, distributions in progressbar.progressbar(datasets.items()):
             distributions_json = json.dumps(distributions)
             res_dict[dataset_uri]['dcat_distribution'] = distributions_json
 
-    def format_publisher(self, res_dict, db_name):
-        publisher_tags = ['dcterms_title']
+        self.logger.info('Distributions merged')
 
-        for dataset_uri in res_dict:
-            sparql = PUBLISHER_FOR_DATASET.format(dataset_uri)
-            results = self.rdf4j.query_repository(db_name, sparql)
-            res = results['results']['bindings'][0]
+    def format_publisher(self, res_dict, db_name):
+        self.logger.info('Process Publishers')
+
+        sparql = PUBLISHER_FOR_DATASET
+        results = self.rdf4j.query_repository(db_name, sparql)
+
+        for res in progressbar.progressbar(results['results']['bindings']):
+
+            dataset_uri = res['s']['value']
+            if dataset_uri not in res_dict:
+                continue
             if res['pt']:
                 res_dict[dataset_uri]['dct_publisher'] = res['pt']['value']
             else:
                 res_dict[dataset_uri]['dct_publisher'] = res['p']['value']
 
+        self.logger.info('Publishers processed')
+
+    def format_contact(self, res_dict, db_name):
+        self.logger.info('Process Contacts')
+
+        sparql = CONTACT_FOR_DATASET
+        results = self.rdf4j.query_repository(db_name, sparql)
+        contacts = {}
+
+        for res in progressbar.progressbar(results['results']['bindings']):
+            dataset_uri = res['s']['value']
+            if dataset_uri not in contacts:
+                contacts[dataset_uri] = {}
+            tag = self.nsm.uri2prefix_name(res['p']['value'])
+            contacts[dataset_uri][tag] = res['o']['value']
+
+        self.logger.info('Contacts processed')
+        self.logger.info('Merge Contacts')
+
+        for dataset_uri, contact in progressbar.progressbar(contacts.items()):
+            if dataset_uri not in res_dict:
+                continue
+            res_dict[dataset_uri]['dcat_contactPoint'] = json.dumps(contact)
+        self.logger.info('Contacts merged')
 
 
 def main():
