@@ -3,7 +3,7 @@
 from rdflib import Literal, Namespace, URIRef
 
 from iso2dcat.entities.base import BaseEntity
-from iso2dcat.utils import children_as_text
+
 
 
 class ContactPoint(BaseEntity):

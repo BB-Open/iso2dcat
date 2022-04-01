@@ -17,6 +17,7 @@ NAMESPACES = {
     'ows': 'http://www.opengis.net/ows',
     'srv': 'http://www.isotc211.org/2005/srv',
     'dcatde': 'http://dcat-ap.de/def/dcatde/',
+    'vcard': 'http://www.w3.org/2006/vcard/ns#',
 }
 
 
