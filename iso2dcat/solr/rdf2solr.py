@@ -178,6 +178,9 @@ class RDF2SOLR(BaseDCM):
         self.logger.info('Merge Distributions')
 
         for dataset_uri, distributions in progressbar.progressbar(datasets.items()):
+            if dataset_uri not in res_dict:
+                self.logger.info('Cannot add Distribution to dataset {}'.format(dataset_uri))
+                continue
             distributions_json = json.dumps(distributions)
             res_dict[dataset_uri]['dcat_distribution'] = distributions_json
 
