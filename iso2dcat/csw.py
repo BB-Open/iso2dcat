@@ -5,20 +5,21 @@ from pathlib import Path
 from lxml import etree, objectify
 from owslib.csw import CatalogueServiceWeb
 from owslib.fes import PropertyIsLike
+from rdflib import Graph
 
 from iso2dcat.dcat import DCAT
-from iso2dcat.entities.base import BaseDCM
+from iso2dcat.entities.base import BaseEntity
 from iso2dcat.exceptions import EntityFailed
 from iso2dcat.utils import print_error
 from more_itertools import chunked
 
 
-class CSWProcessor(BaseDCM):
+class CSWProcessor(BaseEntity):
 
     count = 0
 
     def __init__(self):
-        super(CSWProcessor, self).__init__()
+        super(CSWProcessor, self).__init__(None)
         self.csw = CatalogueServiceWeb(self.cfg.CSW_URI)
 
     def get_constraint(self):
@@ -90,11 +91,13 @@ class CSWProcessor(BaseDCM):
 
                 node = objectify.parse(xml_file).getroot()
 
-                dcat = DCAT(node).run()
+                self.rdf += DCAT(node).run()
             except EntityFailed:
                 print_error(rec)
 
-        return dcat
+        self.to_rdf4j(self.rdf)
+        self.rdf = Graph()
+        return self.rdf
         #     if publisher is None:
         #         print('Error')
         #         bad += 1

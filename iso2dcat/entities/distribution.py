@@ -77,8 +77,4 @@ class Distribution(DcatResource):
                 title = title[0]
             self.add_distribution(title, downloadURL[0], downloadURL[0])
 
-        try:
-            self.to_rdf4j(self.rdf)
-        except Exception as e:
-            a=10
         return self.rdf

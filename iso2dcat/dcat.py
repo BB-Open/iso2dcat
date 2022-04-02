@@ -16,5 +16,5 @@ class DCAT(BaseEntity):
     def run(self):
         self.logger.info('processing UUID: {}'.format(self.node.fileIdentifier.getchildren()[0]))
         hirarchy = Hirarchy(self.node).run()
-        self.to_rdf4j(hirarchy)
+        return hirarchy
 
