@@ -36,7 +36,7 @@ class NsManager:
 
     @property
     def namespaces(self):
-        return self.nsm.namespaces()
+        return NAMESPACES
 
 
 def register_nsmanager():

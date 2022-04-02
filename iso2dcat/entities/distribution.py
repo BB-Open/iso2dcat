@@ -77,4 +77,3 @@ class Distribution(DcatResource):
                 title = title[0]
             self.add_distribution(title, downloadURL[0], downloadURL[0])
 
-        return self.rdf

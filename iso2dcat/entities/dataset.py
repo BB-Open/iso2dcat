@@ -15,6 +15,5 @@ class DcatDataset(DcatResource):
     def run(self):
         super(DcatDataset, self).run()
 
-        distribution = Distribution(self.node, self.uri).run()
+        distribution = Distribution(self.node, self.rdf, self.uri).run()
 
-        return self.rdf + distribution

@@ -24,4 +24,3 @@ class Tile(DcatDataset):
         else:
             self.inc('tile:no_parent')
 
-        return self.rdf

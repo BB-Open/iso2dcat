@@ -19,8 +19,10 @@ class CSWProcessor(BaseEntity):
     count = 0
 
     def __init__(self):
-        super(CSWProcessor, self).__init__(None)
+        super(CSWProcessor, self).__init__(None, Graph())
         self.csw = CatalogueServiceWeb(self.cfg.CSW_URI)
+        # Important to set the namespaces only once!
+        self.set_namespaces()
 
     def get_constraint(self):
         return PropertyIsLike(propertyname='apiso:subject', literal='opendata')
@@ -91,13 +93,12 @@ class CSWProcessor(BaseEntity):
 
                 node = objectify.parse(xml_file).getroot()
 
-                self.rdf += DCAT(node).run()
+                DCAT(node, self.rdf).run()
             except EntityFailed:
                 print_error(rec)
 
         self.to_rdf4j(self.rdf)
         self.rdf = Graph()
-        return self.rdf
         #     if publisher is None:
         #         print('Error')
         #         bad += 1

@@ -37,9 +37,6 @@ class Catalog(BaseEntity):
             self.rdf.add((uri_cat, DCAT.themeTaxonomy, URIRef('http://publications.europa.eu/resource/authority/data-theme/')))
             self.logger.info('Catalog Created')
 
-
-        return self.rdf
-
         # identifier = self.node.fileIdentifier.getchildren()[0].text
         # if identifier in self.dcm.dcm:
         #     key = self.dcm.dcm[identifier]['publisher']

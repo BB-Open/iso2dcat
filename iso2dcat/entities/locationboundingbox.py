@@ -12,9 +12,9 @@ class LocationBoundingbox(BaseEntity):
 
     dcat_class = 'dct_Location'
 
-    def __init__(self, node):
+    def __init__(self, node, rdf):
 
-        super().__init__(node)
+        super().__init__(node, rdf)
         self.directions = ['gmd:southBoundLatitude',
                           'gmd:northBoundLatitude',
                           'gmd:westBoundLongitude',
@@ -46,5 +46,3 @@ class LocationBoundingbox(BaseEntity):
             raise EntityFailed
         else:
             self.inc('good')
-        # todo: continue here
-        return self.rdf

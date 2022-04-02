@@ -80,6 +80,7 @@ SELECT DISTINCT ?s ?c ?p ?o
     WHERE {{
         ?s dcat:contactPoint ?c.
         ?c ?p ?o .
+        FILTER (lang(?o) = "" || lang(?o) = "de")
     }}
 """
 

@@ -39,17 +39,17 @@ class DcatResource(BaseEntity):
             for lang in clean_languages:
                 self.rdf.add((URIRef(self.uri), DCTERMS.description, Literal(description, lang=lang)))
 
-        publisher = Publisher(self.node)
+        publisher = Publisher(self.node, self.rdf)
         try:
-            rdf = publisher.run()
+            publisher.run()
         except EntityFailed:
             self.logger.warning('No publisher found')
         else:
-            self.rdf += rdf
+
             self.rdf.add([URIRef(self.uri), DCTERMS.publisher, URIRef(publisher.uri)])
 
         # Maintainer
-        maintainer = Maintainer(self.node)
+        maintainer = Maintainer(self.node, self.rdf)
         if publisher.role == 'custodian':
             # do not create two identical foaf agents
             self.rdf.add([URIRef(self.uri), DCATDE.maintainer, URIRef(publisher.uri)])
@@ -63,12 +63,10 @@ class DcatResource(BaseEntity):
             except EntityFailed:
                 self.logger.warning('No Maintainer found')
             else:
-                self.rdf += rdf
                 self.rdf.add([URIRef(self.uri), DCATDE.maintainer, URIRef(maintainer.uri)])
 
-        contact = ContactPoint(self.node)
+        contact = ContactPoint(self.node, self.rdf)
         rdf = contact.run()
-        self.rdf += rdf
         self.rdf.add([URIRef(self.uri), DCAT.contactPoint, URIRef(contact.uri)])
 
         # catalog link
@@ -87,41 +85,34 @@ class DcatResource(BaseEntity):
         self.rdf.add((URIRef(self.uri), ADMS.identifier, Literal(self.uuid)))
 
         # contributor
-        contributor = Contributor(self.node)
+        contributor = Contributor(self.node, self.rdf)
         try:
             rdf = contributor.run()
         except EntityFailed:
             self.logger.warning('No Contributor found')
         else:
-            self.rdf += rdf
             self.rdf.add([URIRef(self.uri), DCTERMS.contributor, URIRef(contributor.uri)])
 
         # categories
-        categories = CategoryKeywordMapper(self.node, self.uri)
+        categories = CategoryKeywordMapper(self.node, self.rdf, self.uri)
         try:
             rdf = categories.run()
         except EntityFailed:
             self.logger.warning('No Keywords or Categories found')
-        else:
-            self.rdf += rdf
 
         # issued/modified
-        dates = DateMapper(self.node, self.uri)
+        dates = DateMapper(self.node, self.rdf, self.uri)
         try:
             rdf = dates.run()
         except EntityFailed:
             self.logger.warning('No Dates found')
-        else:
-            self.rdf += rdf
 
         # dct:spatial
-        spatial = LocationBoundingbox(self.node)
+        spatial = LocationBoundingbox(self.node, self.rdf)
         try:
             rdf = spatial.run()
         except EntityFailed:
             self.logger.warning('No Dates found')
         else:
-            self.rdf += rdf
             self.rdf.add((URIRef(self.uri), DCTERMS.spatial, URIRef(spatial.uri)))
 
-        return self.rdf

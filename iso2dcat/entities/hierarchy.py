@@ -79,9 +79,9 @@ class Hirarchy(BaseEntity):
 #                             </gmd:linkage>
 
         if hirarchy == 'tile':
-            return Tile(self.node).run()
+            return Tile(self.node, self.rdf).run()
         elif hirarchy == 'service':
-            return DcatDataService(self.node).run()
+            return DcatDataService(self.node, self.rdf).run()
         elif hirarchy == 'series':
-            return DcatDataset(self.node).run()
-        return DcatDataset(self.node).run()
+            return DcatDataset(self.node, self.rdf).run()
+        return DcatDataset(self.node, self.rdf).run()

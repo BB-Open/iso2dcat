@@ -88,16 +88,17 @@ class BaseEntity(BaseDCM):
     dcat_class = None
     entity_type = None
 
-    def __init__(self, node, parent=None):
+    def __init__(self, node, rdf, parent=None):
         self.node = node
         self.parent = parent
-        self.rdf = Graph()
-
-        for prefix, URI in self.nsm.nsm.namespaces():
-            self.rdf.bind(prefix, URI)
+        self.rdf = rdf
 
         if self.entity_type is not None:
             self.add_entity_type()
+
+    def set_namespaces(self):
+        for prefix, URI in self.nsm.nsm.namespaces():
+              self.rdf.bind(prefix, URI)
 
     def get_languages(self):
         languages = self.node.xpath(LANGUAGE, namespaces=self.nsm.namespaces)

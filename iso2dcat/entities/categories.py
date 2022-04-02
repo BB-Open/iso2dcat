@@ -18,8 +18,8 @@ QUERYS = ["""
 class CategoryKeywordMapper(BaseEntity):
     cached_keywords = {}
 
-    def __init__(self, node, parent_uri):
-        super().__init__(node)
+    def __init__(self, node, rdf, parent_uri):
+        super().__init__(node, rdf, parent_uri)
         self.parent_ressource_uri = parent_uri
         self.dcat_themes = [
             "AGRI", "EDUC", "ENVI", "ENER",
@@ -120,7 +120,6 @@ class CategoryKeywordMapper(BaseEntity):
             self.inc('good_additional_cat')
         else:
             self.inc('bad_additional_cat')
-        return self.rdf
 
     def label_to_uri(self, label):
         if label in KNOWN_THESAURI:

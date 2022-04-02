@@ -59,4 +59,3 @@ class ContactPoint(BaseEntity):
         else:
             self.inc('good')
 
-        return self.rdf
