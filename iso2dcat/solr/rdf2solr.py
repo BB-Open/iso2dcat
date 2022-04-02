@@ -170,9 +170,9 @@ class RDF2SOLR(BaseDCM):
 
             predicate = self.nsm.uri2prefix_name(res['p']['value'])
             value = res['f']['value']
-            if 'ft' in res:
-                value = res['ft']['value']
             datasets[dataset_uri][distribution][predicate] = value
+            if 'ft' in res and predicate == 'dcterms_title':
+                datasets[dataset_uri][distribution][predicate] = res['ft']['value']
 
         self.logger.info('Distributions processed')
         self.logger.info('Merge Distributions')

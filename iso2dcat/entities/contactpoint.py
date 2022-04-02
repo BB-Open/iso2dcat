@@ -11,12 +11,15 @@ class ContactPoint(BaseEntity):
     dcat_class = 'vcard_Kind'
 
     simple_mapping = {
+        'gmd:organisationName': 'organization',
         'gmd:deliveryPoint': 'street-address',
         'gmd:city': 'locality',
         'gmd:postalCode': 'postal-code',
         'gmd:administrativeArea': 'region',
         'gmd:country': 'country-name',
         'gmd:electronicMailAddress' : 'email',
+        'gmd:voice': 'voice',
+        'gmd:facsimile': 'fax',
     }
     PUBLISHER_ORG_EXPR = './/gmd:CI_ResponsibleParty[gmd:role/gmd:CI_RoleCode/@codeListValue=$role]'
 
