@@ -12,6 +12,22 @@ from iso2dcat.namespace import register_nsmanager
 from iso2dcat.rdf_database.db import register_db
 from iso2dcat.statistics.stat import register_stat
 
+DCAT_THEMES = {
+    "AGRI": "Landwirtschaft, Fischerei, Forstwirtschaft und Nahrungsmittel",
+    "EDUC": 'Bildung, Kultur und Sport',
+    "ENVI": 'Umwelt',
+    "ENER": 'Energie',
+    "TRAN": 'Verkehr',
+    "TECH": 'Wissenschft und Technologie',
+    "ECON": 'Wirtschaft und Finanzen',
+    "SOCI": 'Bevölkerung und Gesellschaft',
+    "HEAL": 'Gesundheit',
+    "GOVE": 'Regierung und öffentlicher Sektor',
+    "REGI": 'Regionen und Staädte',
+    "JUST": 'Justiz, Rechtssystem und öffentliche Sicherheit',
+    "INTR": 'INternationale Themen'
+}
+
 ALL_DATASETS = """
 prefix bds: <http://www.bigdata.com/rdf/search#>
 PREFIX dcat: <http://www.w3.org/ns/dcat#>
@@ -64,6 +80,7 @@ SELECT DISTINCT ?s ?p ?pt
         OPTIONAL {{
            ?p foaf:name ?pt
            }}
+        FILTER (lang(?pt) = "" || lang(?pt) = "de")
     }}
 """
 
@@ -84,6 +101,21 @@ SELECT DISTINCT ?s ?c ?p ?o
     }}
 """
 
+THEMES_FOR_DATASET = """
+prefix bds: <http://www.bigdata.com/rdf/search#>
+PREFIX dcat: <http://www.w3.org/ns/dcat#>
+PREFIX dct: <http://purl.org/dc/terms/>
+prefix foaf: <http://xmlns.com/foaf/0.1/>
+prefix skos: <http://www.w3.org/2004/02/skos/core#>
+prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+prefix vcard: <http://www.w3.org/2006/vcard/ns#>
+
+SELECT DISTINCT ?s ?t
+    WHERE {{
+        ?s a dcat:Dataset .
+        ?s dcat:theme ?t .
+    }}
+"""
 
 
 class RDF2SOLR(BaseDCM):
@@ -148,6 +180,7 @@ class RDF2SOLR(BaseDCM):
         self.format_distribution(res_dict, db_name)
         self.format_publisher(res_dict, db_name)
         self.format_contact(res_dict, db_name)
+        self.format_themes(res_dict, db_name)
         return res_dict
 
     def format_distribution(self, res_dict, db_name):
@@ -199,8 +232,10 @@ class RDF2SOLR(BaseDCM):
                 continue
             if res['pt']:
                 res_dict[dataset_uri]['dct_publisher'] = res['pt']['value']
+                res_dict[dataset_uri]['dct_publisher_facet'] = res['pt']['value']
             else:
                 res_dict[dataset_uri]['dct_publisher'] = res['p']['value']
+                res_dict[dataset_uri]['dct_publisher_facet'] = res['p']['value']
 
         self.logger.info('Publishers processed')
 
@@ -226,6 +261,31 @@ class RDF2SOLR(BaseDCM):
                 continue
             res_dict[dataset_uri]['dcat_contactPoint'] = json.dumps(contact)
         self.logger.info('Contacts merged')
+
+    def format_themes(self, res_dict, db_name):
+        self.logger.info('Process Themes')
+
+        sparql = THEMES_FOR_DATASET
+        results = self.rdf4j.query_repository(db_name, sparql)
+        themes = {}
+
+        for res in progressbar.progressbar(results['results']['bindings']):
+            dataset_uri = res['s']['value']
+            if dataset_uri not in themes:
+                themes[dataset_uri] = []
+
+            theme_abre = self.nsm.uri2prefix_name(res['t']['value']).split('_')[1]
+            themes[dataset_uri].append( DCAT_THEMES[theme_abre])
+
+        self.logger.info('Themes processed')
+        self.logger.info('Merge Themes')
+
+        for dataset_uri, theme in progressbar.progressbar(themes.items()):
+            if dataset_uri not in res_dict:
+                continue
+            res_dict[dataset_uri]['dcat_theme_facet'] = theme
+        self.logger.info('Themes merged')
+
 
 
 def main():
