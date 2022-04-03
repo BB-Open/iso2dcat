@@ -353,7 +353,8 @@ class RDF2SOLR(BaseDCM):
         self.logger.info('Merge Licenses')
 
         for dataset_uri, licence in progressbar.progressbar(licenses.items()):
-            res_dict[dataset_uri]['dcterms_license_facet'] = list(licence.keys())[0]
+            if len(list(licence.keys())) > 0
+                res_dict[dataset_uri]['dcterms_license_facet'] = list(licence.keys())[0]
 
         self.logger.info('Licenses merged')
 
