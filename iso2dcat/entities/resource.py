@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 from rdflib import URIRef, Literal
 from rdflib.namespace import DCTERMS, Namespace
-from iso2dcat.entities.base import DCAT, ADMS
 
 from iso2dcat.entities.base import BaseEntity
 from iso2dcat.entities.categories import CategoryKeywordMapper
@@ -10,11 +9,11 @@ from iso2dcat.entities.dates import DateMapper
 from iso2dcat.entities.locationboundingbox import LocationBoundingbox
 from iso2dcat.entities.publisher import Publisher, Contributor, Maintainer
 from iso2dcat.exceptions import EntityFailed
+from iso2dcat.namespace import DCATDE, DCAT, ADMS
 
 TITLE = './/gmd:identificationInfo[1]/*/gmd:citation/*/gmd:title/gco:CharacterString[text()]'
 DESCRIPTION = './/gmd:identificationInfo[1]/*/gmd:abstract/gco:CharacterString[text()]'
 
-DCATDE = Namespace('http://dcat-ap.de/def/dcatde/')
 
 
 class DcatResource(BaseEntity):

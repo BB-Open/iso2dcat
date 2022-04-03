@@ -20,6 +20,7 @@ pkan_config = {path="../pkan_config", develop=true}
 lxml = "*"
 pysolr = "*"
 progressbar2 = "^4.0.0"
+simplejson = "^3.17.6"
 
 
 [tool.poetry.dev-dependencies]

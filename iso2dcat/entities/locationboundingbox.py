@@ -4,7 +4,7 @@ from rdflib.namespace import FOAF, RDF, DCTERMS, Namespace
 from iso2dcat.entities.base import BaseEntity
 from iso2dcat.exceptions import EntityFailed
 
-LOCN = Namespace('https://www.w3.org/ns/locn')
+
 
 LOCATION_QUERY = 'gmd:identificationInfo/*/gmd:extent/*/gmd:geographicElement|gmd:identificationInfo/*/srv:extent/*/gmd:geographicElement'
 

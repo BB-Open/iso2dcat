@@ -2,8 +2,9 @@ from pyrdf4j.errors import QueryFailed
 from rdflib import Literal, URIRef
 from rdflib.namespace import RDF, SKOS, DCTERMS
 
-from iso2dcat.entities.base import BaseEntity, DCAT
+from iso2dcat.entities.base import BaseEntity
 from iso2dcat.meta_data_database import KNOWN_THESAURI, META_REPO_ID
+from iso2dcat.namespace import DCAT
 
 KEYWORDS = 'gmd:identificationInfo/*/gmd:descriptiveKeywords/*/gmd:keyword/gco:CharacterString'
 CATEGORIES = 'gmd:identificationInfo[1]/*/gmd:topicCategory/*'

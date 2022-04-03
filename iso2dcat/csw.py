@@ -34,7 +34,6 @@ class CSWProcessor(BaseEntity):
             batch_start = 0
             files = Path(self.cfg.CSW_PATH).glob('*')
             batch = {}
-#            files = ['xml/d3583349-09f6-40ce-adb8-87efcaae1e93.xml']
             for record_file_names in chunked(files, self.cfg.BATCH_COUNT):
                 batch = {}
                 for record_file_name in record_file_names:

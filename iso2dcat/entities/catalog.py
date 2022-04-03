@@ -4,7 +4,8 @@ from rdflib import URIRef, Literal
 from rdflib.namespace import FOAF, RDF, DCTERMS
 
 from iso2dcat.component.interface import ICatalog
-from iso2dcat.entities.base import BaseEntity, DCAT, ADMS
+from iso2dcat.entities.base import BaseEntity
+from iso2dcat.namespace import DCAT, ADMS
 
 
 @zope.interface.implementer(ICatalog)

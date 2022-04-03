@@ -8,6 +8,7 @@ class IDBFunc(interface.Interface):
     Marker Interface for DBFunc utility
     """
 
+
 class IIsoCfg(interface.Interface):
     """
     Marker Interface for Config utility
@@ -69,12 +70,20 @@ class IRDFDatabase(interface.Interface):
     Marker interface for RDF Database
     """
 
+
 class INamespaceManager(interface.Interface):
     """
     Marker interface for NamespaceManager
     """
 
+
 class ILanguageMapper(interface.Interface):
     """
     Marker Interface for global Language Mapping
+    """
+
+
+class ILicenseMapper(interface.Interface):
+    """
+    Marker Interface for global License Mapping
     """

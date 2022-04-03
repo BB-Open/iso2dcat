@@ -6,8 +6,7 @@ from zope import component
 
 from iso2dcat.component.interface import IDCM, ILogger, IStat, IRDFDatabase, INamespaceManager, ILanguageMapper, IIsoCfg
 
-DCAT = Namespace('http://www.w3.org/ns/dcat#')
-ADMS = Namespace('http://www.w3.org/ns/adms#')
+
 
 LANGUAGE = './/gmd:language/*[string-length(@codeListValue) = 3]'
 
@@ -88,9 +87,11 @@ class BaseEntity(BaseDCM):
     dcat_class = None
     entity_type = None
 
-    def __init__(self, node, rdf, parent=None):
+    def __init__(self, node, rdf=None, parent=None):
         self.node = node
         self.parent = parent
+        if rdf is None:
+            rdf = Graph()
         self.rdf = rdf
 
         if self.entity_type is not None:

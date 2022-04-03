@@ -1,5 +1,5 @@
 from rdflib import Graph
-from rdflib.namespace import NamespaceManager
+from rdflib.namespace import NamespaceManager, Namespace
 
 from iso2dcat.component.interface import INamespaceManager
 from zope import component
@@ -18,7 +18,16 @@ NAMESPACES = {
     'srv': 'http://www.isotc211.org/2005/srv',
     'dcatde': 'http://dcat-ap.de/def/dcatde/',
     'vcard': 'http://www.w3.org/2006/vcard/ns#',
+    'adms': 'http://www.w3.org/ns/adms#',
+    'locn':'https://www.w3.org/ns/locn',
+
 }
+
+DCATDE = Namespace('http://dcat-ap.de/def/dcatde/')
+LOCN = Namespace('https://www.w3.org/ns/locn')
+DCAT = Namespace('http://www.w3.org/ns/dcat#')
+ADMS = Namespace('http://www.w3.org/ns/adms#')
+vcard = Namespace('http://www.w3.org/2006/vcard/ns#')
 
 
 @zope.interface.implementer(INamespaceManager)

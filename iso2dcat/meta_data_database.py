@@ -12,6 +12,7 @@ KNOWN_THESAURI = {
                                             'format': 'application/rdf+xml'}
 }
 
+
 class Main(Base):
 
     def __init__(self, env='Production', args=None):

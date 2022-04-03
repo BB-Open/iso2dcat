@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 from rdflib import URIRef
 
-from iso2dcat.entities.base import DCAT
 from iso2dcat.entities.dataset import DcatDataset
 
 from iso2dcat.entities.resource import DcatResource
+from iso2dcat.namespace import DCAT
 
 
 class DcatDataService(DcatResource):

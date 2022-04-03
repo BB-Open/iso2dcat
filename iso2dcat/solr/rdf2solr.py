@@ -7,6 +7,7 @@ from pkan_config.config import register_config, get_config
 
 from iso2dcat.component.interface import IIsoCfg
 from iso2dcat.entities.base import BaseDCM
+from iso2dcat.license_mapper import register_licensemapper
 from iso2dcat.log.log import register_logger
 from iso2dcat.namespace import register_nsmanager
 from iso2dcat.rdf_database.db import register_db
@@ -119,6 +120,33 @@ SELECT DISTINCT ?s ?t
     }}
 """
 
+LICENSE_FOR_DATASET = """
+prefix bds: <http://www.bigdata.com/rdf/search#>
+PREFIX dcat: <http://www.w3.org/ns/dcat#>
+PREFIX dct: <http://purl.org/dc/terms/>
+prefix foaf: <http://xmlns.com/foaf/0.1/>
+prefix skos: <http://www.w3.org/2004/02/skos/core#>
+prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+prefix vcard: <http://www.w3.org/2006/vcard/ns#>
+prefix dcatde: <http://dcat-ap.de/def/dcatde/>
+
+SELECT DISTINCT ?s ?dl ?dlt ?cl
+    WHERE {{
+        ?s a dcat:Dataset .
+        OPTIONAL {
+        ?s dcat:distribution ?d .
+        ?d dct:license ?dl
+            OPTIONAL {
+                ?d dcatde:licenseAttributionByText ?dlt
+            }
+        }
+        OPTIONAL {
+        ?c dcat:Catalog ?s .
+        ?c dct:license ?cl
+        }
+    }}
+"""
+
 
 class RDF2SOLR(BaseDCM):
 
@@ -137,6 +165,9 @@ class RDF2SOLR(BaseDCM):
 
         # Setup the logging facility for this measurement ID
         register_logger(visitor=visitor)
+
+        # Register the license mapper
+        self.lcm = register_licensemapper()
 
         self.logger.info('rdf2solr starting')
         # Register the namespace manager
@@ -184,6 +215,7 @@ class RDF2SOLR(BaseDCM):
         self.format_publisher(res_dict, db_name)
         self.format_contact(res_dict, db_name)
         self.format_themes(res_dict, db_name)
+        self.format_licenses(res_dict, db_name)
         return res_dict
 
     def format_distribution(self, res_dict, db_name):
@@ -290,6 +322,40 @@ class RDF2SOLR(BaseDCM):
             res_dict[dataset_uri]['dcat_theme_facet'] = theme
         self.logger.info('Themes merged')
 
+    def format_licenses(self, res_dict, db_name):
+        self.logger.info('Process Licenses')
+
+        sparql = LICENSE_FOR_DATASET
+        results = self.rdf4j.query_repository(db_name, sparql)
+        licenses = {}
+
+        for res in progressbar.progressbar(results['results']['bindings']):
+            dataset_uri = res['s']['value']
+            if dataset_uri not in licenses:
+                licenses[dataset_uri] = {}
+
+            if 'dl' in res:
+                license_uri = res['dl']['value']
+                if license_uri not in self.lcm.mapping:
+                    self.logger.info('Wrong License {}'.format(license_uri))
+                    continue
+
+                license_text = self.lcm.mapping[license_uri]
+            elif 'dlt' in res:
+                license_text = res['dlt']['value']
+            else:
+                license_text = 'keine Lizenz'
+                self.logger.info('No Licence for {}'.format(res['s']['value']))
+
+            licenses[dataset_uri][license_text] = 1
+
+        self.logger.info('Licenses processed')
+        self.logger.info('Merge Licenses')
+
+        for dataset_uri, licence in progressbar.progressbar(licenses.items()):
+            res_dict[dataset_uri]['dcterms_license_facet'] = list(licence.keys())[0]
+
+        self.logger.info('Licenses merged')
 
 
 def main():

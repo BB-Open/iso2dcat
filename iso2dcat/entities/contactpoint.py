@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-from rdflib import Literal, Namespace, URIRef
+from rdflib import Literal, URIRef
 
 from iso2dcat.entities.base import BaseEntity
-
+from iso2dcat.namespace import vcard
 
 
 class ContactPoint(BaseEntity):
@@ -26,7 +26,7 @@ class ContactPoint(BaseEntity):
     # The list of roles defining the order to lookup
     ROLES = ['pointOfContact',  'distributor', 'custodian', 'publisher', 'owner']
 
-    vcard = Namespace('http://www.w3.org/2006/vcard/ns#')
+
     namespaces = {'vcard': vcard}
     entity_type = vcard.Kind
 
@@ -55,7 +55,7 @@ class ContactPoint(BaseEntity):
                         for hit in hits:
                             if hit:
                                 for lang in languages:
-                                    self.rdf.add((URIRef(self.uri), self.vcard[target], Literal(hit, lang=lang)))
+                                    self.rdf.add((URIRef(self.uri), vcard[target], Literal(hit, lang=lang)))
                 break
         if len(self.rdf) == 0:
             self.inc('bad')
