@@ -18,14 +18,14 @@ DCAT_THEMES = {
     "ENVI": 'Umwelt',
     "ENER": 'Energie',
     "TRAN": 'Verkehr',
-    "TECH": 'Wissenschft und Technologie',
+    "TECH": 'Wissenschaft und Technologie',
     "ECON": 'Wirtschaft und Finanzen',
     "SOCI": 'Bevölkerung und Gesellschaft',
     "HEAL": 'Gesundheit',
     "GOVE": 'Regierung und öffentlicher Sektor',
-    "REGI": 'Regionen und Staädte',
+    "REGI": 'Regionen und Städte',
     "JUST": 'Justiz, Rechtssystem und öffentliche Sicherheit',
-    "INTR": 'INternationale Themen'
+    "INTR": 'Internationale Themen'
 }
 
 ALL_DATASETS = """
@@ -231,11 +231,11 @@ class RDF2SOLR(BaseDCM):
             if dataset_uri not in res_dict:
                 continue
             if res['pt']:
-                res_dict[dataset_uri]['dct_publisher'] = res['pt']['value']
-                res_dict[dataset_uri]['dct_publisher_facet'] = res['pt']['value']
+                res_dict[dataset_uri]['dcterms_publisher'] = res['pt']['value']
+                res_dict[dataset_uri]['dcterms_publisher_facet'] = res['pt']['value']
             else:
-                res_dict[dataset_uri]['dct_publisher'] = res['p']['value']
-                res_dict[dataset_uri]['dct_publisher_facet'] = res['p']['value']
+                res_dict[dataset_uri]['dcterms_publisher'] = res['p']['value']
+                res_dict[dataset_uri]['dcterms_publisher_facet'] = res['p']['value']
 
         self.logger.info('Publishers processed')
 
