@@ -275,7 +275,8 @@ class RDF2SOLR(BaseDCM):
                 themes[dataset_uri] = []
 
             theme_abre = self.nsm.uri2prefix_name(res['t']['value']).split('_')[1]
-            themes[dataset_uri].append( DCAT_THEMES[theme_abre])
+            if theme_abre in DCAT_THEMES:
+                themes[dataset_uri].append( DCAT_THEMES[theme_abre])
 
         self.logger.info('Themes processed')
         self.logger.info('Merge Themes')
