@@ -36,14 +36,16 @@ prefix foaf: <http://xmlns.com/foaf/0.1/>
 prefix skos: <http://www.w3.org/2004/02/skos/core#>
 prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 
+
 SELECT DISTINCT ?s ?dt ?dd
     WHERE {
         VALUES ?type {dcat:Dataset}
         ?s a ?type .
-        ?s dct:description ?dd .
   		?s dct:title ?dt .
-  		FILTER (lang(?dd) = "" || lang(?dd) = "de")
   		FILTER (lang(?dt) = "" || lang(?dt) = "de")
+        OPTIONAL {?s dct:description ?dd .
+  		FILTER (lang(?dd) = "" || lang(?dd) = "de")
+        }
     }
 """
 
@@ -173,7 +175,8 @@ class RDF2SOLR(BaseDCM):
                 res_dict[s_uri] = {'id': s_uri}
 
             res_dict[s_uri]['dcterms_title'] = res['dt']['value']
-            res_dict[s_uri]['dcterms_description'] = res['dd']['value']
+            if 'dd' in res:
+                res_dict[s_uri]['dcterms_description'] = res['dd']['value']
 
         self.logger.info('Datasets processed')
 
