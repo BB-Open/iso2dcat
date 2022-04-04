@@ -21,7 +21,6 @@ class LicenseMapper(BaseEntity):
         super(LicenseMapper, self).__init__(node, rdf, parent)
 
         try:
-            a = 1/0
             self.rdf.parse('https://www.dcat-ap.de/def/licenses/20210721.rdf')
         except Exception as e:
             self.rdf.parse(abs_file_path('iso2dcat/data/20210721.rdf'))

@@ -87,3 +87,9 @@ class ILicenseMapper(interface.Interface):
     """
     Marker Interface for global License Mapping
     """
+
+
+class IFormatMapper(interface.Interface):
+    """
+    Marker Interface for global Format Mapping
+    """

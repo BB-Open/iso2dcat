@@ -7,6 +7,7 @@ from pkan_config.config import register_config, get_config
 
 from iso2dcat.component.interface import IIsoCfg
 from iso2dcat.entities.base import BaseDCM
+from iso2dcat.format_mapper import register_formatmapper
 from iso2dcat.license_mapper import register_licensemapper
 from iso2dcat.log.log import register_logger
 from iso2dcat.namespace import register_nsmanager
@@ -147,6 +148,25 @@ SELECT DISTINCT ?s ?dl ?dlt ?cl
     }}
 """
 
+FORMAT_FOR_DATASET = """
+prefix bds: <http://www.bigdata.com/rdf/search#>
+PREFIX dcat: <http://www.w3.org/ns/dcat#>
+PREFIX dct: <http://purl.org/dc/terms/>
+prefix foaf: <http://xmlns.com/foaf/0.1/>
+prefix skos: <http://www.w3.org/2004/02/skos/core#>
+prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+prefix vcard: <http://www.w3.org/2006/vcard/ns#>
+prefix dcatde: <http://dcat-ap.de/def/dcatde/>
+
+SELECT DISTINCT ?s ?dl ?dlt ?cl
+    WHERE {{
+        ?s a dcat:Dataset .
+        ?s dcat:distribution ?d .
+        ?d dct:format ?df
+    }}
+"""
+
+
 
 class RDF2SOLR(BaseDCM):
 
@@ -168,6 +188,9 @@ class RDF2SOLR(BaseDCM):
 
         # Register the license mapper
         self.lcm = register_licensemapper()
+
+        # Register the license mapper
+        self.fm = register_formatmapper()
 
         self.logger.info('rdf2solr starting')
         # Register the namespace manager
@@ -357,6 +380,36 @@ class RDF2SOLR(BaseDCM):
                 res_dict[dataset_uri]['dcterms_license_facet'] = list(licence.keys())[0]
 
         self.logger.info('Licenses merged')
+
+    def format_format(self, res_dict, db_name):
+        self.logger.info('Process Fromats')
+
+        sparql = FORMAT_FOR_DATASET
+        results = self.rdf4j.query_repository(db_name, sparql)
+        formats = {}
+
+        for res in progressbar.progressbar(results['results']['bindings']):
+            dataset_uri = res['s']['value']
+            if dataset_uri not in formats:
+                formats[dataset_uri] = []
+
+            format_uri = res['df']['value']
+            if format_uri in self.fm.mapping:
+                license_text = self.lcm.mapping[format_uri]
+            else:
+                license_text = format_uri
+                self.logger.warning('No EU Format {}'.format(format_uri))
+
+            formats[dataset_uri].append(license_text)
+
+        self.logger.info('Formats processed')
+        self.logger.info('Merge Formats')
+
+        for dataset_uri, format in progressbar.progressbar(formats.items()):
+            if len(formats) > 0:
+                res_dict[dataset_uri]['dcterms_format_facet'] = formats
+
+        self.logger.info('Formats merged')
 
 
 def main():
