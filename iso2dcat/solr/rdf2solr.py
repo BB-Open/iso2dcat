@@ -408,8 +408,8 @@ class RDF2SOLR(BaseDCM):
         self.logger.info('Merge Formats')
 
         for dataset_uri, format in progressbar.progressbar(formats.items()):
-            if len(formats) > 0:
-                res_dict[dataset_uri]['dcterms_format_facet'] = formats
+            if len(format) > 0:
+                res_dict[dataset_uri]['dcterms_format_facet'] = format
 
         self.logger.info('Formats merged')
 
