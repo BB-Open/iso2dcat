@@ -158,7 +158,7 @@ prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 prefix vcard: <http://www.w3.org/2006/vcard/ns#>
 prefix dcatde: <http://dcat-ap.de/def/dcatde/>
 
-SELECT DISTINCT ?s ?dl ?dlt ?cl
+SELECT DISTINCT ?s ?df
     WHERE {{
         ?s a dcat:Dataset .
         ?s dcat:distribution ?d .
