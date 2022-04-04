@@ -396,12 +396,13 @@ class RDF2SOLR(BaseDCM):
 
             format_uri = res['df']['value']
             if format_uri in self.fm.mapping:
-                license_text = self.lcm.mapping[format_uri]
+                format_text = self.lcm.mapping[format_uri]
             else:
-                license_text = format_uri
+                format_text = format_uri
                 self.logger.warning('No EU Format {}'.format(format_uri))
 
-            formats[dataset_uri].append(license_text)
+            self.logger.warning('Format is {}'.format(format_text))
+            formats[dataset_uri].append(format_text)
 
         self.logger.info('Formats processed')
         self.logger.info('Merge Formats')
