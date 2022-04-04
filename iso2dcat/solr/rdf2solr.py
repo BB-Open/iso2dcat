@@ -239,6 +239,7 @@ class RDF2SOLR(BaseDCM):
         self.format_contact(res_dict, db_name)
         self.format_themes(res_dict, db_name)
         self.format_licenses(res_dict, db_name)
+        self.format_format(res_dict, db_name)
         return res_dict
 
     def format_distribution(self, res_dict, db_name):
