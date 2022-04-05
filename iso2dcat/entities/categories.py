@@ -1,23 +1,17 @@
 from pyrdf4j.errors import QueryFailed
 from rdflib import Literal, URIRef
 from rdflib.namespace import RDF, SKOS, DCTERMS
+from zope import component
 
 from iso2dcat.entities.base import BaseEntity
-from iso2dcat.meta_data_database import KNOWN_THESAURI, META_REPO_ID
 from iso2dcat.namespace import DCAT
+from iso2dcat.thesauri_mapper import KNOWN_THESAURI
 
 KEYWORDS = 'gmd:identificationInfo/*/gmd:descriptiveKeywords/*/gmd:keyword/gco:CharacterString'
 CATEGORIES = 'gmd:identificationInfo[1]/*/gmd:topicCategory/*'
 INSPIRE_THEME_LABELS = "gmd:identificationInfo/*/gmd:descriptiveKeywords/*"
 
-QUERYS = ["""
-        PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
-        SELECT ?s WHERE {{ ?s skos:prefLabel ?label FILTER (lcase(str(?label)) = '{keyword}').}}""",
-]
-
-
 class CategoryKeywordMapper(BaseEntity):
-    cached_keywords = {}
 
     def __init__(self, node, rdf, parent_uri):
         super().__init__(node, rdf, parent_uri)
@@ -99,54 +93,33 @@ class CategoryKeywordMapper(BaseEntity):
             if label:
                 label = label[0]
 
-                label_uri = self.label_to_uri(label)
-                if not label_uri:
+                mapper = self.get_mapper(label)
+
+                if not mapper:
                     self.logger.warning('Missing Data for Thesauri ' + label)
                     continue
                 for keyword in keywords:
-                    keyword_uri = self.keyword_to_uri(keyword)
-                    if not keyword_uri:
+                    keyword_uris = mapper.keyword_to_uri(keyword)
+                    if not keyword_uris:
                         self.logger.warning('Keyword not found in store: ' + keyword)
                         continue
                     additional_cat_found = True
-                    self.logger.debug('Additional Categorie found for: ' + keyword)
-                    self.rdf.add((URIRef(label_uri), RDF.type, SKOS.ConceptScheme))
-                    self.rdf.add((URIRef(keyword_uri), RDF.type, SKOS.Concept))
-                    self.rdf.add((URIRef(keyword_uri), SKOS.inScheme, URIRef(label_uri)))
-                    self.rdf.add((URIRef(self.parent_ressource_uri), DCAT.theme, URIRef(keyword_uri)))
-                    for lang in languages:
-                        self.rdf.add((URIRef(keyword_uri), SKOS.prefLabel, Literal(keyword, lang=lang)))
-                        self.rdf.add((URIRef(label_uri), DCTERMS.title, Literal(label, lang=lang)))
+                    for keyword_uri in keyword_uris:
+                        self.logger.debug('Additional Categorie found for: ' + keyword)
+                        self.rdf.add((URIRef(mapper.base), RDF.type, SKOS.ConceptScheme))
+                        self.rdf.add((keyword_uri, RDF.type, SKOS.Concept))
+                        self.rdf.add((keyword_uri, SKOS.inScheme, URIRef(mapper.base)))
+                        self.rdf.add((URIRef(self.parent_ressource_uri), DCAT.theme, keyword_uri))
+                        for lang in languages:
+                            self.rdf.add((keyword_uri, SKOS.prefLabel, Literal(keyword, lang=lang)))
+                            self.rdf.add((URIRef(mapper.base), DCTERMS.title, Literal(label, lang=lang)))
         if additional_cat_found:
             self.inc('good_additional_cat')
         else:
             self.inc('bad_additional_cat')
 
-    def label_to_uri(self, label):
+    def get_mapper(self, label):
         if label in KNOWN_THESAURI:
-            return KNOWN_THESAURI[label]['base']
+            return component.queryUtility(KNOWN_THESAURI[label])
         else:
             return None
-
-    def keyword_to_uri(self, keyword):
-        # todo: why is there a problem with utf-8 character?
-        if keyword in self.cached_keywords:
-            return self.cached_keywords[keyword]
-        keyword_clean = str(keyword).lower().encode(
-            'utf-8').decode("iso-8859-1")
-        uri = None
-        for query in QUERYS:
-            try:
-                res = self.rdf4j.query_repository(META_REPO_ID, query)
-            except QueryFailed:
-                self.logger.error('Query failed')
-                self.logger.error(query)
-                uri = None
-            else:
-                if res['results']['bindings']:
-                    uri = res['results']['bindings'][0]['s']['value']
-                    break
-                else:
-                    uri = None
-        self.cached_keywords[keyword] = uri
-        return uri
