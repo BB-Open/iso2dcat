@@ -158,14 +158,16 @@ prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 prefix vcard: <http://www.w3.org/2006/vcard/ns#>
 prefix dcatde: <http://dcat-ap.de/def/dcatde/>
 
-SELECT DISTINCT ?s ?df
+SELECT DISTINCT ?s ?df ?dft
     WHERE {{
         ?s a dcat:Dataset .
         ?s dcat:distribution ?d .
         ?d dct:format ?df
+        OPTIONAL {
+        ?df dct:title ?dft
+        }
     }}
 """
-
 
 
 class RDF2SOLR(BaseDCM):
@@ -394,12 +396,15 @@ class RDF2SOLR(BaseDCM):
             if dataset_uri not in formats:
                 formats[dataset_uri] = []
 
-            format_uri = res['df']['value']
-            if format_uri in self.fm.mapping:
-                format_text = self.lcm.mapping[format_uri]
+            if 'dft' in res:
+                format_text = res['dft']['value']
             else:
-                format_text = format_uri
-                self.logger.warning('No EU Format {}'.format(format_uri))
+                format_uri = res['df']['value']
+                if format_uri in self.fm.mapping:
+                    format_text = self.lcm.mapping[format_uri]
+                else:
+                    format_text = format_uri
+                    self.logger.warning('No EU Format {}'.format(format_uri))
 
             self.logger.warning('Format is {}'.format(format_text))
             formats[dataset_uri].append(format_text)
