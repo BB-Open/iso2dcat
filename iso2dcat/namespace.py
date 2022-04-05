@@ -28,6 +28,7 @@ LOCN = Namespace('https://www.w3.org/ns/locn')
 DCAT = Namespace('http://www.w3.org/ns/dcat#')
 ADMS = Namespace('http://www.w3.org/ns/adms#')
 vcard = Namespace('http://www.w3.org/2006/vcard/ns#')
+GSP = Namespace('http://www.opengis.net/ont/geosparql#')
 
 
 @zope.interface.implementer(INamespaceManager)

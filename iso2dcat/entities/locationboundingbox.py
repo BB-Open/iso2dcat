@@ -1,12 +1,13 @@
-from rdflib import URIRef
+from rdflib import URIRef, Literal
 from rdflib.namespace import FOAF, RDF, DCTERMS, Namespace
 
 from iso2dcat.entities.base import BaseEntity
 from iso2dcat.exceptions import EntityFailed
+from iso2dcat.namespace import LOCN, GSP
 
+LOCATION_QUERY = 'gmd:identificationInfo/*/gmd:extent/*/gmd:geographicElement/gmd:EX_GeographicBoundingBox|gmd:identificationInfo/*/srv:extent/*/gmd:geographicElement/gmd:EX_GeographicBoundingBox'
 
-
-LOCATION_QUERY = 'gmd:identificationInfo/*/gmd:extent/*/gmd:geographicElement|gmd:identificationInfo/*/srv:extent/*/gmd:geographicElement'
+GEOMETRY = "<gml:Envelope srsName='http://www.opengis.net/def/crs/EPSG/0/4326'><gml:lowerCorner>{south} {west}</gml:lowerCorner><gml:upperCorner>{north} {east}</gml:upperCorner></gml:Envelope>"
 
 class LocationBoundingbox(BaseEntity):
 
@@ -34,7 +35,7 @@ class LocationBoundingbox(BaseEntity):
         for element in subnode:
 
             for direction in self.directions:
-                res = element.xpath('*/' + direction + '/gco:Decimal', namespaces=self.nsm.namespaces)
+                res = element.xpath(direction + '/gco:Decimal', namespaces=self.nsm.namespaces)
                 if res:
                     results[direction] = res[0]
                 else:
@@ -46,3 +47,13 @@ class LocationBoundingbox(BaseEntity):
             raise EntityFailed
         else:
             self.inc('good')
+
+        geometry_string = GEOMETRY.format(
+            west=results['gmd:westBoundLongitude'],
+            east=results['gmd:eastBoundLongitude'],
+            north=results['gmd:northBoundLatitude'],
+            south=results['gmd:southBoundLatitude'])
+
+        self.rdf.add((URIRef(self.uri), RDF.type, DCTERMS.Location))
+        self.rdf.add((URIRef(self.uri), LOCN.geometry, Literal(geometry_string, datatype=GSP.gmlLiteral)))
+
