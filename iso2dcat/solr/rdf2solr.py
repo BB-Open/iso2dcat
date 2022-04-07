@@ -41,7 +41,7 @@ prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 
 SELECT DISTINCT ?s ?dt ?dd ?type
     WHERE {
-        VALUES ?type {dcat:Dataset dcat:DataService }
+        VALUES ?type { dcat:Dataset dcat:DataService }
         ?s a ?type .
   		?s dct:title ?dt .
   		FILTER (lang(?dt) = "" || lang(?dt) = "de")
@@ -50,9 +50,6 @@ SELECT DISTINCT ?s ?dt ?dd ?type
         }
     }
 """
-
-
-
 
 DISTRIBUTIONS_FOR_DATASET = """
 prefix bds: <http://www.bigdata.com/rdf/search#>
@@ -192,7 +189,6 @@ SELECT DISTINCT ?s ?d ?dt
 """
 
 
-
 class RDF2SOLR(BaseDCM):
 
     def __init__(self):
@@ -253,9 +249,9 @@ class RDF2SOLR(BaseDCM):
             if s_uri not in res_dict:
                 res_dict[s_uri] = {'id': s_uri}
 
-            res_dict[s_uri]['dcterms_title'] = res['dt']['value']
+            res_dict[s_uri]['dct_title'] = res['dt']['value']
             if 'dd' in res:
-                res_dict[s_uri]['dcterms_description'] = res['dd']['value']
+                res_dict[s_uri]['dct_description'] = res['dd']['value']
 
             if 'type' in res:
                 if res['type']['value'] == 'http://www.w3.org/ns/dcat#DataService':
@@ -297,7 +293,7 @@ class RDF2SOLR(BaseDCM):
             predicate = self.nsm.uri2prefix_name(res['p']['value'])
             value = res['f']['value']
             datasets[dataset_uri][distribution][predicate] = value
-            if 'ft' in res and predicate == 'dcterms_title':
+            if 'ft' in res and predicate == 'dct_title':
                 datasets[dataset_uri][distribution][predicate] = res['ft']['value']
 
         self.logger.info('Distributions processed')
@@ -324,11 +320,11 @@ class RDF2SOLR(BaseDCM):
             if dataset_uri not in res_dict:
                 continue
             if res['pt']:
-                res_dict[dataset_uri]['dcterms_publisher'] = res['pt']['value']
-                res_dict[dataset_uri]['dcterms_publisher_facet'] = res['pt']['value']
+                res_dict[dataset_uri]['dct_publisher'] = res['pt']['value']
+                res_dict[dataset_uri]['dct_publisher_facet'] = res['pt']['value']
             else:
-                res_dict[dataset_uri]['dcterms_publisher'] = res['p']['value']
-                res_dict[dataset_uri]['dcterms_publisher_facet'] = res['p']['value']
+                res_dict[dataset_uri]['dct_publisher'] = res['p']['value']
+                res_dict[dataset_uri]['dct_publisher_facet'] = res['p']['value']
 
         self.logger.info('Publishers processed')
 
@@ -412,7 +408,7 @@ class RDF2SOLR(BaseDCM):
 
         for dataset_uri, licence in progressbar.progressbar(licenses.items()):
             if len(list(licence.keys())) > 0:
-                res_dict[dataset_uri]['dcterms_license_facet'] = list(licence.keys())[0]
+                res_dict[dataset_uri]['dct_license_facet'] = list(licence.keys())[0]
 
         self.logger.info('Licenses merged')
 
@@ -446,10 +442,9 @@ class RDF2SOLR(BaseDCM):
 
         for dataset_uri, format in progressbar.progressbar(formats.items()):
             if len(format) > 0:
-                res_dict[dataset_uri]['dcterms_format_facet'] = format
+                res_dict[dataset_uri]['dct_format_facet'] = format
 
         self.logger.info('Formats merged')
-
 
     def format_dataservice(self, res_dict, db_name):
         self.logger.info('Process Dataset links for DataServices')
@@ -464,7 +459,7 @@ class RDF2SOLR(BaseDCM):
                 dataset_links[dataservice_uri] = []
 
             dataset_link = {
-                'dcterms_title': res['dt']['value'],
+                'dct_title': res['dt']['value'],
                 'dct_dataset': res['d']['value']
             }
 
