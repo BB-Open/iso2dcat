@@ -24,6 +24,7 @@ from iso2dcat.log.log import register_logger
 from iso2dcat.namespace import register_nsmanager
 from iso2dcat.rdf_database.db import register_db
 from iso2dcat.statistics.stat import register_stat
+from iso2dcat.thesauri_mapper import register_thesauri
 
 
 class Main(Base):
@@ -55,6 +56,9 @@ class Main(Base):
 
         # Register statistics
         register_stat()
+
+        # register Thesauri
+        register_thesauri()
 
         # Register RDF Database to write final results
         self.db = register_db()
