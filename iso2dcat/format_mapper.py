@@ -36,7 +36,7 @@ class FormatMapper(BaseEntity):
 def register_formatmapper():
     format_mapper = FormatMapper(None)
     component.provideUtility(format_mapper, IFormatMapper)
-    return  format_mapper
+    return format_mapper
 
 
 def main():

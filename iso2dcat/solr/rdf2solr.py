@@ -39,9 +39,9 @@ prefix skos: <http://www.w3.org/2004/02/skos/core#>
 prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 
 
-SELECT DISTINCT ?s ?dt ?dd
+SELECT DISTINCT ?s ?dt ?dd ?type
     WHERE {
-        VALUES ?type {dcat:Dataset}
+        VALUES ?type {dcat:Dataset dcat:DataService }
         ?s a ?type .
   		?s dct:title ?dt .
   		FILTER (lang(?dt) = "" || lang(?dt) = "de")
@@ -50,6 +50,9 @@ SELECT DISTINCT ?s ?dt ?dd
         }
     }
 """
+
+
+
 
 DISTRIBUTIONS_FOR_DATASET = """
 prefix bds: <http://www.bigdata.com/rdf/search#>
@@ -170,6 +173,26 @@ SELECT DISTINCT ?s ?df ?dft
 """
 
 
+DATASETS_FOR_DATASERVICES = """
+prefix bds: <http://www.bigdata.com/rdf/search#>
+PREFIX dcat: <http://www.w3.org/ns/dcat#>
+PREFIX dct: <http://purl.org/dc/terms/>
+prefix foaf: <http://xmlns.com/foaf/0.1/>
+prefix skos: <http://www.w3.org/2004/02/skos/core#>
+prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+prefix vcard: <http://www.w3.org/2006/vcard/ns#>
+prefix dcatde: <http://dcat-ap.de/def/dcatde/>
+
+SELECT DISTINCT ?s ?d ?dt
+    WHERE {{
+        ?s a dcat:DataService .
+        ?s dcat:servesDataset ?d .
+        ?d dct:title ?dt .
+    }}
+"""
+
+
+
 class RDF2SOLR(BaseDCM):
 
     def __init__(self):
@@ -234,6 +257,14 @@ class RDF2SOLR(BaseDCM):
             if 'dd' in res:
                 res_dict[s_uri]['dcterms_description'] = res['dd']['value']
 
+            if 'type' in res:
+                if res['type']['value'] == 'http://www.w3.org/ns/dcat#DataService':
+                    res_dict[s_uri]['rdf_type'] = 'dcat_DataService'
+                elif res['type']['value'] == 'http://www.w3.org/ns/dcat#Dataset':
+                    res_dict[s_uri]['rdf_type'] = 'dcat_Dataset'
+                else:
+                    a= 10
+
         self.logger.info('Datasets processed')
 
         self.format_distribution(res_dict, db_name)
@@ -242,6 +273,7 @@ class RDF2SOLR(BaseDCM):
         self.format_themes(res_dict, db_name)
         self.format_licenses(res_dict, db_name)
         self.format_format(res_dict, db_name)
+        self.format_dataservice(res_dict, db_name)
         return res_dict
 
     def format_distribution(self, res_dict, db_name):
@@ -417,6 +449,35 @@ class RDF2SOLR(BaseDCM):
                 res_dict[dataset_uri]['dcterms_format_facet'] = format
 
         self.logger.info('Formats merged')
+
+
+    def format_dataservice(self, res_dict, db_name):
+        self.logger.info('Process Dataset links for DataServices')
+
+        sparql = DATASETS_FOR_DATASERVICES
+        results = self.rdf4j.query_repository(db_name, sparql)
+        dataset_links = {}
+
+        for res in progressbar.progressbar(results['results']['bindings']):
+            dataservice_uri = res['s']['value']
+            if dataservice_uri not in dataset_links:
+                dataset_links[dataservice_uri] = []
+
+            dataset_link = {
+                'dcterms_title': res['dt']['value'],
+                'dct_dataset': res['d']['value']
+            }
+
+            dataset_links[dataservice_uri].append(dataset_link)
+
+        self.logger.info('Dataset Links for DataServicesDataset processed')
+        self.logger.info('Merge Dataset Links')
+
+        for dataservice_uri, links in progressbar.progressbar(dataset_links.items()):
+            if len(links) > 0:
+                res_dict[dataservice_uri]['dcat_servesDataset'] = json.dumps(links)
+
+        self.logger.info('Dataset Links merged')
 
 
 def main():

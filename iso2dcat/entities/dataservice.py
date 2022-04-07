@@ -39,3 +39,4 @@ class DcatDataService(DcatResource):
                 dataset_uri = base_uri + '#' + DcatDataset.dcat_class + '_' + uuid
                 self.rdf.add([URIRef(self.uri), DCAT.servesDataset, URIRef(dataset_uri)])
 
+#        dcat:endpointURL
