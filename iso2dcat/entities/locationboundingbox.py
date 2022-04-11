@@ -1,5 +1,5 @@
 from rdflib import URIRef, Literal
-from rdflib.namespace import FOAF, RDF, DCTERMS, Namespace
+from rdflib.namespace import RDF, DCTERMS
 
 from iso2dcat.entities.base import BaseEntity
 from iso2dcat.exceptions import EntityFailed

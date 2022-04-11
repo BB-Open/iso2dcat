@@ -1,16 +1,19 @@
 # -*- coding: utf-8 -*-
+from urllib.parse import quote, urlparse
+
 from rdflib import URIRef, RDF, Literal
 from rdflib.namespace import DCTERMS
-from urllib.parse import quote, urlparse
-from iso2dcat.entities.resource import DcatResource, DCATDE
-from iso2dcat.exceptions import EntityFailed
-import simplejson as sj
 
+from iso2dcat.entities.dates import DateMapper
+from iso2dcat.entities.licenses import License
+from iso2dcat.entities.provenance import ProvenanceStatement
+from iso2dcat.entities.resource import DcatResource
+from iso2dcat.entities.rightstatement import RightsStatement
+from iso2dcat.exceptions import EntityFailed
 from iso2dcat.namespace import DCAT
 
 ACCESS = ".//gmd:transferOptions/*/gmd:onLine/gmd:CI_OnlineResource[not(gmd:function/*/@codeListValue = 'download')]"
 DOWNLOAD = ".//gmd:transferOptions/*/gmd:onLine/gmd:CI_OnlineResource[gmd:function/*/@codeListValue = 'download']"
-LICENSE = ".//gmd:resourceConstraints/gmd:MD_LegalConstraints/gmd:otherConstraints/gco:CharacterString[text()]"
 
 
 class Distribution(DcatResource):
@@ -39,48 +42,41 @@ class Distribution(DcatResource):
             return out_url.geturl()
         return url.text
 
-    def add_distribution(self, title, accessURL, downloadURL=None, licenses=None):
+    def add_distribution(self, title, accessURL, downloadURL=None):
         uri = self.make_uri(accessURL)
         self.rdf.add([URIRef(uri), RDF.type, self.entity_type])
-        self.rdf.add([URIRef(uri), DCTERMS.title, Literal(title)])
+        for lang in self.languages:
+            self.rdf.add([URIRef(uri), DCTERMS.title, Literal(title, lang=lang)])
         self.rdf.add((URIRef(uri), DCAT.accessURL, URIRef(self.sanitize_url(accessURL))))
         self.rdf.add([URIRef(self.parent), DCAT.distribution, URIRef(uri)])
 
         if downloadURL is not None:
             self.rdf.add((URIRef(uri), DCAT.downloadURL, URIRef(self.sanitize_url(downloadURL))))
 
-        if licenses is not None:
-            for tag, license in licenses.items():
-                self.rdf.add((URIRef(uri), tag, license))
+        licenses = License(self.node, self.rdf, uri)
+        rdf = licenses.run()
+
+        if self.rightstatement:
+            self.rdf.add((URIRef(uri), DCTERMS.accessRights, URIRef(self.rightstatement.uri)))
+        if self.provenance:
+            self.rdf.add((URIRef(uri), DCTERMS.provenance, URIRef(self.provenance.uri)))
 
     def run(self):
+        self.languages = self.get_languages()
+        self.rightstatement = RightsStatement(self.node, self.rdf)
+        self.provenance = ProvenanceStatement(self.node, self.rdf)
+        try:
+            self.provenance.run()
+        except EntityFailed:
+            self.provenance = None
+
+        try:
+            self.rightstatement.run()
+        except EntityFailed:
+            self.rightstatement = None
+
         access_nodes = self.node.xpath(ACCESS, namespaces=self.nsm.namespaces)
         download_nodes = self.node.xpath(DOWNLOAD, namespaces=self.nsm.namespaces)
-
-        license_nodes = self.node.xpath(LICENSE, namespaces=self.nsm.namespaces)
-        if not license_nodes:
-            self.inc('No License')
-        licenses = {}
-
-        URI_MAPPING = {
-            'https://www.govdata.de/dl-de/by-2-0' : 'http://dcat-ap.de/def/licenses/dl-by-de/2.0'
-        }
-        for license in license_nodes:
-            try:
-                license_obj = sj.loads(license.text)
-
-                uri_in = license_obj['url']
-                if uri_in in URI_MAPPING:
-                    uri_out = URI_MAPPING[uri_in]
-                else:
-                    uri_out = uri_in
-
-                licenses[DCTERMS.license] = URIRef(uri_out)
-
-                self.inc('DCAT License')
-            except Exception as e :
-                licenses[DCATDE.licenseAttributionByText] = Literal(license)
-                self.inc('DCAT licenseAttributionByText')
 
         if access_nodes :
             self.inc('dcat:accessURL')
@@ -100,7 +96,7 @@ class Distribution(DcatResource):
                 title = 'Zugang'
             else:
                 title = title[0]
-            self.add_distribution(title, accessURL[0], licenses=licenses)
+            self.add_distribution(title, accessURL[0])
 
         for download_node in download_nodes:
             downloadURL = download_node.xpath('gmd:linkage/*', namespaces =self.nsm.namespaces)
@@ -109,5 +105,7 @@ class Distribution(DcatResource):
                 title = 'Download'
             else:
                 title = title[0]
-            self.add_distribution(title, downloadURL[0], downloadURL=downloadURL[0], licenses=licenses)
+            self.add_distribution(title, downloadURL[0], downloadURL=downloadURL[0])
+
+
 

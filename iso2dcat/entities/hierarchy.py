@@ -1,10 +1,6 @@
 from iso2dcat.entities.base import BaseEntity
-
-
-# <gmd:hierarchyLevel>
-#     <gmd:MD_ScopeCode codeList="https://standards.iso.org/iso/19139/resources/gmxCodelists.xml#MD_ScopeCode" codeListValue="service">service</gmd:MD_ScopeCode>
-# </gmd:hierarchyLevel>
-
+from iso2dcat.entities.dataservice import DcatDataService
+from iso2dcat.entities.dataset import DcatDataset
 # Possible values
 # <CodeDefinition gml:id="MD_ScopeCode_attribute">
 # <CodeDefinition gml:id="MD_ScopeCode_attributeType">
@@ -23,8 +19,10 @@ from iso2dcat.entities.base import BaseEntity
 # <CodeDefinition gml:id="MD_ScopeCode_model">
 # <CodeDefinition gml:id="MD_ScopeCode_tile">
 from iso2dcat.entities.tile import Tile
-from iso2dcat.entities.dataset import DcatDataset
-from iso2dcat.entities.dataservice import DcatDataService
+
+# <gmd:hierarchyLevel>
+#     <gmd:MD_ScopeCode codeList="https://standards.iso.org/iso/19139/resources/gmxCodelists.xml#MD_ScopeCode" codeListValue="service">service</gmd:MD_ScopeCode>
+# </gmd:hierarchyLevel>
 
 SCOPE_CODE_MAPPING = {
     'dataset': 'dcat:Dataset',

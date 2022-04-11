@@ -2,7 +2,7 @@
 from rdflib import URIRef
 
 from iso2dcat.entities.dataset import DcatDataset
-
+from iso2dcat.entities.licenses import License
 from iso2dcat.entities.resource import DcatResource
 from iso2dcat.namespace import DCAT
 
@@ -53,3 +53,6 @@ class DcatDataService(DcatResource):
         for uri in results:
             self.inc('service:has_enpointURI')
             self.rdf.add([URIRef(self.uri), DCAT.endpointURL, URIRef(str(uri).strip())])
+
+        licenses = License(self.node, self.rdf, self.uri)
+        rdf = licenses.run()

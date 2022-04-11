@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from rdflib import URIRef, Literal
+from rdflib import URIRef
 from rdflib.namespace import DCTERMS
 
 from iso2dcat.entities.dataset import DcatDataset

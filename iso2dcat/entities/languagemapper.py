@@ -1,6 +1,4 @@
-import os
 import pickle
-from pathlib import Path
 
 from rdflib import Graph, Namespace
 from rdflib.plugins.sparql import prepareQuery

@@ -1,4 +1,3 @@
-from pyrdf4j.errors import QueryFailed
 from rdflib import Literal, URIRef
 from rdflib.namespace import RDF, SKOS, DCTERMS
 from zope import component

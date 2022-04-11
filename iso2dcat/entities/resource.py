@@ -1,12 +1,14 @@
 # -*- coding: utf-8 -*-
 from rdflib import URIRef, Literal
-from rdflib.namespace import DCTERMS, Namespace
+from rdflib.namespace import DCTERMS
 
 from iso2dcat.entities.base import BaseEntity
 from iso2dcat.entities.categories import CategoryKeywordMapper
 from iso2dcat.entities.contactpoint import ContactPoint
 from iso2dcat.entities.dates import DateMapper
+from iso2dcat.entities.foafdocuments import FoafDocuments
 from iso2dcat.entities.locationboundingbox import LocationBoundingbox
+from iso2dcat.entities.periodicity import AccrualPeriodicity
 from iso2dcat.entities.publisher import Publisher, Contributor, Maintainer
 from iso2dcat.exceptions import EntityFailed
 from iso2dcat.namespace import DCATDE, DCAT, ADMS
@@ -111,7 +113,17 @@ class DcatResource(BaseEntity):
         try:
             rdf = spatial.run()
         except EntityFailed:
-            self.logger.warning('No Dates found')
+            self.logger.warning('No Bounding Box found')
         else:
             self.rdf.add((URIRef(self.uri), DCTERMS.spatial, URIRef(spatial.uri)))
+
+        # dct:accrualPeriodicity
+        periodicity = AccrualPeriodicity(self.node, self.rdf, self.uri)
+        rdf = periodicity.run()
+
+        # foaf:homepage
+        page = FoafDocuments(self.node, self.rdf, self.uri)
+        rdf = page.run()
+
+
 

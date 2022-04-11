@@ -1,12 +1,10 @@
 # from globalconfig.interface import IGlobalCfg
 from lxml import etree
 from rdflib import Graph, URIRef
-from rdflib.namespace import RDF, FOAF, DCTERMS, Namespace
+from rdflib.namespace import RDF
 from zope import component
 
 from iso2dcat.component.interface import IDCM, ILogger, IStat, IRDFDatabase, INamespaceManager, ILanguageMapper, IIsoCfg
-
-
 
 LANGUAGE = './/gmd:language/*[string-length(@codeListValue) = 3]'
 

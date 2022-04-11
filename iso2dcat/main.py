@@ -2,10 +2,8 @@
 
 import zope
 from pkan_config.config import register_config, get_config
-
 from zope import component
 
-import iso2dcat
 from iso2dcat.component.interface import IStat, IIsoCfg
 from iso2dcat.csw import CSWProcessor
 from iso2dcat.dcat import CatalogBuilder
@@ -18,9 +16,13 @@ from iso2dcat.entities.dataservice import DcatDataService
 from iso2dcat.entities.dates import DateMapper
 from iso2dcat.entities.distribution import Distribution
 from iso2dcat.entities.hierarchy import Hirarchy
+from iso2dcat.entities.foafdocuments import FoafDocuments
 from iso2dcat.entities.languagemapper import register_languagemapper
 from iso2dcat.entities.locationboundingbox import LocationBoundingbox
+from iso2dcat.entities.periodicity import AccrualPeriodicity
+from iso2dcat.entities.provenance import ProvenanceStatement
 from iso2dcat.entities.publisher import Publisher, Contributor, Maintainer
+from iso2dcat.entities.rightstatement import RightsStatement
 from iso2dcat.log.log import register_logger
 from iso2dcat.namespace import register_nsmanager
 from iso2dcat.rdf_database.db import register_db
@@ -93,7 +95,8 @@ class Main(Base):
         self.logger.info('iso2dcat statistics')
         stat = component.queryUtility(IStat)
         for klass in [CSWProcessor, Catalog, Publisher, ContactPoint, Hirarchy, Contributor, Maintainer,
-                      CategoryKeywordMapper, DateMapper, LocationBoundingbox, Distribution, DcatDataService]:
+                      CategoryKeywordMapper, DateMapper, LocationBoundingbox, Distribution, DcatDataService,
+                      AccrualPeriodicity, FoafDocuments, RightsStatement, ProvenanceStatement]:
             for line in stat.get_stats(klass):
                 self.logger.info(line)
 
