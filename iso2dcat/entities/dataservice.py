@@ -40,3 +40,16 @@ class DcatDataService(DcatResource):
                 self.rdf.add([URIRef(self.uri), DCAT.servesDataset, URIRef(dataset_uri)])
 
 #        dcat:endpointURL
+
+        ENDPOINT_EXPR = ".//srv:connectPoint/gmd:CI_OnlineResource/gmd:linkage/*"
+        results = self.node.xpath(
+            ENDPOINT_EXPR,
+            namespaces={
+                'gmd': 'http://www.isotc211.org/2005/gmd',
+                'srv': 'http://www.isotc211.org/2005/srv',
+                'xlink': 'http://www.w3.org/1999/xlink',
+            }
+        )
+        for uri in results:
+            self.inc('service:has_enpointURI')
+            self.rdf.add([URIRef(self.uri), DCAT.endpointURL, URIRef(str(uri).strip())])

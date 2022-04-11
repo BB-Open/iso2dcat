@@ -250,14 +250,15 @@ class RDF2SOLR(BaseDCM):
                 res_dict[s_uri] = {'id': s_uri}
 
             res_dict[s_uri]['dct_title'] = res['dt']['value']
+
             if 'dd' in res:
                 res_dict[s_uri]['dct_description'] = res['dd']['value']
 
             if 'type' in res:
                 if res['type']['value'] == 'http://www.w3.org/ns/dcat#DataService':
-                    res_dict[s_uri]['rdf_type'] = 'dcat_DataService'
+                    res_dict[s_uri]['rdf_type'] = 'DataService'
                 elif res['type']['value'] == 'http://www.w3.org/ns/dcat#Dataset':
-                    res_dict[s_uri]['rdf_type'] = 'dcat_Dataset'
+                    res_dict[s_uri]['rdf_type'] = 'Dataset'
                 else:
                     a= 10
 
