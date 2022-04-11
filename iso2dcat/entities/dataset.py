@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
-from rdflib import URIRef
 
-from iso2dcat.entities.resource import DcatResource
 from iso2dcat.entities.distribution import Distribution
+from iso2dcat.entities.resource import DcatResource
 from iso2dcat.namespace import DCAT
 
 
