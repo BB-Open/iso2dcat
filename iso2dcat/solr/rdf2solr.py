@@ -188,6 +188,24 @@ SELECT DISTINCT ?s ?d ?dt
     }}
 """
 
+ENDPOINTS_FOR_DATASERVICES = """
+prefix bds: <http://www.bigdata.com/rdf/search#>
+PREFIX dcat: <http://www.w3.org/ns/dcat#>
+PREFIX dct: <http://purl.org/dc/terms/>
+prefix foaf: <http://xmlns.com/foaf/0.1/>
+prefix skos: <http://www.w3.org/2004/02/skos/core#>
+prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+prefix vcard: <http://www.w3.org/2006/vcard/ns#>
+prefix dcatde: <http://dcat-ap.de/def/dcatde/>
+
+SELECT DISTINCT ?s ?de
+    WHERE {{
+        ?s a dcat:DataService .
+        ?s dcat:endpointURL ?de .
+    }}
+"""
+
+
 
 class RDF2SOLR(BaseDCM):
 
@@ -262,8 +280,8 @@ class RDF2SOLR(BaseDCM):
                 else:
                     a= 10
 
-        self.logger.info('Datasets processed')
 
+        self.logger.info('Datasets processed')
         self.format_distribution(res_dict, db_name)
         self.format_publisher(res_dict, db_name)
         self.format_contact(res_dict, db_name)
@@ -271,6 +289,8 @@ class RDF2SOLR(BaseDCM):
         self.format_licenses(res_dict, db_name)
         self.format_format(res_dict, db_name)
         self.format_dataservice(res_dict, db_name)
+        self.format_endpoints(res_dict, db_name)
+
         return res_dict
 
     def format_distribution(self, res_dict, db_name):
@@ -474,6 +494,33 @@ class RDF2SOLR(BaseDCM):
                 res_dict[dataservice_uri]['dcat_servesDataset'] = json.dumps(links)
 
         self.logger.info('Dataset Links merged')
+
+    def format_endpoints(self, res_dict, db_name):
+        self.logger.info('Process endpointURLs for DataServices')
+
+        sparql = ENDPOINTS_FOR_DATASERVICES
+        results = self.rdf4j.query_repository(db_name, sparql)
+        dataset_links = {}
+
+        for res in progressbar.progressbar(results['results']['bindings']):
+            dataservice_uri = res['s']['value']
+            if dataservice_uri not in dataset_links:
+                dataset_links[dataservice_uri] = []
+
+            dataset_link = {
+                'dcat_endpointURL': res['de']['value'],
+            }
+
+            dataset_links[dataservice_uri].append(dataset_link)
+
+        self.logger.info('Dataset endpointURLs for DataServicesDataset processed')
+        self.logger.info('Merge endpointURLs')
+
+        for dataservice_uri, links in progressbar.progressbar(dataset_links.items()):
+            if len(links) > 0:
+                res_dict[dataservice_uri]['dcat_endpointURL'] = json.dumps(links)
+
+        self.logger.info('endpointURLs merged')
 
 
 def main():
