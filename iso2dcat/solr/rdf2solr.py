@@ -251,6 +251,11 @@ class RDF2SOLR(BaseDCM):
             self.solr.add(data_set)
         self.solr.commit()
         self.logger.info('datasets written to solr')
+        self.logger.info('Restart solr core')
+        self.solr_admin = pysolr.SolrCoreAdmin(self.cfg.SOLR_ADMIN_URI)
+        self.solr_admin.reload('datasets')
+        self.logger.info('Solr core restarted')
+
         self.logger.info('rdf2solr finished')
 
     def format_data(self, db_name):
