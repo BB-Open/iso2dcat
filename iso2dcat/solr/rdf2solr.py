@@ -149,6 +149,29 @@ SELECT DISTINCT ?s ?dl ?dlt ?cl
     }}
 """
 
+RIGHTSTATEMENT_FOR_DATASET = """
+prefix bds: <http://www.bigdata.com/rdf/search#>
+PREFIX dcat: <http://www.w3.org/ns/dcat#>
+PREFIX dct: <http://purl.org/dc/terms/>
+prefix foaf: <http://xmlns.com/foaf/0.1/>
+prefix skos: <http://www.w3.org/2004/02/skos/core#>
+prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+prefix vcard: <http://www.w3.org/2006/vcard/ns#>
+prefix dcatde: <http://dcat-ap.de/def/dcatde/>
+
+SELECT DISTINCT ?s ?dl ?dlt
+    WHERE {
+        ?s a dcat:Dataset .
+
+        ?s dcat:distribution ?d .
+        ?d dct:accessRights ?dl
+            OPTIONAL {
+                ?dl rdfs:label ?dlt
+            }
+
+    }
+"""
+
 FORMAT_FOR_DATASET = """
 prefix bds: <http://www.bigdata.com/rdf/search#>
 PREFIX dcat: <http://www.w3.org/ns/dcat#>
@@ -296,6 +319,7 @@ class RDF2SOLR(BaseDCM):
         self.format_format(res_dict, db_name)
         self.format_dataservice(res_dict, db_name)
         self.format_endpoints(res_dict, db_name)
+        self.format_rightstatements(res_dict, db_name)
 
         return res_dict
 
@@ -438,6 +462,26 @@ class RDF2SOLR(BaseDCM):
                 res_dict[dataset_uri]['dct_license_facet'] = list(licence.keys())[0]
 
         self.logger.info('Licenses merged')
+
+    def format_rightstatements(self, res_dict, db_name):
+        self.logger.info('Process Right Statements')
+
+        sparql = RIGHTSTATEMENT_FOR_DATASET
+        results = self.rdf4j.query_repository(db_name, sparql)
+
+        for res in progressbar.progressbar(results['results']['bindings']):
+            dataset_uri = res['s']['value']
+            if 'dlt' in res:
+                statement_text = res['dlt']['value']
+            elif 'dl' in res:
+                statement_text = res['dl']['value']
+            else:
+                statement_text = None
+                self.logger.info('No Rights Statement for {}'.format(res['s']['value']))
+
+            if statement_text:
+                res_dict[dataset_uri]['dct_rightsstatement'] = statement_text
+        self.logger.info('Right Statements processed')
 
     def format_format(self, res_dict, db_name):
         self.logger.info('Process Fromats')
