@@ -55,12 +55,10 @@ class Logger:
         self.db_log(SYSLOG_ERROR, msg, file_id)
         self.plone_log('error', msg, file_id)
 
-
     def warning(self, msg, file_id=None):
         self.logger.warning(self.log_message(msg, file_id))
         self.db_log(SYSLOG_WARN, msg, file_id)
         self.plone_log('warn', msg, file_id)
-
 
     def info(self, msg, file_id=None):
         self.logger.info(self.log_message(msg, file_id))

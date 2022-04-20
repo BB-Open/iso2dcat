@@ -7,7 +7,6 @@ from iso2dcat.exceptions import EntityFailed
 
 
 class Publisher(BaseEntity):
-
     dcat_class = 'foaf_Agent'
     entity_type = FOAF.Agent
     roles = ['publisher', 'owner', 'distributor', 'custodian', 'pointOfContact']
@@ -32,7 +31,7 @@ class Publisher(BaseEntity):
         # - which have a role "$role" (given as a parameter)
         # and then get their gmd:organisationName entity
         PUBLISHER_ORG_EXPR = './/gmd:CI_ResponsibleParty[gmd:role/gmd:CI_RoleCode/@codeListValue=$role]//gmd:organisationName/gco:CharacterString[text()]'
-#        PUBLISHER_ORG_EXPR = ".//gmd:CI_ResponsibleParty[gmd:role/gmd:CI_RoleCode/@codeListValue=$role]"
+        #        PUBLISHER_ORG_EXPR = ".//gmd:CI_ResponsibleParty[gmd:role/gmd:CI_RoleCode/@codeListValue=$role]"
 
         publisher = None
         # For each role
@@ -50,7 +49,6 @@ class Publisher(BaseEntity):
                 self.role = role
                 break
 
-
         if publisher is None:
             self.inc('bad')
             self.role = None
@@ -63,14 +61,11 @@ class Publisher(BaseEntity):
             self.rdf.add((URIRef(self.uri), FOAF.name, Literal(publisher, lang=lang)))
 
 
-
 class Contributor(Publisher):
-
     roles = ['contributor']
     dcat_class = 'foaf_Agent_dct_Contributor'
 
 
 class Maintainer(Publisher):
-
     roles = ['custodian']
     dcat_class = 'foaf_Agent_dcatde_Maintainer'

@@ -26,14 +26,13 @@ from iso2dcat.entities.tile import Tile
 
 SCOPE_CODE_MAPPING = {
     'dataset': 'dcat:Dataset',
-#    'series': 'dcat:Dataset',
-#    'nonGeographicDataset': 'dcat:Dataset',
-#    'service' : 'dcat:Distribution',
+    #    'series': 'dcat:Dataset',
+    #    'nonGeographicDataset': 'dcat:Dataset',
+    #    'service' : 'dcat:Distribution',
 }
 
 
 class Hirarchy(BaseEntity):
-
     dataset = 0
     distribution = 0
     service = 0
@@ -68,13 +67,13 @@ class Hirarchy(BaseEntity):
         return self.process(hirarchy)
 
     def process(self, hirarchy):
-# <gmd:transferOptions>
-#     <gmd:MD_DigitalTransferOptions>
-#             <gmd:onLine>
-#                     <gmd:CI_OnlineResource>
-#                             <gmd:linkage>
-#                                     <gmd:URL>https://geobroker.geobasis-bb.de/gbss.php?MODE=GetProductInformation&amp;PRODUCTID=121181a5-3b7b-44db-9436-a0906f1f5d7c</gmd:URL>
-#                             </gmd:linkage>
+        # <gmd:transferOptions>
+        #     <gmd:MD_DigitalTransferOptions>
+        #             <gmd:onLine>
+        #                     <gmd:CI_OnlineResource>
+        #                             <gmd:linkage>
+        #                                     <gmd:URL>https://geobroker.geobasis-bb.de/gbss.php?MODE=GetProductInformation&amp;PRODUCTID=121181a5-3b7b-44db-9436-a0906f1f5d7c</gmd:URL>
+        #                             </gmd:linkage>
 
         if hirarchy == 'tile':
             return Tile(self.node, self.rdf).run()

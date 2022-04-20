@@ -24,6 +24,9 @@ simplejson = "^3.17.6"
 
 
 [tool.poetry.dev-dependencies]
+coverage = "^6.3.2"
+unittest2 = "^1.1.0"
+pytest = "^7.1.1"
 
 
 [build-system]

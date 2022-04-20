@@ -41,8 +41,8 @@ class NotFoundInStorage(Iso2DcatException):
         self.where = where
 
     def __str__(self):
-        return('cannot find {0} for {1} '
-               'in data storage'.format(self.what, self.where))
+        return ('cannot find {0} for {1} '
+                'in data storage'.format(self.what, self.where))
 
 
 class LogPathNotExists(Iso2DcatException):

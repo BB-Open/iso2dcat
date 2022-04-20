@@ -94,6 +94,7 @@ class IFormatMapper(interface.Interface):
     Marker Interface for global Format Mapping
     """
 
+
 class IGemetMapper(interface.Interface):
     """
     Marker Interface for global Gemet Keyword Mapping

@@ -8,7 +8,7 @@ from iso2dcat.component.interface import IStat, IIsoCfg
 from iso2dcat.csw import CSWProcessor
 from iso2dcat.dcat import CatalogBuilder
 from iso2dcat.dcm import register_dcm
-from iso2dcat.entities.base import Base
+from iso2dcat.entities.base import Base, BaseEntity
 from iso2dcat.entities.catalog import Catalog
 from iso2dcat.entities.categories import CategoryKeywordMapper
 from iso2dcat.entities.contactpoint import ContactPoint
@@ -17,7 +17,7 @@ from iso2dcat.entities.dates import DateMapper
 from iso2dcat.entities.distribution import Distribution
 from iso2dcat.entities.hierarchy import Hirarchy
 from iso2dcat.entities.foafdocuments import FoafDocuments
-from iso2dcat.entities.languagemapper import register_languagemapper
+from iso2dcat.entities.languagemapper import register_languagemapper, LanguageMapper
 from iso2dcat.entities.locationboundingbox import LocationBoundingbox
 from iso2dcat.entities.periodicity import AccrualPeriodicity
 from iso2dcat.entities.provenance import ProvenanceStatement
@@ -51,7 +51,6 @@ class Main(Base):
         # Setup the logging facility for this measurement ID
         register_logger(visitor=visitor)
 
-
         self.logger.info('iso2dcat starting')
 
         # Register the namespace manager
@@ -74,7 +73,6 @@ class Main(Base):
         self.language_mapper = register_languagemapper()
         self.logger.info('Languages file loaded')
 
-
     def run(self, visitor=None, cfg=None):
         self.setup_components(visitor=visitor, cfg=cfg)
 
@@ -96,7 +94,7 @@ class Main(Base):
         stat = component.queryUtility(IStat)
         for klass in [CSWProcessor, Catalog, Publisher, ContactPoint, Hirarchy, Contributor, Maintainer,
                       CategoryKeywordMapper, DateMapper, LocationBoundingbox, Distribution, DcatDataService,
-                      AccrualPeriodicity, FoafDocuments, RightsStatement, ProvenanceStatement]:
+                      AccrualPeriodicity, FoafDocuments, RightsStatement, ProvenanceStatement, LanguageMapper]:
             for line in stat.get_stats(klass):
                 self.logger.info(line)
 

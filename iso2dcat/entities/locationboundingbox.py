@@ -9,18 +9,18 @@ LOCATION_QUERY = 'gmd:identificationInfo/*/gmd:extent/*/gmd:geographicElement/gm
 
 GEOMETRY = "<gml:Envelope srsName='http://www.opengis.net/def/crs/EPSG/0/4326'><gml:lowerCorner>{south} {west}</gml:lowerCorner><gml:upperCorner>{north} {east}</gml:upperCorner></gml:Envelope>"
 
-class LocationBoundingbox(BaseEntity):
 
+class LocationBoundingbox(BaseEntity):
     dcat_class = 'dct_Location'
 
     def __init__(self, node, rdf):
 
         super().__init__(node, rdf)
         self.directions = ['gmd:southBoundLatitude',
-                          'gmd:northBoundLatitude',
-                          'gmd:westBoundLongitude',
-                          'gmd:eastBoundLongitude'
-                          ]
+                           'gmd:northBoundLatitude',
+                           'gmd:westBoundLongitude',
+                           'gmd:eastBoundLongitude'
+                           ]
 
     def run(self):
         self.rdf.add((URIRef(self.uri), RDF.type, DCTERMS.Location))
@@ -56,4 +56,3 @@ class LocationBoundingbox(BaseEntity):
 
         self.rdf.add((URIRef(self.uri), RDF.type, DCTERMS.Location))
         self.rdf.add((URIRef(self.uri), LOCN.geometry, Literal(geometry_string, datatype=GSP.gmlLiteral)))
-

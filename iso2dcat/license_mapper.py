@@ -36,7 +36,7 @@ class LicenseMapper(BaseEntity):
 def register_licensemapper():
     license_mapper = LicenseMapper(None)
     component.provideUtility(license_mapper, ILicenseMapper)
-    return  license_mapper
+    return license_mapper
 
 
 def main():

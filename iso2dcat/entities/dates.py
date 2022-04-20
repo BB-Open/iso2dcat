@@ -5,7 +5,7 @@ from rdflib.namespace import DCTERMS, XSD
 
 from iso2dcat.entities.base import BaseEntity
 
-DATE_QUERY= "gmd:identificationInfo[1]/*/gmd:citation/*/gmd:date/*[gmd:dateType/*/@codeListValue=$role]/gmd:date/*"
+DATE_QUERY = "gmd:identificationInfo[1]/*/gmd:citation/*/gmd:date/*[gmd:dateType/*/@codeListValue=$role]/gmd:date/*"
 
 
 class DateMapper(BaseEntity):
@@ -18,6 +18,7 @@ class DateMapper(BaseEntity):
 
     def run(self):
         # todo: Role fields as fields on data
-        self.rdf.add((URIRef(self.parent_ressource_uri), DCTERMS.modified, Literal(datetime.now(), datatype=XSD.dateTimeStamp)))
-        self.rdf.add((URIRef(self.parent_ressource_uri), DCTERMS.issued, Literal(datetime.now(), datatype=XSD.dateTimeStamp)))
-
+        self.rdf.add(
+            (URIRef(self.parent_ressource_uri), DCTERMS.modified, Literal(datetime.now(), datatype=XSD.dateTimeStamp)))
+        self.rdf.add(
+            (URIRef(self.parent_ressource_uri), DCTERMS.issued, Literal(datetime.now(), datatype=XSD.dateTimeStamp)))

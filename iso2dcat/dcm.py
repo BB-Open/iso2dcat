@@ -6,6 +6,7 @@ from zope import component
 
 from iso2dcat.component.interface import IDCM
 from iso2dcat.entities.base import Base
+from iso2dcat.path_utils import abs_file_path
 
 
 class DCM(Base):
@@ -14,9 +15,23 @@ class DCM(Base):
         self.dcm = None
         self._file_id_to_baseurl = {}
         self._id_to_baseurl = {}
+        self.cache_file = abs_file_path('iso2dcat/data/dcm.json')
 
     def run(self):
-        dcm_file = urllib.request.urlopen(self.cfg.DCM_URI)
+        try:
+            self.logger.info('Update cache')
+            url_dcm_file = urllib.request.urlopen(self.cfg.DCM_URI)
+            data = url_dcm_file.read()
+            if data:
+                output_file = open(self.cache_file, mode='wb')
+                output_file.write(data)
+                output_file.close()
+                url_dcm_file.close()
+            else:
+                self.logger.info('Could not read source, read cache without update.')
+        except:
+            self.logger.info('Could not read source, read cache without update.')
+        dcm_file = open(self.cache_file, mode='rb')
         self.dcm = json.loads(dcm_file.read())
         publishers = self.dcm['publisher']['mapping']
         self.logger.info('Mapping publishers to Base Url')
@@ -26,6 +41,7 @@ class DCM(Base):
         self.logger.info('Mapping Files to Base Url')
         for file in files:
             self._file_id_to_baseurl[file['fileidentifier']] = self._id_to_baseurl[file['publisher_id']]
+        dcm_file.close()
 
     def file_id_to_baseurl(self, file_id, return_fallback=False):
         try:
@@ -40,6 +56,9 @@ class DCM(Base):
 
 
 def register_dcm():
+    dcm = component.queryUtility(IDCM)
+    if dcm is not None:
+        return dcm
     dcm = DCM()
     component.provideUtility(dcm, IDCM)
     return dcm

@@ -15,12 +15,15 @@ from more_itertools import chunked
 
 
 class CSWProcessor(BaseEntity):
-
     count = 0
 
     def __init__(self):
         super(CSWProcessor, self).__init__(None, Graph())
-        self.csw = CatalogueServiceWeb(self.cfg.CSW_URI)
+        if self.cfg.CSW_URI:
+            self.csw = CatalogueServiceWeb(self.cfg.CSW_URI)
+        else:
+            self.logger.error('No Uri provided, make sure you use File Mode')
+            self.csw = None
         # Important to set the namespaces only once!
         self.set_namespaces()
 
@@ -30,9 +33,9 @@ class CSWProcessor(BaseEntity):
     def get_records(self):
         self.logger.info(self.cfg.FROM_DISK)
 
-        if self.cfg.FROM_DISK :
+        if self.cfg.FROM_DISK:
             batch_start = 0
-            files = Path(self.cfg.CSW_PATH).glob('*')
+            files = Path(self.cfg.CSW_PATH).glob('*.xml')
             batch = {}
             for record_file_names in chunked(files, self.cfg.BATCH_COUNT):
                 batch = {}
@@ -57,7 +60,7 @@ class CSWProcessor(BaseEntity):
             )
 
             if len(self.csw.records) > 0:
-                yield {uuid : rec.xml for uuid,rec in self.csw.records.items()}
+                yield {uuid: rec.xml for uuid, rec in self.csw.records.items()}
             else:
                 break
 

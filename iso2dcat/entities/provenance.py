@@ -7,8 +7,8 @@ from rdflib.namespace import RDF, DCTERMS, RDFS
 
 QUERY = ".//gmd:dataQualityInfo/*/gmd:lineage/*/gmd:statement/gco:CharacterString"
 
-class ProvenanceStatement(BaseEntity):
 
+class ProvenanceStatement(BaseEntity):
     dcat_class = 'dct_ProvenanceStatement'
 
     @property

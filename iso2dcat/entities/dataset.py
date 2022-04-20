@@ -6,7 +6,6 @@ from iso2dcat.namespace import DCAT
 
 
 class DcatDataset(DcatResource):
-
     dcat_class = 'dcat_Dataset'
     entity_type = DCAT.Dataset
 
@@ -15,3 +14,4 @@ class DcatDataset(DcatResource):
 
         distribution = Distribution(self.node, self.rdf, self.uri).run()
 
+        self.add_entity_type()

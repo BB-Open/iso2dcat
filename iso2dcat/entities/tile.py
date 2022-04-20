@@ -23,4 +23,3 @@ class Tile(DcatDataset):
             self.inc('tile:has_parent')
         else:
             self.inc('tile:no_parent')
-

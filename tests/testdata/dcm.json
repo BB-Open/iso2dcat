@@ -1,0 +1,72 @@
+﻿{
+  "publisher": {
+    "time": "2022-04-13T13:13:55",
+    "count": 8,
+    "mapping": [
+      {
+        "publisher_id": "land-lgb-bb",
+        "publisher_name": "Landesvermessung und Geobasisinformation Brandenburg (LGB)",
+        "publisher_type": "Landesbetrieb und Einrichtung des Landes",
+        "publisher_url": "https://geobasis-bb.de"
+      },
+      {
+        "publisher_id": "land-mluk-bb",
+        "publisher_name": "Ministerium für Landwirtschaft, Umwelt und Klimaschutz (MLUK)",
+        "publisher_type": "Ministerium",
+        "publisher_url": "https://mluk.brandenburg.de"
+      },
+      {
+        "publisher_id": "land-lfb-bb",
+        "publisher_name": "Landesbetrieb Forst (LFB)",
+        "publisher_type": "Landesbetrieb und Einrichtung des Landes",
+        "publisher_url": "https://forst.brandenburg.de/"
+      },
+      {
+        "publisher_id": "land-lfu-bb",
+        "publisher_name": "Landesamt für Umwelt (LfU)",
+        "publisher_type": "Landesamt",
+        "publisher_url": "https://lfu.brandenburg.de"
+      },
+      {
+        "publisher_id": "land-lavg-bb",
+        "publisher_name": "Landesamt für Arbeitsschutz, Verbraucherschutz und Gesundheit (LAVG)",
+        "publisher_type": "Landesamt",
+        "publisher_url": "https://lavg.brandenburg.de"
+      },
+      {
+        "publisher_id": "land-lelf-bb",
+        "publisher_name": "Landesamt für Ländliche Entwicklung, Landwirtschaft und Flurneuordnung (LELF)",
+        "publisher_type": "Landesamt",
+        "publisher_url": "https://lelf.brandenburg.de"
+      },
+      {
+        "publisher_id": "land-lbgr-bb",
+        "publisher_name": "Landesamt für Bergbau, Geologie und Rohstoffe (LBGR)",
+        "publisher_type": "Landesamt",
+        "publisher_url": "https://lbgr.brandenburg.de"
+      },
+      {
+        "publisher_id": "land-gl-bebb",
+        "publisher_name": "Gemeinsame Landesplanung Berlin-Brandenburg (GL)",
+        "publisher_type": "Landesamt",
+        "publisher_url": "https://gl.berlin-brandenburg.de"
+      }
+    ]
+  },
+  "dcm": {
+    "time": "2022-04-13T13:13:54",
+    "count": 9042,
+    "mapping": [
+      {
+        "fileidentifier": "0a2c35a5-81b9-4ecd-a223-d40592c0ba12",
+        "priority": 100,
+        "publisher_id": "land-lgb-bb"
+      },
+      {
+        "fileidentifier": "7DE3A549-769C-4F01-A5E6-B3E25D40975E",
+        "priority": 100,
+        "publisher_id": "land-lfu-bb"
+      }
+    ]
+  }
+}

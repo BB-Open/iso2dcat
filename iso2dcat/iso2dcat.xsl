@@ -54,7 +54,8 @@
 
     <xsl:variable name="inspire_md_codelist">http://inspire.ec.europa.eu/metadata-codelist/</xsl:variable>
 
-    <xsl:variable name="resourceIdentifiers" select="replace(string-join(/csw:GetRecordsResponse/csw:SearchResults/gmd:MD_Metadata/gmd:identificationInfo/*/gmd:citation/*/gmd:identifier/*/gmd:code/*, '|'), '#', '%23')"/>
+    <xsl:variable name="resourceIdentifiers"
+                  select="replace(string-join(/csw:GetRecordsResponse/csw:SearchResults/gmd:MD_Metadata/gmd:identificationInfo/*/gmd:citation/*/gmd:identifier/*/gmd:code/*, '|'), '#', '%23')"/>
     <xsl:variable name="coupledServicesUri">
         <xsl:value-of select="'direct:getCoupledServices'"/>
         <xsl:if test="/soapenv:Envelope" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
@@ -90,7 +91,8 @@
             <!--dct:modified-->
 
             <!--dct:title-->
-            <xsl:apply-templates select="gmd:identificationInfo[1]/*/gmd:citation/*/gmd:title/gco:CharacterString[text()]"/>
+            <xsl:apply-templates
+                    select="gmd:identificationInfo[1]/*/gmd:citation/*/gmd:title/gco:CharacterString[text()]"/>
 
             <!--dct:description-->
             <xsl:apply-templates select="gmd:identificationInfo[1]/*/gmd:abstract/gco:CharacterString[text()]"/>
@@ -104,43 +106,58 @@
             <!--dct:language-->
             <!--cnt:characterEncoding-->
             <xsl:choose>
-                <xsl:when test="gmd:language/*[string-length(@codeListValue) = 3]|gmd:identificationInfo/*/gmd:language/gco:CharacterString[string-length(text()) = 3]">
-                    <xsl:apply-templates select="gmd:language/*[string-length(@codeListValue) = 3]|gmd:identificationInfo/*/gmd:language/gco:CharacterString[string-length(text()) = 3]"/>
+                <xsl:when
+                        test="gmd:language/*[string-length(@codeListValue) = 3]|gmd:identificationInfo/*/gmd:language/gco:CharacterString[string-length(text()) = 3]">
+                    <xsl:apply-templates
+                            select="gmd:language/*[string-length(@codeListValue) = 3]|gmd:identificationInfo/*/gmd:language/gco:CharacterString[string-length(text()) = 3]"/>
                     <xsl:apply-templates select="gmd:characterSet/*/@codeListValue"/>
                 </xsl:when>
                 <xsl:otherwise>
-                    <xsl:apply-templates select="gmd:identificationInfo[1]/*/gmd:language/*[string-length(@codeListValue) = 3]|gmd:identificationInfo/*/gmd:language/gco:CharacterString[string-length(text()) = 3]"/>
-                    <xsl:apply-templates select="gmd:identificationInfo[1]/*/gmd:characterSet/*/@codeListValue|ancestor::gmi:MI_Metadata/gmd:identificationInfo/*/gmd:characterSet/*/@codeListValue"/>
+                    <xsl:apply-templates
+                            select="gmd:identificationInfo[1]/*/gmd:language/*[string-length(@codeListValue) = 3]|gmd:identificationInfo/*/gmd:language/gco:CharacterString[string-length(text()) = 3]"/>
+                    <xsl:apply-templates
+                            select="gmd:identificationInfo[1]/*/gmd:characterSet/*/@codeListValue|ancestor::gmi:MI_Metadata/gmd:identificationInfo/*/gmd:characterSet/*/@codeListValue"/>
                 </xsl:otherwise>
             </xsl:choose>
 
 
             <!--dct:accessRights-->
-            <xsl:variable name="accessConstraints" select="gmd:identificationInfo[1]/*/gmd:resourceConstraints/*[*/gmd:MD_RestrictionCode/@codeListValue=$c_other_restrictions]/gmd:otherConstraints[. != $c_no_limitation]"/>
+            <xsl:variable name="accessConstraints"
+                          select="gmd:identificationInfo[1]/*/gmd:resourceConstraints/*[*/gmd:MD_RestrictionCode/@codeListValue=$c_other_restrictions]/gmd:otherConstraints[. != $c_no_limitation]"/>
             <xsl:apply-templates select="$accessConstraints[1]"/>
 
             <!--dcat:keyword-->
-            <xsl:apply-templates select="gmd:identificationInfo[1]/*/gmd:descriptiveKeywords/*/gmd:keyword/gco:CharacterString[text()]"/>
+            <xsl:apply-templates
+                    select="gmd:identificationInfo[1]/*/gmd:descriptiveKeywords/*/gmd:keyword/gco:CharacterString[text()]"/>
 
             <!--dcatde:politicalGeocodingLevelURI-->
             <!--dcatde:politicalGeocodingURI-->
 
             <!--dct:spatial-->
-            <xsl:apply-templates select="gmd:identificationInfo[1]/*/gmd:extent/*/gmd:geographicElement|gmd:identificationInfo/*/srv:extent/*/gmd:geographicElement"/>
+            <xsl:apply-templates
+                    select="gmd:identificationInfo[1]/*/gmd:extent/*/gmd:geographicElement|gmd:identificationInfo/*/srv:extent/*/gmd:geographicElement"/>
 
             <!--dct:issued dct:modified-->
             <xsl:apply-templates select="gmd:dateStamp"/>
-            <xsl:apply-templates select="gmd:identificationInfo[1]/*/gmd:citation/*/gmd:date/*[gmd:dateType/*/@codeListValue='publication' or gmd:dateType/*/@codeListValue='revision' or gmd:dateType/*/@codeListValue='creation']/gmd:date/*"/>
+            <xsl:apply-templates
+                    select="gmd:identificationInfo[1]/*/gmd:citation/*/gmd:date/*[gmd:dateType/*/@codeListValue='publication' or gmd:dateType/*/@codeListValue='revision' or gmd:dateType/*/@codeListValue='creation']/gmd:date/*"/>
 
             <!--dcat:contactPoint dct:publisher dcatde:maintainer-->
-            <xsl:variable name="pointOfContact" select="gmd:identificationInfo[1]/*/gmd:pointOfContact/gmd:CI_ResponsibleParty[gmd:role/gmd:CI_RoleCode/@codeListValue='pointOfContact']"/>
-            <xsl:variable name="publisher" select="gmd:identificationInfo[1]/*/gmd:pointOfContact/gmd:CI_ResponsibleParty[gmd:role/gmd:CI_RoleCode/@codeListValue='publisher']"/>
-            <xsl:apply-templates select="$pointOfContact | $publisher | gmd:identificationInfo[1]/*/gmd:pointOfContact/gmd:CI_ResponsibleParty[gmd:role/gmd:CI_RoleCode/@codeListValue='custodian']"/>
+            <xsl:variable name="pointOfContact"
+                          select="gmd:identificationInfo[1]/*/gmd:pointOfContact/gmd:CI_ResponsibleParty[gmd:role/gmd:CI_RoleCode/@codeListValue='pointOfContact']"/>
+            <xsl:variable name="publisher"
+                          select="gmd:identificationInfo[1]/*/gmd:pointOfContact/gmd:CI_ResponsibleParty[gmd:role/gmd:CI_RoleCode/@codeListValue='publisher']"/>
+            <xsl:apply-templates
+                    select="$pointOfContact | $publisher | gmd:identificationInfo[1]/*/gmd:pointOfContact/gmd:CI_ResponsibleParty[gmd:role/gmd:CI_RoleCode/@codeListValue='custodian']"/>
             <xsl:choose>
                 <xsl:when test="count($pointOfContact) = 0">
-                    <xsl:apply-templates select="gmd:identificationInfo[1]/*/gmd:pointOfContact[1]/gmd:CI_ResponsibleParty" mode="contactPoint"/>
+                    <xsl:apply-templates
+                            select="gmd:identificationInfo[1]/*/gmd:pointOfContact[1]/gmd:CI_ResponsibleParty"
+                            mode="contactPoint"/>
                     <xsl:if test="count($publisher) = 0">
-                        <xsl:apply-templates select="gmd:identificationInfo[1]/*/gmd:pointOfContact[1]/gmd:CI_ResponsibleParty" mode="publisher"/>
+                        <xsl:apply-templates
+                                select="gmd:identificationInfo[1]/*/gmd:pointOfContact[1]/gmd:CI_ResponsibleParty"
+                                mode="publisher"/>
                     </xsl:if>
                 </xsl:when>
                 <xsl:otherwise>
@@ -150,8 +167,10 @@
                 </xsl:otherwise>
             </xsl:choose>
 
-            <xsl:apply-templates select="gmd:dataQualityInfo/*/gmd:report/*/gmd:result/gmd:DQ_ConformanceResult/gmd:specification/gmd:CI_Citation"/>
-            <xsl:apply-templates select="gmd:identificationInfo[1]/*/gmd:resourceMaintenance/*/gmd:maintenanceAndUpdateFrequency/*/@codeListValue"/>
+            <xsl:apply-templates
+                    select="gmd:dataQualityInfo/*/gmd:report/*/gmd:result/gmd:DQ_ConformanceResult/gmd:specification/gmd:CI_Citation"/>
+            <xsl:apply-templates
+                    select="gmd:identificationInfo[1]/*/gmd:resourceMaintenance/*/gmd:maintenanceAndUpdateFrequency/*/@codeListValue"/>
             <xsl:apply-templates select="gmd:hierarchyLevel"/>
 
             <!--dcat:distribution-->
@@ -167,11 +186,15 @@
             <xsl:variable name="metadataUri" select="replace($cswServiceShowMetadataBaseUrl, ' ', '')"/>
             <xsl:choose>
                 <xsl:when test="$metadataUri != '' and contains($metadataUri, $uidPlaceholder)">
-                    <xsl:attribute name="rdf:about"><xsl:value-of select="replace($metadataUri, $uidPlaceholder, $identifier)"/></xsl:attribute>
+                    <xsl:attribute name="rdf:about">
+                        <xsl:value-of select="replace($metadataUri, $uidPlaceholder, $identifier)"/>
+                    </xsl:attribute>
                 </xsl:when>
                 <xsl:when test="$metadataUri != ''">
                     <!-- Concat with identifier -->
-                    <xsl:attribute name="rdf:about"><xsl:value-of select="concat($metadataUri, '#', $identifier)"/></xsl:attribute>
+                    <xsl:attribute name="rdf:about">
+                        <xsl:value-of select="concat($metadataUri, '#', $identifier)"/>
+                    </xsl:attribute>
                 </xsl:when>
                 <!-- If no metadataUri is set the attribute rdf:about is not added -->
             </xsl:choose>
@@ -244,30 +267,30 @@
         </earl:result>
     </xsl:template>
 
-<!--    <xsl:template match="gmd:pass[text() = 'true']" mode="value">
-        <xsl:value-of select="concat($inspire_md_codelist, 'DegreeOfConformity/conformant')"/>
-    </xsl:template>
+    <!--    <xsl:template match="gmd:pass[text() = 'true']" mode="value">
+            <xsl:value-of select="concat($inspire_md_codelist, 'DegreeOfConformity/conformant')"/>
+        </xsl:template>
 
-    <xsl:template match="gmd:pass[text() = 'false']" mode="value">
-        <xsl:value-of select="concat($inspire_md_codelist, 'DegreeOfConformity/notConformant')"/>
-    </xsl:template>
+        <xsl:template match="gmd:pass[text() = 'false']" mode="value">
+            <xsl:value-of select="concat($inspire_md_codelist, 'DegreeOfConformity/notConformant')"/>
+        </xsl:template>
 
-    <xsl:template match="gmd:pass" mode="value">
-        <xsl:value-of select="concat($inspire_md_codelist, 'DegreeOfConformity/notEvaluated')"/>
-    </xsl:template>
--->
+        <xsl:template match="gmd:pass" mode="value">
+            <xsl:value-of select="concat($inspire_md_codelist, 'DegreeOfConformity/notEvaluated')"/>
+        </xsl:template>
+    -->
     <xsl:template
-        match="gmd:dateStamp/*[text() castable as xs:date or text() castable as xs:dateTime]">
+            match="gmd:dateStamp/*[text() castable as xs:date or text() castable as xs:dateTime]">
         <dct:modified>
             <xsl:call-template name="dateType"/>
             <xsl:value-of select="."/>
         </dct:modified>
     </xsl:template>
 
-<!--    <xsl:template match="gmd:hierarchyLevel[*/@codeListValue = 'dataset' or */@codeListValue = 'series']">
-        <dct:type rdf:resource="{concat($inspire_md_codelist, 'ResourceType/', */@codeListValue)}"/>
-    </xsl:template>
--->
+    <!--    <xsl:template match="gmd:hierarchyLevel[*/@codeListValue = 'dataset' or */@codeListValue = 'series']">
+            <dct:type rdf:resource="{concat($inspire_md_codelist, 'ResourceType/', */@codeListValue)}"/>
+        </xsl:template>
+    -->
     <xsl:template match="gmd:hierarchyLevel"/>
 
     <xsl:template match="gmd:identificationInfo/*/gmd:citation/*/gmd:title/gco:CharacterString">
@@ -283,21 +306,24 @@
     <xsl:template match="gmd:PT_FreeText/gmd:textGroup/gmd:LocalisedCharacterString" mode="param">
         <xsl:param name="mode" select="'description'"/>
         <xsl:variable name="localeRef" select="substring-after(@locale, '#')"/>
-        <xsl:variable name="locale" select="ancestor::gmd:MD_Metadata/gmd:locale/*[@id = $localeRef]|ancestor::gmi:MI_Metadata/gmd:locale/*[@id = $localeRef]"/>
+        <xsl:variable name="locale"
+                      select="ancestor::gmd:MD_Metadata/gmd:locale/*[@id = $localeRef]|ancestor::gmi:MI_Metadata/gmd:locale/*[@id = $localeRef]"/>
         <xsl:if test="$locale">
             <xsl:variable name="language" select="$locale/gmd:languageCode"/>
             <xsl:if test="ancestor::gmd:MD_Metadata/gmd:language/*/gco:CharacterString">
                 <xsl:call-template name="language">
                     <xsl:with-param name="mode" select="$mode"/>
                     <xsl:with-param name="language" select="$language"/>
-                    <xsl:with-param name="languageCode" select="string(ancestor::gmd:MD_Metadata/gmd:language/*/gco:CharacterString)"/>
+                    <xsl:with-param name="languageCode"
+                                    select="string(ancestor::gmd:MD_Metadata/gmd:language/*/gco:CharacterString)"/>
                 </xsl:call-template>
             </xsl:if>
             <xsl:if test="ancestor::gmd:MD_Metadata/gmd:language/*/@codeListValue">
                 <xsl:call-template name="language">
                     <xsl:with-param name="mode" select="$mode"/>
                     <xsl:with-param name="language" select="$language"/>
-                    <xsl:with-param name="languageCode" select="string(ancestor::gmd:MD_Metadata/gmd:language/*/@codeListValue)"/>
+                    <xsl:with-param name="languageCode"
+                                    select="string(ancestor::gmd:MD_Metadata/gmd:language/*/@codeListValue)"/>
                 </xsl:call-template>
             </xsl:if>
         </xsl:if>
@@ -339,12 +365,14 @@
         <xsl:apply-templates select="../gmd:PT_FreeText/gmd:textGroup/gmd:LocalisedCharacterString" mode="param"/>
     </xsl:template>
 
-    <xsl:template match="gmd:identificationInfo/*/gmd:extent/*/gmd:geographicElement|gmd:identificationInfo/*/srv:extent/*/gmd:geographicElement">
+    <xsl:template
+            match="gmd:identificationInfo/*/gmd:extent/*/gmd:geographicElement|gmd:identificationInfo/*/srv:extent/*/gmd:geographicElement">
         <xsl:if test="gmd:EX_GeographicBoundingBox[string(gmd:southBoundLatitude/*) != string(gmd:northBoundLatitude/*) and string(gmd:westBoundLongitude/*) != string(gmd:eastBoundLongitude/*)]">
             <dct:spatial>
                 <dct:Location>
                     <xsl:apply-templates select="../gmd:description/gco:CharacterString"/>
-                    <xsl:apply-templates select="gmd:EX_GeographicBoundingBox[string(gmd:southBoundLatitude/*) != string(gmd:northBoundLatitude/*) and string(gmd:westBoundLongitude/*) != string(gmd:eastBoundLongitude/*)]"/>
+                    <xsl:apply-templates
+                            select="gmd:EX_GeographicBoundingBox[string(gmd:southBoundLatitude/*) != string(gmd:northBoundLatitude/*) and string(gmd:westBoundLongitude/*) != string(gmd:eastBoundLongitude/*)]"/>
                 </dct:Location>
             </dct:spatial>
         </xsl:if>
@@ -360,7 +388,8 @@
 
     <xsl:template match="gmd:extent/*/gmd:description/gmd:PT_FreeText/gmd:textGroup/gmd:LocalisedCharacterString">
         <xsl:variable name="localeRef" select="substring-after(@locale, '#')"/>
-        <xsl:variable name="locale" select="ancestor::gmd:MD_Metadata/gmd:locale/*[@id = $localeRef]|ancestor::gmi:MI_Metadata/gmd:locale/*[@id = $localeRef]"/>
+        <xsl:variable name="locale"
+                      select="ancestor::gmd:MD_Metadata/gmd:locale/*[@id = $localeRef]|ancestor::gmi:MI_Metadata/gmd:locale/*[@id = $localeRef]"/>
         <xsl:if test="$locale">
             <rdfs:label>
                 <xsl:apply-templates select="$locale/gmd:languageCode/*" mode="xmlLang"/>
@@ -371,7 +400,9 @@
 
     <xsl:template match="gmd:geographicElement/gmd:EX_GeographicBoundingBox">
         <locn:geometry rdf:datatype="http://www.opengis.net/ont/geosparql#gmlLiteral">
-            <xsl:text disable-output-escaping="yes">&lt;![CDATA[&lt;gml:Envelope srsName="http://www.opengis.net/def/EPSG/0/4326"&gt;&lt;gml:lowerCorner&gt;</xsl:text>
+            <xsl:text disable-output-escaping="yes">&lt;![CDATA[&lt;gml:Envelope
+                srsName="http://www.opengis.net/def/EPSG/0/4326"&gt;&lt;gml:lowerCorner&gt;
+            </xsl:text>
             <xsl:value-of select="concat(gmd:southBoundLatitude/*, ' ', gmd:westBoundLongitude/*)"/>
             <xsl:text disable-output-escaping="yes">&lt;/gml:lowerCorner&gt;&lt;gml:upperCorner&gt;</xsl:text>
             <xsl:value-of select="concat(gmd:northBoundLatitude/*, ' ', gmd:eastBoundLongitude/*)"/>
@@ -379,8 +410,10 @@
         </locn:geometry>
         <locn:geometry rdf:datatype="http://www.opengis.net/ont/geosparql#wktLiteral">
             <xsl:text disable-output-escaping="yes">&lt;![CDATA[POLYGON((</xsl:text>
-            <xsl:value-of select="concat(gmd:westBoundLongitude/*, ' ', gmd:northBoundLatitude/*, ',', gmd:eastBoundLongitude/*, ' ', gmd:northBoundLatitude/*, ',', gmd:eastBoundLongitude/*, ' ', gmd:southBoundLatitude/*,',')"/>
-            <xsl:value-of select="concat(gmd:westBoundLongitude/*, ' ', gmd:southBoundLatitude/*, ',', gmd:westBoundLongitude/*, ' ', gmd:northBoundLatitude/*)"/>
+            <xsl:value-of
+                    select="concat(gmd:westBoundLongitude/*, ' ', gmd:northBoundLatitude/*, ',', gmd:eastBoundLongitude/*, ' ', gmd:northBoundLatitude/*, ',', gmd:eastBoundLongitude/*, ' ', gmd:southBoundLatitude/*,',')"/>
+            <xsl:value-of
+                    select="concat(gmd:westBoundLongitude/*, ' ', gmd:southBoundLatitude/*, ',', gmd:westBoundLongitude/*, ' ', gmd:northBoundLatitude/*)"/>
             <xsl:text disable-output-escaping="yes">))]]&gt;</xsl:text>
         </locn:geometry>
     </xsl:template>
@@ -398,9 +431,11 @@
         </skos:inScheme>
     </xsl:template>
 
-    <xsl:template match="gmd:authority/gmd:CI_Citation/gmd:title/gmd:PT_FreeText/gmd:textGroup/gmd:LocalisedCharacterString">
+    <xsl:template
+            match="gmd:authority/gmd:CI_Citation/gmd:title/gmd:PT_FreeText/gmd:textGroup/gmd:LocalisedCharacterString">
         <xsl:variable name="localeRef" select="substring-after(@locale, '#')"/>
-        <xsl:variable name="locale" select="ancestor::gmd:MD_Metadata/gmd:locale/*[@id = $localeRef]|ancestor::gmi:MI_Metadata/gmd:locale/*[@id = $localeRef]"/>
+        <xsl:variable name="locale"
+                      select="ancestor::gmd:MD_Metadata/gmd:locale/*[@id = $localeRef]|ancestor::gmi:MI_Metadata/gmd:locale/*[@id = $localeRef]"/>
         <xsl:if test="$locale">
             <rdfs:label>
                 <xsl:apply-templates select="$locale/gmd:languageCode/*" mode="xmlLang"/>
@@ -419,7 +454,7 @@
     </xsl:template>
 
     <xsl:template
-        match="gmd:date/*[gmd:dateType/*/@codeListValue = 'publication']/gmd:date/*[text() castable as xs:date or text() castable as xs:dateTime]">
+            match="gmd:date/*[gmd:dateType/*/@codeListValue = 'publication']/gmd:date/*[text() castable as xs:date or text() castable as xs:dateTime]">
         <xsl:if test="not(ancestor::gmd:MD_Metadata/gmd:dateStamp/* or ancestor::gmd:MD_Metadata/gmd:identificationInfo[1]/*/gmd:citation/*/gmd:date/*[gmd:dateType/*/@codeListValue = 'revision']/gmd:date/*)">
             <dct:modified>
                 <xsl:call-template name="dateType"/>
@@ -435,7 +470,7 @@
     </xsl:template>
 
     <xsl:template
-        match="gmd:date/*[gmd:dateType/*/@codeListValue = 'revision']/gmd:date/*[text() castable as xs:date or text() castable as xs:dateTime]">
+            match="gmd:date/*[gmd:dateType/*/@codeListValue = 'revision']/gmd:date/*[text() castable as xs:date or text() castable as xs:dateTime]">
         <xsl:if test="not(ancestor::gmd:MD_Metadata/gmd:dateStamp/*)">
             <dct:modified>
                 <xsl:call-template name="dateType"/>
@@ -445,7 +480,7 @@
     </xsl:template>
 
     <xsl:template
-        match="gmd:date/*[gmd:dateType/*/@codeListValue = 'creation']/gmd:date/*[text() castable as xs:date or text() castable as xs:dateTime]">
+            match="gmd:date/*[gmd:dateType/*/@codeListValue = 'creation']/gmd:date/*[text() castable as xs:date or text() castable as xs:dateTime]">
         <xsl:if test="not(ancestor::gmd:MD_Metadata/gmd:dateStamp/* or ancestor::gmd:MD_Metadata/gmd:identificationInfo[1]/*/gmd:citation/*/gmd:date/*[gmd:dateType/*/@codeListValue = 'revision']/gmd:date/* or ancestor::gmd:MD_Metadata/gmd:identificationInfo[1]/*/gmd:citation/*/gmd:date/*[gmd:dateType/*/@codeListValue = 'publication']/gmd:date/*)">
             <dct:modified>
                 <xsl:call-template name="dateType"/>
@@ -463,9 +498,9 @@
     </xsl:template>
 
     <xsl:template match="gmd:CI_ResponsibleParty" mode="contactPoint">
-                    <dcat:contactPoint>
-                        <xsl:call-template name="vcardOrg"/>
-                    </dcat:contactPoint>
+        <dcat:contactPoint>
+            <xsl:call-template name="vcardOrg"/>
+        </dcat:contactPoint>
     </xsl:template>
 
     <xsl:template match="gmd:CI_ResponsibleParty[gmd:role/gmd:CI_RoleCode/@codeListValue='publisher']">
@@ -473,15 +508,15 @@
     </xsl:template>
 
     <xsl:template match="gmd:CI_ResponsibleParty" mode="publisher">
-                    <dct:publisher>
-                        <xsl:call-template name="foafOrg"/>
-                    </dct:publisher>
+        <dct:publisher>
+            <xsl:call-template name="foafOrg"/>
+        </dct:publisher>
     </xsl:template>
 
     <xsl:template match="gmd:CI_ResponsibleParty[gmd:role/gmd:CI_RoleCode/@codeListValue='custodian']">
-                    <dcatde:maintainer>
-                        <xsl:call-template name="foafOrg"/>
-                    </dcatde:maintainer>
+        <dcatde:maintainer>
+            <xsl:call-template name="foafOrg"/>
+        </dcatde:maintainer>
     </xsl:template>
 
     <xsl:template name="foafOrg">
@@ -493,7 +528,9 @@
                     <rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Organization"/>
                     <xsl:variable name="orgLink" select="string(gmd:organisationName/gmx:Anchor/@xlink:href)"/>
                     <xsl:if test="$orgLink != ''">
-                        <xsl:attribute name="rdf:resource"><xsl:value-of select="$orgLink"/></xsl:attribute>
+                        <xsl:attribute name="rdf:resource">
+                            <xsl:value-of select="$orgLink"/>
+                        </xsl:attribute>
                     </xsl:if>
                     <xsl:apply-templates select="gmd:organisationName/gco:CharacterString[text()]"/>
                 </xsl:when>
@@ -501,7 +538,9 @@
                     <rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
                     <xsl:variable name="indLink" select="string(gmd:individualName/gmx:Anchor/@xlink:href)"/>
                     <xsl:if test="$indLink != ''">
-                        <xsl:attribute name="rdf:resource"><xsl:value-of select="$indLink"/></xsl:attribute>
+                        <xsl:attribute name="rdf:resource">
+                            <xsl:value-of select="$indLink"/>
+                        </xsl:attribute>
                     </xsl:if>
                     <xsl:apply-templates select="gmd:individualName/gco:CharacterString[text()]"/>
                 </xsl:when>
@@ -509,7 +548,8 @@
                     <rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Agent"/>
                 </xsl:otherwise>
             </xsl:choose>
-            <xsl:apply-templates select="gmd:contactInfo/*/gmd:address/*/gmd:electronicMailAddress/gco:CharacterString[not(contains(text, ';') or contains(text, ',') or contains(text, ' '))]"/>
+            <xsl:apply-templates
+                    select="gmd:contactInfo/*/gmd:address/*/gmd:electronicMailAddress/gco:CharacterString[not(contains(text, ';') or contains(text, ',') or contains(text, ' '))]"/>
             <xsl:apply-templates select="gmd:contactInfo/*/gmd:phone/*/gmd:voice/*[text()]"/>
             <xsl:apply-templates select="gmd:contactInfo/*/gmd:onlineResource/*/gmd:linkage/*[text()]"/>
             <xsl:apply-templates select="gmd:contactInfo/*/gmd:address/*"/>
@@ -517,7 +557,9 @@
     </xsl:template>
 
     <xsl:template match="gmd:organisationName/gco:CharacterString|gmd:individualName/gco:CharacterString">
-        <foaf:name><xsl:value-of select="."/></foaf:name>
+        <foaf:name>
+            <xsl:value-of select="."/>
+        </foaf:name>
     </xsl:template>
 
     <xsl:template match="gmd:organisationName/gco:CharacterString" mode="memberOf">
@@ -533,11 +575,12 @@
     </xsl:template>
 
     <xsl:template match="gmd:contactInfo/*/gmd:phone/*/gmd:voice/*">
-        <foaf:phone rdf:resource="{concat('tel:+', translate(translate(translate(translate(translate(normalize-space(.),' ',''),'(',''),')',''),'+',''),'.',''))}"/>
+        <foaf:phone
+                rdf:resource="{concat('tel:+', translate(translate(translate(translate(translate(normalize-space(.),' ',''),'(',''),')',''),'+',''),'.',''))}"/>
     </xsl:template>
 
     <xsl:template match="gmd:contactInfo/*/gmd:onlineResource/*/gmd:linkage/*">
-        <foaf:homepage rdf:resource="{text()}" />
+        <foaf:homepage rdf:resource="{text()}"/>
     </xsl:template>
 
     <xsl:template match="gmd:contactInfo/*/gmd:address/*">
@@ -553,23 +596,33 @@
     </xsl:template>
 
     <xsl:template match="gmd:deliveryPoint/*">
-        <locn:thoroughfare><xsl:value-of select="."/></locn:thoroughfare>
+        <locn:thoroughfare>
+            <xsl:value-of select="."/>
+        </locn:thoroughfare>
     </xsl:template>
 
     <xsl:template match="gmd:city/*">
-        <locn:postName><xsl:value-of select="."/></locn:postName>
+        <locn:postName>
+            <xsl:value-of select="."/>
+        </locn:postName>
     </xsl:template>
 
     <xsl:template match="gmd:postalCode/*">
-        <locn:postCode><xsl:value-of select="."/></locn:postCode>
+        <locn:postCode>
+            <xsl:value-of select="."/>
+        </locn:postCode>
     </xsl:template>
 
     <xsl:template match="gmd:administrativeArea/*">
-        <locn:adminUnitL2><xsl:value-of select="."/></locn:adminUnitL2>
+        <locn:adminUnitL2>
+            <xsl:value-of select="."/>
+        </locn:adminUnitL2>
     </xsl:template>
 
     <xsl:template match="gmd:country/*">
-        <locn:adminUnitL1><xsl:value-of select="."/></locn:adminUnitL1>
+        <locn:adminUnitL1>
+            <xsl:value-of select="."/>
+        </locn:adminUnitL1>
     </xsl:template>
 
     <xsl:template name="vcardOrg">
@@ -580,7 +633,9 @@
                 <xsl:when test="$orgName != ''">
                     <xsl:variable name="orgLink" select="string(gmd:organisationName/gmx:Anchor/@xlink:href)"/>
                     <xsl:if test="$orgLink != ''">
-                        <xsl:attribute name="rdf:resource"><xsl:value-of select="$orgLink"/></xsl:attribute>
+                        <xsl:attribute name="rdf:resource">
+                            <xsl:value-of select="$orgLink"/>
+                        </xsl:attribute>
                     </xsl:if>
                     <rdf:type rdf:resource="http://www.w3.org/2006/vcard/ns#Organization"/>
                     <xsl:apply-templates select="gmd:organisationName/gco:CharacterString[text()]" mode="vcard"/>
@@ -588,7 +643,9 @@
                 <xsl:when test="$indName != ''">
                     <xsl:variable name="indLink" select="string(gmd:individualName/gmx:Anchor/@xlink:href)"/>
                     <xsl:if test="$indLink != ''">
-                        <xsl:attribute name="rdf:resource"><xsl:value-of select="$indLink"/></xsl:attribute>
+                        <xsl:attribute name="rdf:resource">
+                            <xsl:value-of select="$indLink"/>
+                        </xsl:attribute>
                     </xsl:if>
                     <rdf:type rdf:resource="http://www.w3.org/2006/vcard/ns#Individual"/>
                     <xsl:apply-templates select="gmd:individualName/gco:CharacterString[text()]" mode="vcard"/>
@@ -597,15 +654,19 @@
                     <rdf:type rdf:resource="http://www.w3.org/2006/vcard/ns#Kind"/>
                 </xsl:otherwise>
             </xsl:choose>
-            <xsl:apply-templates select="gmd:contactInfo/*/gmd:address/*/gmd:electronicMailAddress/gco:CharacterString[not(contains(text, ';') or contains(text, ',') or contains(text, ' '))]" mode="vcard"/>
-            <xsl:apply-templates select="gmd:contactInfo/*/gmd:phone/*/gmd:voice/*[text()]"  mode="vcard"/>
+            <xsl:apply-templates
+                    select="gmd:contactInfo/*/gmd:address/*/gmd:electronicMailAddress/gco:CharacterString[not(contains(text, ';') or contains(text, ',') or contains(text, ' '))]"
+                    mode="vcard"/>
+            <xsl:apply-templates select="gmd:contactInfo/*/gmd:phone/*/gmd:voice/*[text()]" mode="vcard"/>
             <xsl:apply-templates select="gmd:contactInfo/*/gmd:onlineResource/*/gmd:linkage/*[text()]" mode="vcard"/>
             <xsl:apply-templates select="gmd:contactInfo/*/gmd:address/*" mode="vcard"/>
         </rdf:Description>
     </xsl:template>
 
     <xsl:template match="gmd:organisationName/gco:CharacterString|gmd:individualName/gco:CharacterString" mode="vcard">
-        <vcard:fn><xsl:value-of select="."/></vcard:fn>
+        <vcard:fn>
+            <xsl:value-of select="."/>
+        </vcard:fn>
     </xsl:template>
 
     <xsl:template match="gmd:electronicMailAddress/*" mode="vcard">
@@ -614,7 +675,8 @@
 
     <xsl:template match="gmd:contactInfo/*/gmd:phone/*/gmd:voice/*" mode="vcard">
         <vcard:hasTelephone rdf:parseType="Resource">
-            <vcard:hasValue rdf:resource="{concat('tel:+', translate(translate(translate(translate(translate(normalize-space(.),' ',''),'(',''),')',''),'+',''),'.',''))}"/>
+            <vcard:hasValue
+                    rdf:resource="{concat('tel:+', translate(translate(translate(translate(translate(normalize-space(.),' ',''),'(',''),')',''),'+',''),'.',''))}"/>
             <rdf:type rdf:resource="http://www.w3.org/2006/vcard/ns#Voice"/>
         </vcard:hasTelephone>
     </xsl:template>
@@ -636,23 +698,33 @@
     </xsl:template>
 
     <xsl:template match="gmd:deliveryPoint/*" mode="vcard">
-        <vcard:street-address><xsl:value-of select="."/></vcard:street-address>
+        <vcard:street-address>
+            <xsl:value-of select="."/>
+        </vcard:street-address>
     </xsl:template>
 
     <xsl:template match="gmd:city/*" mode="vcard">
-        <vcard:locality><xsl:value-of select="."/></vcard:locality>
+        <vcard:locality>
+            <xsl:value-of select="."/>
+        </vcard:locality>
     </xsl:template>
 
     <xsl:template match="gmd:postalCode/*" mode="vcard">
-        <vcard:postal-code><xsl:value-of select="."/></vcard:postal-code>
+        <vcard:postal-code>
+            <xsl:value-of select="."/>
+        </vcard:postal-code>
     </xsl:template>
 
     <xsl:template match="gmd:administrativeArea/*" mode="vcard">
-        <vcard:region><xsl:value-of select="."/></vcard:region>
+        <vcard:region>
+            <xsl:value-of select="."/>
+        </vcard:region>
     </xsl:template>
 
     <xsl:template match="gmd:country/*" mode="vcard">
-        <vcard:country-name><xsl:value-of select="."/></vcard:country-name>
+        <vcard:country-name>
+            <xsl:value-of select="."/>
+        </vcard:country-name>
     </xsl:template>
 
     <xsl:template match="srv:serviceType">
@@ -679,42 +751,55 @@
     </xsl:template>
 
     <xsl:template name="dataDistribution">
-        <xsl:variable name="distributionLinks" select="gmd:distributionInfo/*/gmd:transferOptions/*/gmd:onLine/*[gmd:function/*/@codeListValue='download' and gmd:linkage/*[text()]]"/>
+        <xsl:variable name="distributionLinks"
+                      select="gmd:distributionInfo/*/gmd:transferOptions/*/gmd:onLine/*[gmd:function/*/@codeListValue='download' and gmd:linkage/*[text()]]"/>
         <xsl:apply-templates select="$distributionLinks" mode="nrw"/>
         <!-- read and store license information start -->
-        <xsl:variable name="accessConstraints" select="gmd:identificationInfo[1]/*/gmd:resourceConstraints/*[*/gmd:MD_RestrictionCode/@codeListValue=$c_other_restrictions]/gmd:otherConstraints[gco:CharacterString != $c_no_limitation]"/>
-        <xsl:variable name="accessConstraintsJson" select="$accessConstraints[starts-with(normalize-space(gco:CharacterString), '{')]"/>
+        <xsl:variable name="accessConstraints"
+                      select="gmd:identificationInfo[1]/*/gmd:resourceConstraints/*[*/gmd:MD_RestrictionCode/@codeListValue=$c_other_restrictions]/gmd:otherConstraints[gco:CharacterString != $c_no_limitation]"/>
+        <xsl:variable name="accessConstraintsJson"
+                      select="$accessConstraints[starts-with(normalize-space(gco:CharacterString), '{')]"/>
         <!-- read and store license information end -->
-        <xsl:variable name="resourceIdentifier" select="gmd:identificationInfo/*/gmd:citation/*/gmd:identifier/*/gmd:code/*"/>
+        <xsl:variable name="resourceIdentifier"
+                      select="gmd:identificationInfo/*/gmd:citation/*/gmd:identifier/*/gmd:code/*"/>
         <!-- provide license information from metadata as fallback, if available -->
-        <xsl:apply-templates select="$coupledServices/csw:GetRecordsResponse/csw:SearchResults/gmd:MD_Metadata[gmd:identificationInfo/*/srv:operatesOn/@xlink:href = $resourceIdentifier or gmd:identificationInfo/*/srv:operatesOn/@uuidref = $resourceIdentifier]" mode="serviceDistribution">
-            <xsl:with-param name="licenseInMainMetadata" select="if (count($accessConstraintsJson) &gt; 0) then $accessConstraintsJson[1] else null"/>
+        <xsl:apply-templates
+                select="$coupledServices/csw:GetRecordsResponse/csw:SearchResults/gmd:MD_Metadata[gmd:identificationInfo/*/srv:operatesOn/@xlink:href = $resourceIdentifier or gmd:identificationInfo/*/srv:operatesOn/@uuidref = $resourceIdentifier]"
+                mode="serviceDistribution">
+            <xsl:with-param name="licenseInMainMetadata"
+                            select="if (count($accessConstraintsJson) &gt; 0) then $accessConstraintsJson[1] else null"/>
         </xsl:apply-templates>
     </xsl:template>
 
     <xsl:template match="gmd:MD_Metadata" mode="serviceDistribution">
         <xsl:param name="licenseInMainMetadata"/>
         <xsl:variable name="serviceType" select="string(gmd:identificationInfo/*/srv:serviceType/*)"/>
-        <xsl:variable name="capabilitiesLinkage" select="gmd:identificationInfo[1]/*/srv:containsOperations/*[lower-case(srv:operationName/*) = 'getcapabilities']/srv:connectPoint/*/gmd:linkage/*"/>
+        <xsl:variable name="capabilitiesLinkage"
+                      select="gmd:identificationInfo[1]/*/srv:containsOperations/*[lower-case(srv:operationName/*) = 'getcapabilities']/srv:connectPoint/*/gmd:linkage/*"/>
         <xsl:variable name="accessUrl">
             <xsl:if test="count($capabilitiesLinkage) &gt; 0">
-                <xsl:variable name="ogcServiceType" select="if (lower-case($serviceType) = 'view') then 'WMS' else if (lower-case($serviceType) = 'download') then 'WFS' else $serviceType"/>
-                <xsl:value-of select="if (ends-with(normalize-space($capabilitiesLinkage[1]), '?')) then concat(normalize-space($capabilitiesLinkage[1]), 'REQUEST=GetCapabilities&amp;SERVICE=', $ogcServiceType) else normalize-space($capabilitiesLinkage[1])"/>
+                <xsl:variable name="ogcServiceType"
+                              select="if (lower-case($serviceType) = 'view') then 'WMS' else if (lower-case($serviceType) = 'download') then 'WFS' else $serviceType"/>
+                <xsl:value-of
+                        select="if (ends-with(normalize-space($capabilitiesLinkage[1]), '?')) then concat(normalize-space($capabilitiesLinkage[1]), 'REQUEST=GetCapabilities&amp;SERVICE=', $ogcServiceType) else normalize-space($capabilitiesLinkage[1])"/>
             </xsl:if>
             <xsl:if test="count($capabilitiesLinkage) = 0">
-                <xsl:value-of select="gmd:identificationInfo[1]/*/srv:containsOperations[1]/*/srv:connectPoint/*/gmd:linkage/*"/>
+                <xsl:value-of
+                        select="gmd:identificationInfo[1]/*/srv:containsOperations[1]/*/srv:connectPoint/*/gmd:linkage/*"/>
             </xsl:if>
         </xsl:variable>
         <dcat:distribution>
             <dcat:Distribution rdf:about="{$accessUrl}#distribution">
-                <xsl:apply-templates select="gmd:identificationInfo[1]/*/gmd:citation/*/gmd:title/gco:CharacterString[text()]"/>
+                <xsl:apply-templates
+                        select="gmd:identificationInfo[1]/*/gmd:citation/*/gmd:title/gco:CharacterString[text()]"/>
                 <xsl:apply-templates select="gmd:identificationInfo[1]/*/gmd:abstract/gco:CharacterString[text()]"/>
                 <xsl:call-template name="dctFormat">
                     <xsl:with-param name="format" select="if ($serviceType = '') then 'Unbekannt' else $serviceType"/>
                 </xsl:call-template>
                 <dcat:accessURL rdf:resource="{$accessUrl}"/>
-                <xsl:apply-templates select="gmd:identificationInfo[1]/*/gmd:citation/*/gmd:date/*[gmd:dateType/*/@codeListValue='publication' or gmd:dateType/*/@codeListValue='revision' or gmd:dateType/*/@codeListValue='creation']/gmd:date/*"
-                    mode="serviceDistribution"/>
+                <xsl:apply-templates
+                        select="gmd:identificationInfo[1]/*/gmd:citation/*/gmd:date/*[gmd:dateType/*/@codeListValue='publication' or gmd:dateType/*/@codeListValue='revision' or gmd:dateType/*/@codeListValue='creation']/gmd:date/*"
+                        mode="serviceDistribution"/>
                 <xsl:call-template name="constraints">
                     <xsl:with-param name="licenseInMainMetadata" select="$licenseInMainMetadata"/>
                 </xsl:call-template>
@@ -723,8 +808,8 @@
     </xsl:template>
 
     <xsl:template
-        match="gmd:date/*[gmd:dateType/*/@codeListValue = 'publication']/gmd:date/*[text() castable as xs:date or text() castable as xs:dateTime]"
-        mode="serviceDistribution">
+            match="gmd:date/*[gmd:dateType/*/@codeListValue = 'publication']/gmd:date/*[text() castable as xs:date or text() castable as xs:dateTime]"
+            mode="serviceDistribution">
         <xsl:if test="not(ancestor::gmd:MD_Metadata/gmd:identificationInfo[1]/*/gmd:citation/*/gmd:date/*[gmd:dateType/*/@codeListValue = 'revision']/gmd:date/*)">
             <dct:modified>
                 <xsl:call-template name="dateType"/>
@@ -734,8 +819,8 @@
     </xsl:template>
 
     <xsl:template
-        match="gmd:date/*[gmd:dateType/*/@codeListValue = 'revision']/gmd:date/*[text() castable as xs:date or text() castable as xs:dateTime]"
-        mode="serviceDistribution">
+            match="gmd:date/*[gmd:dateType/*/@codeListValue = 'revision']/gmd:date/*[text() castable as xs:date or text() castable as xs:dateTime]"
+            mode="serviceDistribution">
         <dct:modified>
             <xsl:call-template name="dateType"/>
             <xsl:value-of select="."/>
@@ -743,10 +828,10 @@
     </xsl:template>
 
     <xsl:template
-        match="gmd:date/*[gmd:dateType/*/@codeListValue = 'creation']/gmd:date/*[text() castable as xs:date or text() castable as xs:dateTime]"
-        mode="serviceDistributionserviceDistribution">
+            match="gmd:date/*[gmd:dateType/*/@codeListValue = 'creation']/gmd:date/*[text() castable as xs:date or text() castable as xs:dateTime]"
+            mode="serviceDistributionserviceDistribution">
         <xsl:if
-            test="not(ancestor::gmd:MD_Metadata/gmd:identificationInfo[1]/*/gmd:citation/*/gmd:date/*[gmd:dateType/*/@codeListValue = 'revision']/gmd:date/* or ancestor::gmd:MD_Metadata/gmd:identificationInfo[1]/*/gmd:citation/*/gmd:date/*[gmd:dateType/*/@codeListValue = 'publication']/gmd:date/*)">
+                test="not(ancestor::gmd:MD_Metadata/gmd:identificationInfo[1]/*/gmd:citation/*/gmd:date/*[gmd:dateType/*/@codeListValue = 'revision']/gmd:date/* or ancestor::gmd:MD_Metadata/gmd:identificationInfo[1]/*/gmd:citation/*/gmd:date/*[gmd:dateType/*/@codeListValue = 'publication']/gmd:date/*)">
             <dct:modified>
                 <xsl:call-template name="dateType"/>
                 <xsl:value-of select="."/>
@@ -814,20 +899,25 @@
                         </dct:description>
                     </xsl:when>
                     <xsl:otherwise>
-                        <xsl:apply-templates select="ancestor::gmd:MD_Metadata/gmd:identificationInfo/*/gmd:citation/*/gmd:title/gco:CharacterString[text()]"/>
-                        <xsl:apply-templates select="ancestor::gmd:MD_Metadata/gmd:identificationInfo/*/gmd:abstract/gco:CharacterString[text()]"/>
+                        <xsl:apply-templates
+                                select="ancestor::gmd:MD_Metadata/gmd:identificationInfo/*/gmd:citation/*/gmd:title/gco:CharacterString[text()]"/>
+                        <xsl:apply-templates
+                                select="ancestor::gmd:MD_Metadata/gmd:identificationInfo/*/gmd:abstract/gco:CharacterString[text()]"/>
                     </xsl:otherwise>
                 </xsl:choose>
                 <dcat:downloadURL rdf:resource="{gmd:linkage/*}"/>
                 <dcat:accessURL rdf:resource="{gmd:linkage/*}"/>
-                <xsl:apply-templates select="../../../../gmd:transferOptions/*/gmd:onLine/*[gmd:function/*/@codeListValue='information' and gmd:linkage/*[text()]]"/>
-                <xsl:apply-templates select="gmd:applicationProfile/gco:CharacterString[text()] | ancestor::gmd:distributionInfo/*/gmd:distributionFormat[1]/*/gmd:name/gco:CharacterString[text()]"/>
+                <xsl:apply-templates
+                        select="../../../../gmd:transferOptions/*/gmd:onLine/*[gmd:function/*/@codeListValue='information' and gmd:linkage/*[text()]]"/>
+                <xsl:apply-templates
+                        select="gmd:applicationProfile/gco:CharacterString[text()] | ancestor::gmd:distributionInfo/*/gmd:distributionFormat[1]/*/gmd:name/gco:CharacterString[text()]"/>
                 <xsl:call-template name="constraints"/>
             </dcat:Distribution>
         </dcat:distribution>
     </xsl:template>
 
-    <xsl:template match="gmd:CI_OnlineResource[gmd:function/*/@codeListValue = 'information' or gmd:function/*/@codeListValue = 'search']">
+    <xsl:template
+            match="gmd:CI_OnlineResource[gmd:function/*/@codeListValue = 'information' or gmd:function/*/@codeListValue = 'search']">
         <foaf:page>
             <xsl:call-template name="foafDocument"/>
         </foaf:page>
@@ -862,19 +952,23 @@
         <xsl:apply-templates select="../gmd:PT_FreeText/gmd:textGroup/gmd:LocalisedCharacterString" mode="param"/>
     </xsl:template>
 
-    <xsl:template match="gmd:transferOptions/*/gmd:onLine/gmd:CI_OnlineResource[not(gmd:function/*/@codeListValue = 'download')]/gmd:linkage/*">
+    <xsl:template
+            match="gmd:transferOptions/*/gmd:onLine/gmd:CI_OnlineResource[not(gmd:function/*/@codeListValue = 'download')]/gmd:linkage/*">
         <dcat:accessURL rdf:resource="{.}"/>
     </xsl:template>
 
-    <xsl:template match="gmd:transferOptions/*/gmd:onLine/gmd:CI_OnlineResource[gmd:function/*/@codeListValue = 'download']/gmd:linkage/*">
+    <xsl:template
+            match="gmd:transferOptions/*/gmd:onLine/gmd:CI_OnlineResource[gmd:function/*/@codeListValue = 'download']/gmd:linkage/*">
         <dcat:downloadURL rdf:resource="{.}"/>
     </xsl:template>
 
 
     <xsl:template name="constraints">
         <xsl:param name="licenseInMainMetadata"/>
-        <xsl:variable name="accessConstraints" select="ancestor::gmd:MD_Metadata/gmd:identificationInfo[1]/*/gmd:resourceConstraints/*[*/gmd:MD_RestrictionCode/@codeListValue=$c_other_restrictions]/gmd:otherConstraints[gco:CharacterString != $c_no_limitation]"/>
-        <xsl:variable name="accessConstraintsJson" select="$accessConstraints[starts-with(normalize-space(gco:CharacterString), '{')]"/>
+        <xsl:variable name="accessConstraints"
+                      select="ancestor::gmd:MD_Metadata/gmd:identificationInfo[1]/*/gmd:resourceConstraints/*[*/gmd:MD_RestrictionCode/@codeListValue=$c_other_restrictions]/gmd:otherConstraints[gco:CharacterString != $c_no_limitation]"/>
+        <xsl:variable name="accessConstraintsJson"
+                      select="$accessConstraints[starts-with(normalize-space(gco:CharacterString), '{')]"/>
         <xsl:choose>
             <xsl:when test="count($accessConstraintsJson) &gt; 0">
                 <!-- dct:license -->
@@ -904,9 +998,11 @@
         <xsl:if test="$accessConstraintsJson">
             <xsl:variable name="byText">
                 <xsl:if test="starts-with(normalize-space($accessConstraintsJson), '{')">
-                    <xsl:variable name="jsonWithQuelle" select="substring-after($accessConstraintsJson, '&quot;quelle&quot;')"/>
-                    <xsl:variable name="quelle" select="substring-before(substring-after($jsonWithQuelle, '&quot;'), '&quot;')"/>
-                    <xsl:value-of select="$quelle" />
+                    <xsl:variable name="jsonWithQuelle"
+                                  select="substring-after($accessConstraintsJson, '&quot;quelle&quot;')"/>
+                    <xsl:variable name="quelle"
+                                  select="substring-before(substring-after($jsonWithQuelle, '&quot;'), '&quot;')"/>
+                    <xsl:value-of select="$quelle"/>
                 </xsl:if>
             </xsl:variable>
             <xsl:if test="$byText">
@@ -942,7 +1038,8 @@
                         <xsl:call-template name="xmlLang"/>
                         <xsl:value-of select="."/>
                     </rdfs:label>
-                    <xsl:apply-templates select="../gmd:PT_FreeText/gmd:textGroup/gmd:LocalisedCharacterString" mode="param">
+                    <xsl:apply-templates select="../gmd:PT_FreeText/gmd:textGroup/gmd:LocalisedCharacterString"
+                                         mode="param">
                         <xsl:with-param name="mode" select="'label'"/>
                     </xsl:apply-templates>
                 </dct:LicenseDocument>
@@ -959,7 +1056,8 @@
     <xsl:template match="gmd:MD_RestrictionCode[@codeListValue!=$c_other_restrictions]" mode="license">
         <dct:license>
             <xsl:choose>
-                <xsl:when test="@codeListValue!=$c_license and ../../gmd:accessConstraints/*/@codeListValue!=$c_license">
+                <xsl:when
+                        test="@codeListValue!=$c_license and ../../gmd:accessConstraints/*/@codeListValue!=$c_license">
                     <dct:LicenseDocument>
                         <rdfs:label>
                             <xsl:call-template name="xmlLang"/>
@@ -1048,9 +1146,11 @@
         </xsl:call-template>
     </xsl:template>
 
-    <xsl:template match="gmd:applicationProfile/gco:CharacterString | gmd:distributionFormat/*/gmd:name/gco:CharacterString | gmd:distributorFormat/*/gmd:name/gco:CharacterString">
+    <xsl:template
+            match="gmd:applicationProfile/gco:CharacterString | gmd:distributionFormat/*/gmd:name/gco:CharacterString | gmd:distributorFormat/*/gmd:name/gco:CharacterString">
         <xsl:variable name="formatName" select="text()"/>
-        <xsl:variable name="formatNameUC" select="translate($formatName,'abcdefghijklmnopqrstuvwxyz','ABCDEFGHIJKLMNOPQRSTUVWXYZ')"/>
+        <xsl:variable name="formatNameUC"
+                      select="translate($formatName,'abcdefghijklmnopqrstuvwxyz','ABCDEFGHIJKLMNOPQRSTUVWXYZ')"/>
         <xsl:variable name="mdrUri" select="$mdrFileTypes/*/skos:Concept[*/text() = $formatNameUC]/@rdf:about"/>
         <xsl:choose>
             <xsl:when test="$mdrUri">
@@ -1078,12 +1178,15 @@
         </cnt:characterEncoding>
     </xsl:template>
 
-    <xsl:template match="gmd:identificationInfo/*/gmd:descriptiveKeywords/*[not(gmd:thesaurusName)]/gmd:keyword/gco:CharacterString">
-        <xsl:variable name="kwString" select="translate(text(),'abcdefghijklmnopqrstuvwxyz','ABCDEFGHIJKLMNOPQRSTUVWXYZ')"/>
+    <xsl:template
+            match="gmd:identificationInfo/*/gmd:descriptiveKeywords/*[not(gmd:thesaurusName)]/gmd:keyword/gco:CharacterString">
+        <xsl:variable name="kwString"
+                      select="translate(text(),'abcdefghijklmnopqrstuvwxyz','ABCDEFGHIJKLMNOPQRSTUVWXYZ')"/>
         <xsl:variable name="listTheme" select="$dcatThemes/rdf:RDF/dcatThemes/dcatTheme[@name=$kwString]"/>
         <xsl:choose>
             <xsl:when test="$listTheme">
-                <dcat:theme rdf:resource="{concat('http://publications.europa.eu/resource/authority/data-theme/', $kwString)}"/>
+                <dcat:theme
+                        rdf:resource="{concat('http://publications.europa.eu/resource/authority/data-theme/', $kwString)}"/>
             </xsl:when>
             <xsl:otherwise>
                 <xsl:call-template name="dcatKeyword"/>
@@ -1091,16 +1194,19 @@
         </xsl:choose>
     </xsl:template>
 
-    <xsl:template match="gmd:identificationInfo/*/gmd:descriptiveKeywords/*[starts-with(gmd:thesaurusName/gmd:CI_Citation/gmd:title/*, 'GEMET - INSPIRE themes')]/gmd:keyword[position() &gt; 1]/gco:CharacterString">
+    <xsl:template
+            match="gmd:identificationInfo/*/gmd:descriptiveKeywords/*[starts-with(gmd:thesaurusName/gmd:CI_Citation/gmd:title/*, 'GEMET - INSPIRE themes')]/gmd:keyword[position() &gt; 1]/gco:CharacterString">
         <xsl:call-template name="dcatKeyword"/>
     </xsl:template>
 
-    <xsl:template match="gmd:identificationInfo/*/gmd:descriptiveKeywords/*[starts-with(gmd:thesaurusName/gmd:CI_Citation/gmd:title/*, 'GEMET - INSPIRE themes')]/gmd:keyword[1]/gco:CharacterString">
-                <xsl:call-template name="dcatKeyword"/>
+    <xsl:template
+            match="gmd:identificationInfo/*/gmd:descriptiveKeywords/*[starts-with(gmd:thesaurusName/gmd:CI_Citation/gmd:title/*, 'GEMET - INSPIRE themes')]/gmd:keyword[1]/gco:CharacterString">
+        <xsl:call-template name="dcatKeyword"/>
     </xsl:template>
 
-    <xsl:template match="gmd:identificationInfo/*/gmd:descriptiveKeywords/*[gmd:thesaurusName and not(starts-with(gmd:thesaurusName/gmd:CI_Citation/gmd:title/*, 'GEMET - INSPIRE themes'))]/gmd:keyword/gco:CharacterString">
-                <xsl:call-template name="dcatKeyword"/>
+    <xsl:template
+            match="gmd:identificationInfo/*/gmd:descriptiveKeywords/*[gmd:thesaurusName and not(starts-with(gmd:thesaurusName/gmd:CI_Citation/gmd:title/*, 'GEMET - INSPIRE themes'))]/gmd:keyword/gco:CharacterString">
+        <xsl:call-template name="dcatKeyword"/>
     </xsl:template>
 
     <xsl:template name="dcatKeyword">
@@ -1133,7 +1239,8 @@
                             <xsl:call-template name="xmlLang"/>
                             <xsl:value-of select="../../gmd:thesaurusName/*/gmd:title/*"/>
                         </rdfs:label>
-                        <xsl:apply-templates select="../../gmd:thesaurusName/*/gmd:date/*[gmd:dateType/*/@codeListValue='creation']/gmd:date/*"/>
+                        <xsl:apply-templates
+                                select="../../gmd:thesaurusName/*/gmd:date/*[gmd:dateType/*/@codeListValue='creation']/gmd:date/*"/>
                     </skos:ConceptScheme>
                 </skos:inScheme>
             </skos:Concept>
@@ -1142,7 +1249,8 @@
 
     <xsl:template match="gmd:keyword/gmd:PT_FreeText/gmd:textGroup/gmd:LocalisedCharacterString">
         <xsl:variable name="localeRef" select="substring-after(@locale, '#')"/>
-        <xsl:variable name="locale" select="ancestor::gmd:MD_Metadata/gmd:locale/*[@id = $localeRef]|ancestor::gmi:MI_Metadata/gmd:locale/*[@id = $localeRef]"/>
+        <xsl:variable name="locale"
+                      select="ancestor::gmd:MD_Metadata/gmd:locale/*[@id = $localeRef]|ancestor::gmi:MI_Metadata/gmd:locale/*[@id = $localeRef]"/>
         <xsl:if test="$locale">
             <dcat:keyword>
                 <xsl:apply-templates select="$locale/gmd:languageCode/*" mode="xmlLang"/>
@@ -1158,7 +1266,8 @@
                     <xsl:call-template name="xmlLang"/>
                     <xsl:value-of select="."/>
                 </rdfs:label>
-                <xsl:apply-templates select="../gmd:PT_FreeText/gmd:textGroup/gmd:LocalisedCharacterString" mode="param">
+                <xsl:apply-templates select="../gmd:PT_FreeText/gmd:textGroup/gmd:LocalisedCharacterString"
+                                     mode="param">
                     <xsl:with-param name="mod" select="'label'"/>
                 </xsl:apply-templates>
             </dct:ProvenanceStatement>
@@ -1206,17 +1315,20 @@
     </xsl:template>
 
     <xsl:template match="gmd:maintenanceAndUpdateFrequency/*/@codeListValue[.='asNeeded' or .='notPlanned']">
-        <dct:accrualPeriodicity rdf:resource="{concat('http://inspire.ec.europa.eu/metadata-codelist/MaintenanceFrequencyCode/', .)}"/>
+        <dct:accrualPeriodicity
+                rdf:resource="{concat('http://inspire.ec.europa.eu/metadata-codelist/MaintenanceFrequencyCode/', .)}"/>
     </xsl:template>
 
     <xsl:template name="dcatTheme">
         <xsl:variable name="topicCategories" select=""/>
 
-        <xsl:variable name="inspireThemesLabels" select="gmd:identificationInfo/*/gmd:descriptiveKeywords/*[starts-with(gmd:thesaurusName/gmd:CI_Citation/gmd:title/gco:CharacterString, 'GEMET - INSPIRE themes')]/gmd:keyword/gco:CharacterString/lower-case(text())"/>
+        <xsl:variable name="inspireThemesLabels"
+                      select="gmd:identificationInfo/*/gmd:descriptiveKeywords/*[starts-with(gmd:thesaurusName/gmd:CI_Citation/gmd:title/gco:CharacterString, 'GEMET - INSPIRE themes')]/gmd:keyword/gco:CharacterString/lower-case(text())"/>
 
-<!--        <xsl:variable name="inspireThemeUris" select="$inspireThemes/rdf:RDF/rdf:Description[some $title in dct:title satisfies lower-case($title) = $inspireThemesLabels]/@rdf:about"/>
--->
-        <xsl:variable name="keywords" select="gmd:identificationInfo/*/gmd:descriptiveKeywords/*[not(gmd:thesaurusName)]/gmd:keyword/gco:CharacterString"/>
+        <!--        <xsl:variable name="inspireThemeUris" select="$inspireThemes/rdf:RDF/rdf:Description[some $title in dct:title satisfies lower-case($title) = $inspireThemesLabels]/@rdf:about"/>
+        -->
+        <xsl:variable name="keywords"
+                      select="gmd:identificationInfo/*/gmd:descriptiveKeywords/*[not(gmd:thesaurusName)]/gmd:keyword/gco:CharacterString"/>
 
         <xsl:if test="$topicCategories[.='farming' or .='imageryBaseMapsEarthCover' or .='inlandWaters' or .='oceans']
             or $keywords[.='AGRI']">
@@ -1296,7 +1408,8 @@
                 <xsl:otherwise>deu</xsl:otherwise>
             </xsl:choose>
         </xsl:variable>
-        <dct:language rdf:resource="{concat('http://publications.europa.eu/resource/authority/language/', translate($euListCode,'abcdefghijklmnopqrstuvwxyz','ABCDEFGHIJKLMNOPQRSTUVWXYZ'))}"/>
+        <dct:language
+                rdf:resource="{concat('http://publications.europa.eu/resource/authority/language/', translate($euListCode,'abcdefghijklmnopqrstuvwxyz','ABCDEFGHIJKLMNOPQRSTUVWXYZ'))}"/>
     </xsl:template>
 
     <xsl:template name="xmlLang">

@@ -6,7 +6,7 @@ from zope import component
 
 from iso2dcat.component.interface import IDCM, ILogger, IStat, IRDFDatabase, INamespaceManager, ILanguageMapper, IIsoCfg
 
-LANGUAGE = './/gmd:language/*[string-length(@codeListValue) = 3]'
+LANGUAGE = './/gmd:language/*/@codeListValue'
 
 
 class Base:
@@ -82,6 +82,7 @@ class BaseEntity(BaseDCM):
     _uuid = None
     _base_uri = None
     _uri = None
+    _languages = {}
     dcat_class = None
     entity_type = None
 
@@ -92,24 +93,25 @@ class BaseEntity(BaseDCM):
             rdf = Graph()
         self.rdf = rdf
 
-        if self.entity_type is not None:
-            self.add_entity_type()
-
     def set_namespaces(self):
         for prefix, URI in self.nsm.nsm.namespaces():
-              self.rdf.bind(prefix, URI)
+            self.rdf.bind(prefix, URI)
 
     def get_languages(self):
+        if self.uuid in self._languages:
+            self.logger.debug('Use cached Languages')
+            return self._languages[self.uuid]
         languages = self.node.xpath(LANGUAGE, namespaces=self.nsm.namespaces)
-        if languages:
-            clean_languages = self.language_mapper.convert(languages)
-        else:
+        if not languages:
             # untagged
-            clean_languages = ['']
+            languages = ['']
+        clean_languages = self.language_mapper.convert(languages, self)
+        self._languages[self.uuid] = clean_languages
         return clean_languages
 
     def add_entity_type(self):
-        self.rdf.add([URIRef(self.uri), RDF.type, self.entity_type])
+        if self.entity_type:
+            self.rdf.add([URIRef(self.uri), RDF.type, self.entity_type])
 
     @property
     def uuid(self):
@@ -130,11 +132,14 @@ class BaseEntity(BaseDCM):
         return self._uri
 
     def make_uri(self):
-        return self.base_uri + '#' + self.dcat_class + '_' + self.uuid
+        if self.dcat_class:
+            return self.base_uri + '#' + self.dcat_class + '_' + self.uuid
+        else:
+            self.logger.error('Missing self.dcat_class')
+            return self.base_uri + '#' + self.uuid
 
     def run(self):
         pass
 
     def __str__(self):
         etree.tostring(self.data, pretty_print=True)
-

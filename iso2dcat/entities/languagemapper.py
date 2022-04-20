@@ -69,16 +69,21 @@ class LanguageMapper(Base):
             if uri in self._subject_to_new:
                 self._old_to_new_style[old] = self._subject_to_new[uri]
 
-    def convert(self, codes):
+    def convert(self, codes, obj):
         res = []
         for code in codes:
             if code in self._old_to_new_style:
                 for new_code in self._old_to_new_style[code]:
                     if new_code not in res:
+                        self.inc_obj(new_code, obj)
                         res.append(new_code)
             else:
                 res.append(code)
+                self.inc_obj(code, obj)
         return res
+
+    def inc_obj(self, stat, obj, no_uuid=False):
+        self.stat.inc(obj, stat, no_uuid, cls_name=self.__class__.__name__)
 
 
 def register_languagemapper():

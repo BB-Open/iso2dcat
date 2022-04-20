@@ -8,7 +8,6 @@ from iso2dcat.namespace import DCAT
 
 
 class DcatDataService(DcatResource):
-
     dcat_class = 'dcat_DataService'
     entity_type = DCAT.DataService
 
@@ -32,14 +31,14 @@ class DcatDataService(DcatResource):
             for item in res.items():
                 if item[0] != '{http://www.w3.org/1999/xlink}href':
                     continue
-                link =item[1]
+                link = item[1]
                 uuid = link.split('/')[-1]
 
                 base_uri = self.dcm.file_id_to_baseurl(uuid, return_fallback=True)
                 dataset_uri = base_uri + '#' + DcatDataset.dcat_class + '_' + uuid
                 self.rdf.add([URIRef(self.uri), DCAT.servesDataset, URIRef(dataset_uri)])
 
-#        dcat:endpointURL
+        #        dcat:endpointURL
 
         ENDPOINT_EXPR = ".//srv:connectPoint/gmd:CI_OnlineResource/gmd:linkage/*"
         results = self.node.xpath(
@@ -56,3 +55,4 @@ class DcatDataService(DcatResource):
 
         licenses = License(self.node, self.rdf, self.uri)
         rdf = licenses.run()
+        self.add_entity_type()

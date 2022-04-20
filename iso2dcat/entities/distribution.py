@@ -17,7 +17,6 @@ DOWNLOAD = ".//gmd:transferOptions/*/gmd:onLine/gmd:CI_OnlineResource[gmd:functi
 
 
 class Distribution(DcatResource):
-
     dcat_class = 'dcat_Distribution'
     entity_type = DCAT.Distribution
     dct_format = None
@@ -78,7 +77,7 @@ class Distribution(DcatResource):
         access_nodes = self.node.xpath(ACCESS, namespaces=self.nsm.namespaces)
         download_nodes = self.node.xpath(DOWNLOAD, namespaces=self.nsm.namespaces)
 
-        if access_nodes :
+        if access_nodes:
             self.inc('dcat:accessURL')
         else:
             self.inc('no dcat:accessURL')
@@ -86,12 +85,12 @@ class Distribution(DcatResource):
                 self.inc('no dcat:accessURL')
                 raise EntityFailed('No AccessURL for Distribution')
 
-        if download_nodes :
-             self.inc('dcat:downloadURL')
+        if download_nodes:
+            self.inc('dcat:downloadURL')
 
         for access_node in access_nodes:
-            accessURL = access_node.xpath('gmd:linkage/*', namespaces =self.nsm.namespaces)
-            title = access_node.xpath('gmd:description/gco:CharacterString[text()]', namespaces =self.nsm.namespaces)
+            accessURL = access_node.xpath('gmd:linkage/*', namespaces=self.nsm.namespaces)
+            title = access_node.xpath('gmd:description/gco:CharacterString[text()]', namespaces=self.nsm.namespaces)
             if len(title) == 0:
                 title = 'Zugang'
             else:
@@ -99,13 +98,10 @@ class Distribution(DcatResource):
             self.add_distribution(title, accessURL[0])
 
         for download_node in download_nodes:
-            downloadURL = download_node.xpath('gmd:linkage/*', namespaces =self.nsm.namespaces)
-            title = download_node.xpath('gmd:description/gco:CharacterString[text()]', namespaces =self.nsm.namespaces)
+            downloadURL = download_node.xpath('gmd:linkage/*', namespaces=self.nsm.namespaces)
+            title = download_node.xpath('gmd:description/gco:CharacterString[text()]', namespaces=self.nsm.namespaces)
             if len(title) == 0:
                 title = 'Download'
             else:
                 title = title[0]
             self.add_distribution(title, downloadURL[0], downloadURL=downloadURL[0])
-
-
-

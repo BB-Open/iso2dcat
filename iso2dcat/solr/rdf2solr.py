@@ -193,7 +193,6 @@ SELECT DISTINCT ?s ?df ?dft
     }}
 """
 
-
 DATASETS_FOR_DATASERVICES = """
 prefix bds: <http://www.bigdata.com/rdf/search#>
 PREFIX dcat: <http://www.w3.org/ns/dcat#>
@@ -228,7 +227,6 @@ SELECT DISTINCT ?s ?de
         ?s dcat:endpointURL ?de .
     }}
 """
-
 
 
 class RDF2SOLR(BaseDCM):
@@ -269,7 +267,7 @@ class RDF2SOLR(BaseDCM):
         self.logger.info('Loading rdf datasets')
         data_sets = self.format_data(db_name)
         self.logger.info('rdf datasets loaded')
-        self.solr = pysolr.Solr(self.cfg.SOLR_URI, auth=('writer','Sas242!!'))
+        self.solr = pysolr.Solr(self.cfg.SOLR_URI, auth=('writer', 'Sas242!!'))
         self.logger.info('writing datasets to solr')
         for key, data_set in progressbar.progressbar(data_sets.items()):
             self.solr.add(data_set)
@@ -307,8 +305,7 @@ class RDF2SOLR(BaseDCM):
                 elif res['type']['value'] == 'http://www.w3.org/ns/dcat#Dataset':
                     res_dict[s_uri]['rdf_type'] = 'Dataset'
                 else:
-                    a= 10
-
+                    a = 10
 
         self.logger.info('Datasets processed')
         self.format_distribution(res_dict, db_name)
@@ -416,7 +413,7 @@ class RDF2SOLR(BaseDCM):
 
             theme_abre = self.nsm.uri2prefix_name(res['t']['value']).split('_')[1]
             if theme_abre in DCAT_THEMES:
-                themes[dataset_uri].append( DCAT_THEMES[theme_abre])
+                themes[dataset_uri].append(DCAT_THEMES[theme_abre])
 
         self.logger.info('Themes processed')
         self.logger.info('Merge Themes')

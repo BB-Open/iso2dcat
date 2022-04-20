@@ -1,7 +1,7 @@
 from urllib.parse import urlparse, quote
 
 from rdflib import URIRef
-from rdflib.namespace import FOAF
+from rdflib.namespace import FOAF, RDF
 
 from iso2dcat.entities.base import BaseEntity
 from iso2dcat.namespace import DCAT
@@ -11,7 +11,6 @@ QUERY_FOAF_PAGE = ".//gmd:transferOptions/*/gmd:onLine/gmd:CI_OnlineResource[gmd
 
 
 class FoafDocuments(BaseEntity):
-
     dcat_class = 'foaf_document'
 
     def __init__(self, node, rdf, parent_uri):
@@ -38,6 +37,7 @@ class FoafDocuments(BaseEntity):
             self.logger.debug('Found Landing Page {values}'.format(values=links))
             for link in links:
                 self.rdf.add((URIRef(self.parent_ressource_uri), DCAT.landingPage, URIRef(self.sanitize_url(link))))
+                self.rdf.add((URIRef(self.sanitize_url(link)), RDF.type, FOAF.Document))
 
         values_foaf_page = self.node.xpath(QUERY_FOAF_PAGE, namespaces=self.nsm.namespaces)
         if not values_foaf_page:
@@ -51,3 +51,4 @@ class FoafDocuments(BaseEntity):
             self.logger.debug('Found FOAF Page {values}'.format(values=links))
             for link in links:
                 self.rdf.add((URIRef(self.parent_ressource_uri), FOAF.page, URIRef(self.sanitize_url(link))))
+                self.rdf.add((URIRef(self.sanitize_url(link)), RDF.type, FOAF.Document))

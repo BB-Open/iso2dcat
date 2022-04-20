@@ -37,6 +37,7 @@ class AccrualPeriodicity(BaseEntity):
         for value in values:
             if value in self.mapping:
                 self.inc(value)
-                self.rdf.add((URIRef(self.parent_ressource_uri), DCTERMS.accrualPeriodicity, URIRef(self.mapping[value])))
+                self.rdf.add(
+                    (URIRef(self.parent_ressource_uri), DCTERMS.accrualPeriodicity, URIRef(self.mapping[value])))
             else:
                 self.logger.warning('Missing AccrualPeriodicity Mapping for "' + value + '"')

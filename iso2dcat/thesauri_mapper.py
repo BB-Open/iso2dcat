@@ -40,6 +40,7 @@ class GemetMapper(BaseEntity):
         self.cached_keywords[keyword] = uris
         return uris
 
+
 # MAPPING = """
 # prefix skos: <http://www.w3.org/2004/02/skos/core#>
 #
@@ -73,4 +74,3 @@ def register_thesauri():
     gemet_mapper = GemetMapper(None)
     component.provideUtility(gemet_mapper, IGemetMapper)
     return gemet_mapper
-

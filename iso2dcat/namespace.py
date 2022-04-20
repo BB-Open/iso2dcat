@@ -19,7 +19,7 @@ NAMESPACES = {
     'dcatde': 'http://dcat-ap.de/def/dcatde/',
     'vcard': 'http://www.w3.org/2006/vcard/ns#',
     'adms': 'http://www.w3.org/ns/adms#',
-    'locn':'https://www.w3.org/ns/locn',
+    'locn': 'https://www.w3.org/ns/locn',
     'dct': 'http://purl.org/dc/terms/'
 }
 
@@ -41,7 +41,7 @@ class NsManager:
             self.nsm.bind(prefix, ns)
 
     def uri2prefix_name(self, uri):
-        prefix, _uri, name  = self.nsm.compute_qname(uri)
+        prefix, _uri, name = self.nsm.compute_qname(uri)
         return prefix + '_' + name
 
     @property

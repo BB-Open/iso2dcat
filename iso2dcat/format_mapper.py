@@ -21,7 +21,8 @@ class FormatMapper(BaseEntity):
         super(FormatMapper, self).__init__(node, rdf, parent)
 
         try:
-            self.rdf.parse('https://op.europa.eu/o/opportal-service/euvoc-download-handler?cellarURI=http%3A%2F%2Fpublications.europa.eu%2Fresource%2Fcellar%2F5333010f-a579-11ec-83e1-01aa75ed71a1.0001.04%2FDOC_1&fileName=filetypes-skos.rdf')
+            self.rdf.parse(
+                'https://op.europa.eu/o/opportal-service/euvoc-download-handler?cellarURI=http%3A%2F%2Fpublications.europa.eu%2Fresource%2Fcellar%2F5333010f-a579-11ec-83e1-01aa75ed71a1.0001.04%2FDOC_1&fileName=filetypes-skos.rdf')
         except Exception as e:
             self.rdf.parse(abs_file_path('iso2dcat/data/filetypes-skos.rdf'))
 

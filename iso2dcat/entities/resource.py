@@ -17,7 +17,6 @@ TITLE = './/gmd:identificationInfo[1]/*/gmd:citation/*/gmd:title/gco:CharacterSt
 DESCRIPTION = './/gmd:identificationInfo[1]/*/gmd:abstract/gco:CharacterString[text()]'
 
 
-
 class DcatResource(BaseEntity):
 
     def run(self):
@@ -67,8 +66,12 @@ class DcatResource(BaseEntity):
                 self.rdf.add([URIRef(self.uri), DCATDE.maintainer, URIRef(maintainer.uri)])
 
         contact = ContactPoint(self.node, self.rdf)
-        rdf = contact.run()
-        self.rdf.add([URIRef(self.uri), DCAT.contactPoint, URIRef(contact.uri)])
+        try:
+            rdf = contact.run()
+        except EntityFailed:
+            self.logger.warning('No Contact Point')
+        else:
+            self.rdf.add([URIRef(self.uri), DCAT.contactPoint, URIRef(contact.uri)])
 
         # catalog link
         # get base_uri without fallback to decide, if catalog suffix must be added
@@ -80,7 +83,8 @@ class DcatResource(BaseEntity):
         self.rdf.add([URIRef(catalog), DCAT.dataset, URIRef(self.uri)])
 
         # contributorID
-        self.rdf.add((URIRef(self.uri), DCATDE.contributorID, URIRef('http://dcat-ap.de/def/contributors/landBrandenburg')))
+        self.rdf.add(
+            (URIRef(self.uri), DCATDE.contributorID, URIRef('http://dcat-ap.de/def/contributors/landBrandenburg')))
         # identifier is uuid
         self.rdf.add((URIRef(self.uri), DCTERMS.identifier, Literal(self.uuid)))
         self.rdf.add((URIRef(self.uri), ADMS.identifier, Literal(self.uuid)))
@@ -124,6 +128,3 @@ class DcatResource(BaseEntity):
         # foaf:homepage
         page = FoafDocuments(self.node, self.rdf, self.uri)
         rdf = page.run()
-
-
-

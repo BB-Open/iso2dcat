@@ -10,6 +10,7 @@ KEYWORDS = 'gmd:identificationInfo/*/gmd:descriptiveKeywords/*/gmd:keyword/gco:C
 CATEGORIES = 'gmd:identificationInfo[1]/*/gmd:topicCategory/*'
 INSPIRE_THEME_LABELS = "gmd:identificationInfo/*/gmd:descriptiveKeywords/*"
 
+
 class CategoryKeywordMapper(BaseEntity):
 
     def __init__(self, node, rdf, parent_uri):

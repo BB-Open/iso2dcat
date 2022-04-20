@@ -40,6 +40,10 @@ class RDFDatabase(Base):
 
 
 def register_db():
+    db = component.queryUtility(IRDFDatabase)
+    if db is not None:
+        return db
+
     db = RDFDatabase()
     component.provideUtility(db, IRDFDatabase)
     return db

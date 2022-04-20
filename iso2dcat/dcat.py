@@ -20,4 +20,3 @@ class DCAT(BaseEntity):
         self.logger.info('processing UUID: {}'.format(self.node.fileIdentifier.getchildren()[0]))
         hirarchy = Hirarchy(self.node, self.rdf)
         hirarchy.run()
-
