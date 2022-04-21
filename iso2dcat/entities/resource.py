@@ -11,7 +11,7 @@ from iso2dcat.entities.locationboundingbox import LocationBoundingbox
 from iso2dcat.entities.periodicity import AccrualPeriodicity
 from iso2dcat.entities.publisher import Publisher, Contributor, Maintainer
 from iso2dcat.exceptions import EntityFailed
-from iso2dcat.namespace import DCATDE, DCAT, ADMS
+from iso2dcat.namespace import DCATDE, DCAT, ADMS, INQ
 
 TITLE = './/gmd:identificationInfo[1]/*/gmd:citation/*/gmd:title/gco:CharacterString[text()]'
 DESCRIPTION = './/gmd:identificationInfo[1]/*/gmd:abstract/gco:CharacterString[text()]'
@@ -128,3 +128,7 @@ class DcatResource(BaseEntity):
         # foaf:homepage
         page = FoafDocuments(self.node, self.rdf, self.uri)
         rdf = page.run()
+
+        # inq:priority
+        priority = self.dcm.id_to_priority(self.uuid)
+        self.rdf.add((URIRef(self.uri), INQ.priority, Literal(priority)))
