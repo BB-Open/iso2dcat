@@ -82,7 +82,7 @@ class CSWProcessor(BaseEntity):
             self.count += 1
             self.logger.info(self.count)
             rec = records[uuid]
-            dcat = None
+
             try:
                 parser = etree.XMLParser(remove_blank_text=True)
                 lookup = etree.ElementNamespaceClassLookup(objectify.ObjectifyElementClassLookup())
@@ -94,8 +94,10 @@ class CSWProcessor(BaseEntity):
                 xml_file = io.BytesIO(rec)
 
                 node = objectify.parse(xml_file).getroot()
-
-                DCAT(node, self.rdf).run()
+                dcat = DCAT(node, Graph())
+                dcat.run()
+                # just join if no Entity Failed
+                self.rdf = self.rdf + dcat.rdf
             except EntityFailed:
                 print_error(rec)
 

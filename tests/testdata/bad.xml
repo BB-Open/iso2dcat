@@ -7,7 +7,7 @@
                  xmlns:dc="http://purl.org/dc/elements/1.1/"
                  xsi:schemaLocation="http://www.isotc211.org/2005/gmd http://schemas.opengis.net/csw/2.0.2/profiles/apiso/1.0.0/apiso.xsd">
   <gmd:fileIdentifier>
-    <gco:CharacterString>7DE3A549-769C-4F01-A5E6-B3E25D40975E</gco:CharacterString>
+    <gco:CharacterString>bad</gco:CharacterString>
   </gmd:fileIdentifier>
   <gmd:characterSet>
     <gmd:MD_CharacterSetCode
@@ -66,9 +66,6 @@
       uuid="https://registry.gdi-de.org/id/de.bb.metadata/7DE3A549-769C-4F01-A5E6-B3E25D40975E">
       <gmd:citation>
         <gmd:CI_Citation>
-          <gmd:title>
-            <gco:CharacterString>Fauna-Flora-Habitat (FFH)-Gebiete des Landes Brandenburg</gco:CharacterString>
-          </gmd:title>
           <gmd:alternateTitle>
             <gco:CharacterString>FFH-Gebiete</gco:CharacterString>
           </gmd:alternateTitle>
@@ -425,9 +422,6 @@
       </gmd:featureTypes>
       <gmd:featureCatalogueCitation>
         <gmd:CI_Citation>
-          <gmd:title>
-            <gco:CharacterString>NATURA 2000-Schl&#252;ssel</gco:CharacterString>
-          </gmd:title>
           <gmd:date>
             <gmd:CI_Date>
               <gmd:date>
