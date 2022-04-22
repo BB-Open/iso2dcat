@@ -28,6 +28,7 @@ class CSWProcessor(BaseEntity):
         self.set_namespaces()
 
     def get_constraint(self):
+
         return PropertyIsLike(propertyname='apiso:subject', literal='opendata')
 
     def get_records(self):
@@ -99,29 +100,10 @@ class CSWProcessor(BaseEntity):
                 # just join if no Entity Failed
                 self.rdf = self.rdf + dcat.rdf
             except EntityFailed:
-                print_error(rec)
+                print_error(uuid)
 
         self.to_rdf4j(self.rdf)
         self.rdf = Graph()
-        #     if publisher is None:
-        #         print('Error')
-        #         bad += 1
-        #     else:
-        #         try:
-        #             pub_name = publisher[0].text
-        #             print(pub_name)
-        #             if pub_name in histo:
-        #                 histo[pub_name] += 1
-        #             else:
-        #                 histo[pub_name] = 1
-        #
-        #             good += 1
-        #         except Exception as e:
-        #             print('Error')
-        #             bad += 1
-        #
-        # print('good {} bad {}'.format(good, bad))
-        # pprint(histo)
 
     def run(self):
         self.dispatch_records()

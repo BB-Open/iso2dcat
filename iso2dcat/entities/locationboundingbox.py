@@ -23,7 +23,6 @@ class LocationBoundingbox(BaseEntity):
                            ]
 
     def run(self):
-        self.rdf.add((URIRef(self.uri), RDF.type, DCTERMS.Location))
         subnode = self.node.xpath(LOCATION_QUERY, namespaces=self.nsm.namespaces)
 
         if not subnode:

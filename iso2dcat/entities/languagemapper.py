@@ -83,7 +83,8 @@ class LanguageMapper(Base):
         return res
 
     def inc_obj(self, stat, obj, no_uuid=False):
-        self.stat.inc(obj, stat, no_uuid, cls_name=self.__class__.__name__)
+        if obj:
+            self.stat.inc(obj, stat, no_uuid, cls_name=self.__class__.__name__)
 
 
 def register_languagemapper():

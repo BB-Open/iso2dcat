@@ -369,23 +369,7 @@
             </gmd:EX_GeographicDescription>
           </gmd:geographicElement>
           <gmd:geographicElement>
-            <gmd:EX_GeographicBoundingBox>
-              <gmd:extentTypeCode>
-                <gco:Boolean>true</gco:Boolean>
-              </gmd:extentTypeCode>
-              <gmd:westBoundLongitude>
-                <gco:Decimal>11.265732</gco:Decimal>
-              </gmd:westBoundLongitude>
-              <gmd:eastBoundLongitude>
-                <gco:Decimal>14.765702</gco:Decimal>
-              </gmd:eastBoundLongitude>
-              <gmd:southBoundLatitude>
-                <gco:Decimal>51.35923</gco:Decimal>
-              </gmd:southBoundLatitude>
-              <gmd:northBoundLatitude>
-                <gco:Decimal>53.558704</gco:Decimal>
-              </gmd:northBoundLatitude>
-            </gmd:EX_GeographicBoundingBox>
+
           </gmd:geographicElement>
         </gmd:EX_Extent>
       </gmd:extent>
@@ -466,65 +450,21 @@
       <gmd:transferOptions>
         <gmd:MD_DigitalTransferOptions>
           <gmd:onLine>
-            <gmd:CI_OnlineResource>
-              <gmd:linkage>
-                <gmd:URL>https://data.geobasis-bb.de/geofachdaten/Natur_und_Landschaft/Natura2000/ffh.zip</gmd:URL>
-              </gmd:linkage>
-              <gmd:applicationProfile>
-                <gco:CharacterString>Shapefiles</gco:CharacterString>
-              </gmd:applicationProfile>
-              <gmd:name>
-                <gco:CharacterString>FFH-Gebiete des Landes Brandenburg - Datendownload</gco:CharacterString>
-              </gmd:name>
-              <gmd:function>
-                <gmd:CI_OnLineFunctionCode
-                  codeList="http://standards.iso.org/iso/19139/resources/gmxCodelists.xml#CI_OnLineFunctionCode"
-                  codeListValue="download">download
-                </gmd:CI_OnLineFunctionCode>
-              </gmd:function>
-            </gmd:CI_OnlineResource>
+
           </gmd:onLine>
         </gmd:MD_DigitalTransferOptions>
       </gmd:transferOptions>
       <gmd:transferOptions>
         <gmd:MD_DigitalTransferOptions>
           <gmd:onLine>
-            <gmd:CI_OnlineResource>
-              <gmd:linkage>
-                <gmd:URL>https://lfu.brandenburg.de/lfu/de/aufgaben/natur/natura-2000/</gmd:URL>
-              </gmd:linkage>
-              <gmd:name>
-                <gco:CharacterString>Natura 2000 (Homepage LfU)</gco:CharacterString>
-              </gmd:name>
-              <gmd:function>
-                <gmd:CI_OnLineFunctionCode
-                  codeList="http://standards.iso.org/iso/19139/resources/gmxCodelists.xml#CI_OnLineFunctionCode"
-                  codeListValue="information">information
-                </gmd:CI_OnLineFunctionCode>
-              </gmd:function>
-            </gmd:CI_OnlineResource>
+
           </gmd:onLine>
         </gmd:MD_DigitalTransferOptions>
       </gmd:transferOptions>
       <gmd:transferOptions>
         <gmd:MD_DigitalTransferOptions>
           <gmd:onLine>
-            <gmd:CI_OnlineResource>
-              <gmd:linkage>
-                <gmd:URL>https://inspire.brandenburg.de/services/schutzg_wms?language=ger&amp;REQUEST=GetCapabilities&amp;SERVICE=WMS</gmd:URL>
-              </gmd:linkage>
-              <gmd:name>
-                <gco:CharacterString>Dienst "Schutzgebiete in Brandenburg - INSPIRE View-Service (WMS-LfU-SCHUTZG)"
-                  (GetCapabilities)
-                </gco:CharacterString>
-              </gmd:name>
-              <gmd:function>
-                <gmd:CI_OnLineFunctionCode
-                  codeList="http://standards.iso.org/iso/19139/resources/gmxCodelists.xml#CI_OnLineFunctionCode"
-                  codeListValue="information">information
-                </gmd:CI_OnLineFunctionCode>
-              </gmd:function>
-            </gmd:CI_OnlineResource>
+
           </gmd:onLine>
         </gmd:MD_DigitalTransferOptions>
       </gmd:transferOptions>

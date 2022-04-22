@@ -24,6 +24,7 @@ class ConfigMockup:
     BATCH_COUNT = 1
     SAVE_DATASETS = False
     TOTAL_COUNT_LIMIT = 100
+    DEFAULT_PRIORITY = 15
 
 
 class LoggerMockup:
