@@ -15,6 +15,7 @@ class DCM(Base):
         self.dcm = None
         self._file_id_to_baseurl = {}
         self._id_to_baseurl = {}
+        self._id_to_priority = {}
         self.cache_file = abs_file_path('iso2dcat/data/dcm.json')
 
     def run(self):
@@ -41,6 +42,7 @@ class DCM(Base):
         self.logger.info('Mapping Files to Base Url')
         for file in files:
             self._file_id_to_baseurl[file['fileidentifier']] = self._id_to_baseurl[file['publisher_id']]
+            self._id_to_priority[file['fileidentifier']] = file['priority']
         dcm_file.close()
 
     def file_id_to_baseurl(self, file_id, return_fallback=False):
@@ -53,6 +55,16 @@ class DCM(Base):
                 res = None
             self.logger.warning('ISO-Dataset ID "{}" not in DCM'.format(file_id))
         return res
+
+    def id_to_priority(self, uuid):
+        """
+        Get the priority of the dataset or dataservice from the DCM. If no priority can be found use a priority of 100.
+        """
+        try:
+            priority = self._id_to_priority[uuid]
+        except KeyError:
+            priority = self.cfg.DEFAULT_PRIORITY
+        return priority
 
 
 def register_dcm():

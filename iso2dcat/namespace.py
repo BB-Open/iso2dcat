@@ -20,7 +20,8 @@ NAMESPACES = {
     'vcard': 'http://www.w3.org/2006/vcard/ns#',
     'adms': 'http://www.w3.org/ns/adms#',
     'locn': 'https://www.w3.org/ns/locn',
-    'dct': 'http://purl.org/dc/terms/'
+    'dct': 'http://purl.org/dc/terms/',
+    'inq': 'http://inqbus.de/ns'
 }
 
 DCATDE = Namespace('http://dcat-ap.de/def/dcatde/')
@@ -29,6 +30,7 @@ DCAT = Namespace('http://www.w3.org/ns/dcat#')
 ADMS = Namespace('http://www.w3.org/ns/adms#')
 vcard = Namespace('http://www.w3.org/2006/vcard/ns#')
 GSP = Namespace('http://www.opengis.net/ont/geosparql#')
+INQ = Namespace('http://inqbus.de/ns')
 
 
 @zope.interface.implementer(INamespaceManager)

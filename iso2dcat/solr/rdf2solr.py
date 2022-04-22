@@ -37,16 +37,21 @@ PREFIX dct: <http://purl.org/dc/terms/>
 prefix foaf: <http://xmlns.com/foaf/0.1/>
 prefix skos: <http://www.w3.org/2004/02/skos/core#>
 prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+prefix inq: <http://inqbus.de/ns>
 
 
-SELECT DISTINCT ?s ?dt ?dd ?type
+SELECT DISTINCT ?s ?dt ?dd ?type ?prio
     WHERE {
         VALUES ?type { dcat:Dataset dcat:DataService }
         ?s a ?type .
   		?s dct:title ?dt .
   		FILTER (lang(?dt) = "" || lang(?dt) = "de")
-        OPTIONAL {?s dct:description ?dd .
-  		FILTER (lang(?dd) = "" || lang(?dd) = "de")
+        OPTIONAL {
+            ?s dct:description ?dd .
+  		    FILTER (lang(?dd) = "" || lang(?dd) = "de")
+        }
+        OPTIONAL {
+            ?s inq:priority ?prio
         }
     }
 """
@@ -306,6 +311,8 @@ class RDF2SOLR(BaseDCM):
                     res_dict[s_uri]['rdf_type'] = 'Dataset'
                 else:
                     a = 10
+            if 'prio' in res:
+                res_dict[s_uri]['inq_priority'] = res['prio']['value']
 
         self.logger.info('Datasets processed')
         self.format_distribution(res_dict, db_name)
