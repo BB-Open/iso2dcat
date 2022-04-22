@@ -314,6 +314,10 @@ class RDF2SOLR(BaseDCM):
             if 'prio' in res:
                 res_dict[s_uri]['inq_priority'] = res['prio']['value']
 
+        for res in res_dict.values():
+            if 'inq_priority' not in res:
+                res['inq_priority'] = 100
+
         self.logger.info('Datasets processed')
         self.format_distribution(res_dict, db_name)
         self.format_publisher(res_dict, db_name)
