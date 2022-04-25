@@ -27,7 +27,11 @@ class License(BaseEntity):
         }
         for license in license_nodes:
             try:
-                license_obj = sj.loads(license.text)
+                if license.text[0] == '{' and license.text[-1] == '}':
+                    license_fixed = license.text.replace('\\\\',"\\")
+                else:
+                    license_fixed = license.text
+                license_obj = sj.loads(license_fixed)
 
                 uri_in = license_obj['url']
                 if uri_in in URI_MAPPING:
@@ -45,7 +49,7 @@ class License(BaseEntity):
                     self.inc('JSON Error')
                     self.logger.error('JSON Error in: {}'.format(self.node.fileIdentifier.getchildren()[0]))
                 for lang in langs:
-                    licenses[DCATDE.licenseAttributionByText] = Literal(license, lang=lang)
+                    licenses[DCATDE.licenseAttributionByText] = Literal(license.text, lang=lang)
                 self.inc('DCAT licenseAttributionByText')
 
         if len(list(licenses.keys())) > 0:
