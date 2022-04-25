@@ -57,7 +57,7 @@ class ContactPoint(BaseEntity):
                         for hit in hits:
                             if hit:
                                 for lang in languages:
-                                    self.rdf.add((URIRef(self.uri), vcard[target], Literal(hit, lang=lang)))
+                                    self.add_tripel(URIRef(self.uri), vcard[target], Literal(hit, lang=lang))
                 break
         if len(self.rdf) == 0:
             self.inc('bad')

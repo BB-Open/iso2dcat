@@ -31,18 +31,23 @@ class License(BaseEntity):
 
                 uri_in = license_obj['url']
                 if uri_in in URI_MAPPING:
+                    self.inc('Mapping')
                     uri_out = URI_MAPPING[uri_in]
                 else:
+                    self.inc('No Mapping')
                     uri_out = uri_in
 
                 licenses[DCTERMS.license] = URIRef(uri_out)
 
                 self.inc('DCAT License')
             except Exception as e:
+                if license.text[0] == '{' and license.text[-1] == '}':
+                    self.inc('JSON Error')
+                    self.logger.error('JSON Error in: {}'.format(self.node.fileIdentifier.getchildren()[0]))
                 for lang in langs:
                     licenses[DCATDE.licenseAttributionByText] = Literal(license, lang=lang)
                 self.inc('DCAT licenseAttributionByText')
 
-        if licenses is not None:
+        if len(list(licenses.keys())) > 0:
             for tag, license in licenses.items():
-                self.rdf.add((URIRef(self.parent_ressource_uri), tag, license))
+                self.add_tripel(URIRef(self.parent_ressource_uri), tag, license)

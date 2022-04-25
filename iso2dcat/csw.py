@@ -5,7 +5,7 @@ from pathlib import Path
 from lxml import etree, objectify
 from owslib.csw import CatalogueServiceWeb
 from owslib.fes import PropertyIsLike
-from rdflib import Graph
+from rdflib import Graph, ConjunctiveGraph
 
 from iso2dcat.dcat import DCAT
 from iso2dcat.entities.base import BaseEntity
@@ -18,7 +18,7 @@ class CSWProcessor(BaseEntity):
     count = 0
 
     def __init__(self):
-        super(CSWProcessor, self).__init__(None, Graph())
+        super(CSWProcessor, self).__init__(None, ConjunctiveGraph())
         if self.cfg.CSW_URI:
             self.csw = CatalogueServiceWeb(self.cfg.CSW_URI)
         else:
@@ -95,15 +95,14 @@ class CSWProcessor(BaseEntity):
                 xml_file = io.BytesIO(rec)
 
                 node = objectify.parse(xml_file).getroot()
-                dcat = DCAT(node, Graph())
+                dcat = DCAT(node, self.rdf)
                 dcat.run()
-                # just join if no Entity Failed
-                self.rdf = self.rdf + dcat.rdf
             except EntityFailed:
                 print_error(uuid)
+                self.rdf.remove((None, None, None, dcat.uuid.text))
 
         self.to_rdf4j(self.rdf)
-        self.rdf = Graph()
+        self.rdf = ConjunctiveGraph()
 
     def run(self):
         self.dispatch_records()

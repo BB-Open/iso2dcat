@@ -26,7 +26,7 @@ class Distribution(DcatResource):
 
     def add_entity_type(self):
         pass
-        # self.rdf.add([URIRef(self.uri), RDF.type, self.entity_type])
+        # self.add_tripel([URIRef(self.uri), RDF.type, self.entity_type])
 
     def base_uri(self):
         return None
@@ -43,22 +43,22 @@ class Distribution(DcatResource):
 
     def add_distribution(self, title, accessURL, downloadURL=None):
         uri = self.make_uri(accessURL)
-        self.rdf.add([URIRef(uri), RDF.type, self.entity_type])
+        self.add_tripel(URIRef(uri), RDF.type, self.entity_type)
         for lang in self.languages:
-            self.rdf.add([URIRef(uri), DCTERMS.title, Literal(title, lang=lang)])
-        self.rdf.add((URIRef(uri), DCAT.accessURL, URIRef(self.sanitize_url(accessURL))))
-        self.rdf.add([URIRef(self.parent), DCAT.distribution, URIRef(uri)])
+            self.add_tripel(URIRef(uri), DCTERMS.title, Literal(title, lang=lang))
+        self.add_tripel(URIRef(uri), DCAT.accessURL, URIRef(self.sanitize_url(accessURL)))
+        self.add_tripel(URIRef(self.parent), DCAT.distribution, URIRef(uri))
 
         if downloadURL is not None:
-            self.rdf.add((URIRef(uri), DCAT.downloadURL, URIRef(self.sanitize_url(downloadURL))))
+            self.add_tripel(URIRef(uri), DCAT.downloadURL, URIRef(self.sanitize_url(downloadURL)))
 
         licenses = License(self.node, self.rdf, uri)
         rdf = licenses.run()
 
         if self.rightstatement:
-            self.rdf.add((URIRef(uri), DCTERMS.accessRights, URIRef(self.rightstatement.uri)))
+            self.add_tripel(URIRef(uri), DCTERMS.accessRights, URIRef(self.rightstatement.uri))
         if self.provenance:
-            self.rdf.add((URIRef(uri), DCTERMS.provenance, URIRef(self.provenance.uri)))
+            self.add_tripel(URIRef(uri), DCTERMS.provenance, URIRef(self.provenance.uri))
 
     def run(self):
         self.languages = self.get_languages()

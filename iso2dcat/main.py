@@ -18,6 +18,7 @@ from iso2dcat.entities.distribution import Distribution
 from iso2dcat.entities.hierarchy import Hirarchy
 from iso2dcat.entities.foafdocuments import FoafDocuments
 from iso2dcat.entities.languagemapper import register_languagemapper, LanguageMapper
+from iso2dcat.entities.licenses import License
 from iso2dcat.entities.locationboundingbox import LocationBoundingbox
 from iso2dcat.entities.periodicity import AccrualPeriodicity
 from iso2dcat.entities.priority import InqbusPriority
@@ -96,7 +97,7 @@ class Main(Base):
         for klass in [CSWProcessor, Catalog, Publisher, ContactPoint, Hirarchy, Contributor, Maintainer,
                       CategoryKeywordMapper, DateMapper, LocationBoundingbox, Distribution, DcatDataService,
                       AccrualPeriodicity, FoafDocuments, RightsStatement, ProvenanceStatement, LanguageMapper,
-                      InqbusPriority]:
+                      InqbusPriority, License]:
             for line in stat.get_stats(klass):
                 self.logger.info(line)
 

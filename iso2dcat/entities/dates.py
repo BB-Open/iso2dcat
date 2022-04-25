@@ -18,7 +18,7 @@ class DateMapper(BaseEntity):
 
     def run(self):
         # todo: Role fields as fields on data
-        self.rdf.add(
-            (URIRef(self.parent_ressource_uri), DCTERMS.modified, Literal(datetime.now(), datatype=XSD.dateTimeStamp)))
-        self.rdf.add(
-            (URIRef(self.parent_ressource_uri), DCTERMS.issued, Literal(datetime.now(), datatype=XSD.dateTimeStamp)))
+        self.add_tripel(
+            URIRef(self.parent_ressource_uri), DCTERMS.modified, Literal(datetime.now(), datatype=XSD.dateTimeStamp))
+        self.add_tripel(
+            URIRef(self.parent_ressource_uri), DCTERMS.issued, Literal(datetime.now(), datatype=XSD.dateTimeStamp))

@@ -53,5 +53,5 @@ class LocationBoundingbox(BaseEntity):
             north=results['gmd:northBoundLatitude'],
             south=results['gmd:southBoundLatitude'])
 
-        self.rdf.add((URIRef(self.uri), RDF.type, DCTERMS.Location))
-        self.rdf.add((URIRef(self.uri), LOCN.geometry, Literal(geometry_string, datatype=GSP.gmlLiteral)))
+        self.add_tripel(URIRef(self.uri), RDF.type, DCTERMS.Location)
+        self.add_tripel(URIRef(self.uri), LOCN.geometry, Literal(geometry_string, datatype=GSP.gmlLiteral))

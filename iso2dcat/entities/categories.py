@@ -65,23 +65,23 @@ class CategoryKeywordMapper(BaseEntity):
         languages = self.get_languages()
 
         # create keywords as keyword
-        self.logger.info('Set Keywords')
+#        self.logger.info('Set Keywords')
         for keyword in results_kw:
             for lang in languages:
-                self.rdf.add((URIRef(self.parent_ressource_uri), DCAT.keyword, Literal(keyword, lang=lang)))
+                self.add_tripel(URIRef(self.parent_ressource_uri), DCAT.keyword, Literal(keyword, lang=lang))
                 if str(keyword).upper() in self.dcat_themes:
-                    self.rdf.add((URIRef(self.parent_ressource_uri), DCAT.theme, URIRef(
-                        'http://publications.europa.eu/resource/authority/data-theme/' + str(keyword).upper())))
+                    self.add_tripel(URIRef(self.parent_ressource_uri), DCAT.theme, URIRef(
+                        'http://publications.europa.eu/resource/authority/data-theme/' + str(keyword).upper()))
         # create categories
-        self.logger.info('Set Default Categories')
+#        self.logger.info('Set Default Categories')
         for keyword in results_cat:
             if keyword in self.keywords_to_themes:
                 cats = self.keywords_to_themes[keyword]
                 for cat in cats:
-                    self.rdf.add((URIRef(self.parent_ressource_uri), DCAT.theme, URIRef(
-                        'http://publications.europa.eu/resource/authority/data-theme/' + cat)))
+                    self.add_tripel(URIRef(self.parent_ressource_uri), DCAT.theme, URIRef(
+                        'http://publications.europa.eu/resource/authority/data-theme/' + cat))
 
-        self.logger.info('Set Additional Categories')
+#        self.logger.info('Set Additional Categories')
         # additional categories
         # todo: Improve additional categories
         # todo: Make Themes as dictionary
@@ -106,13 +106,13 @@ class CategoryKeywordMapper(BaseEntity):
                     additional_cat_found = True
                     for keyword_uri in keyword_uris:
                         self.logger.debug('Additional Categorie found for: ' + keyword)
-                        self.rdf.add((URIRef(mapper.base), RDF.type, SKOS.ConceptScheme))
-                        self.rdf.add((keyword_uri, RDF.type, SKOS.Concept))
-                        self.rdf.add((keyword_uri, SKOS.inScheme, URIRef(mapper.base)))
-                        self.rdf.add((URIRef(self.parent_ressource_uri), DCAT.theme, keyword_uri))
+                        self.add_tripel(URIRef(mapper.base), RDF.type, SKOS.ConceptScheme)
+                        self.add_tripel(keyword_uri, RDF.type, SKOS.Concept)
+                        self.add_tripel(keyword_uri, SKOS.inScheme, URIRef(mapper.base))
+                        self.add_tripel(URIRef(self.parent_ressource_uri), DCAT.theme, keyword_uri)
                         for lang in languages:
-                            self.rdf.add((keyword_uri, SKOS.prefLabel, Literal(keyword, lang=lang)))
-                            self.rdf.add((URIRef(mapper.base), DCTERMS.title, Literal(label, lang=lang)))
+                            self.add_tripel(keyword_uri, SKOS.prefLabel, Literal(keyword, lang=lang))
+                            self.add_tripel(URIRef(mapper.base), DCTERMS.title, Literal(label, lang=lang))
         if additional_cat_found:
             self.inc('good_additional_cat')
         else:

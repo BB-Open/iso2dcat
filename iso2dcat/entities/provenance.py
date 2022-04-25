@@ -25,6 +25,6 @@ class ProvenanceStatement(BaseEntity):
         statement = values[0]
         hash_statement = hashlib.md5(str(statement).encode()).hexdigest()
         self._uri = self.base_uri + '#' + self.dcat_class + '_' + hash_statement
-        self.rdf.add((URIRef(self.uri), RDF.type, DCTERMS.ProvenanceStatement))
+        self.add_tripel(URIRef(self.uri), RDF.type, DCTERMS.ProvenanceStatement)
         for lang in self.get_languages():
-            self.rdf.add((URIRef(self.uri), RDFS.label, Literal(statement, lang=lang)))
+            self.add_tripel(URIRef(self.uri), RDFS.label, Literal(statement, lang=lang))

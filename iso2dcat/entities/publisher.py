@@ -58,7 +58,7 @@ class Publisher(BaseEntity):
 
         self.add_entity_type()
         for lang in self.get_languages():
-            self.rdf.add((URIRef(self.uri), FOAF.name, Literal(publisher, lang=lang)))
+            self.add_tripel(URIRef(self.uri), FOAF.name, Literal(publisher, lang=lang))
 
 
 class Contributor(Publisher):

@@ -33,12 +33,12 @@ class DcatResource(BaseEntity):
         # todo languages
         for title in titles:
             for lang in clean_languages:
-                self.rdf.add((URIRef(self.uri), DCTERMS.title, Literal(title, lang=lang)))
+                self.add_tripel(URIRef(self.uri), DCTERMS.title, Literal(title, lang=lang))
 
         # todo languages
         for description in descriptions:
             for lang in clean_languages:
-                self.rdf.add((URIRef(self.uri), DCTERMS.description, Literal(description, lang=lang)))
+                self.add_tripel(URIRef(self.uri), DCTERMS.description, Literal(description, lang=lang))
 
         publisher = Publisher(self.node, self.rdf)
         try:
@@ -47,13 +47,13 @@ class DcatResource(BaseEntity):
             self.logger.warning('No publisher found')
         else:
 
-            self.rdf.add([URIRef(self.uri), DCTERMS.publisher, URIRef(publisher.uri)])
+            self.add_tripel(URIRef(self.uri), DCTERMS.publisher, URIRef(publisher.uri))
 
         # Maintainer
         maintainer = Maintainer(self.node, self.rdf)
         if publisher.role == 'custodian':
             # do not create two identical foaf agents
-            self.rdf.add([URIRef(self.uri), DCATDE.maintainer, URIRef(publisher.uri)])
+            self.add_tripel(URIRef(self.uri), DCATDE.maintainer, URIRef(publisher.uri))
             maintainer.inc('good')
             maintainer.inc('reused_publisher')
             self.logger.info('Reused Publisher as Maintainer, cause same role custodian')
@@ -64,7 +64,7 @@ class DcatResource(BaseEntity):
             except EntityFailed:
                 self.logger.warning('No Maintainer found')
             else:
-                self.rdf.add([URIRef(self.uri), DCATDE.maintainer, URIRef(maintainer.uri)])
+                self.add_tripel(URIRef(self.uri), DCATDE.maintainer, URIRef(maintainer.uri))
 
         contact = ContactPoint(self.node, self.rdf)
         try:
@@ -72,7 +72,7 @@ class DcatResource(BaseEntity):
         except EntityFailed:
             self.logger.warning('No Contact Point')
         else:
-            self.rdf.add([URIRef(self.uri), DCAT.contactPoint, URIRef(contact.uri)])
+            self.add_tripel(URIRef(self.uri), DCAT.contactPoint, URIRef(contact.uri))
 
         # catalog link
         # get base_uri without fallback to decide, if catalog suffix must be added
@@ -81,14 +81,14 @@ class DcatResource(BaseEntity):
             catalog = base_uri + '#dcat_Catalog'
         else:
             catalog = self.cfg.FALLBACK_CATALOG_URL
-        self.rdf.add([URIRef(catalog), DCAT.dataset, URIRef(self.uri)])
+        self.add_tripel(URIRef(catalog), DCAT.dataset, URIRef(self.uri))
 
         # contributorID
-        self.rdf.add(
-            (URIRef(self.uri), DCATDE.contributorID, URIRef('http://dcat-ap.de/def/contributors/landBrandenburg')))
+        self.add_tripel(
+            URIRef(self.uri), DCATDE.contributorID, URIRef('http://dcat-ap.de/def/contributors/landBrandenburg'))
         # identifier is uuid
-        self.rdf.add((URIRef(self.uri), DCTERMS.identifier, Literal(self.uuid)))
-        self.rdf.add((URIRef(self.uri), ADMS.identifier, Literal(self.uuid)))
+        self.add_tripel(URIRef(self.uri), DCTERMS.identifier, Literal(self.uuid))
+        self.add_tripel(URIRef(self.uri), ADMS.identifier, Literal(self.uuid))
 
         # contributor
         contributor = Contributor(self.node, self.rdf)
@@ -97,7 +97,7 @@ class DcatResource(BaseEntity):
         except EntityFailed:
             self.logger.warning('No Contributor found')
         else:
-            self.rdf.add([URIRef(self.uri), DCTERMS.contributor, URIRef(contributor.uri)])
+            self.add_tripel(URIRef(self.uri), DCTERMS.contributor, URIRef(contributor.uri))
 
         # categories
         categories = CategoryKeywordMapper(self.node, self.rdf, self.uri)
@@ -120,7 +120,7 @@ class DcatResource(BaseEntity):
         except EntityFailed:
             self.logger.warning('No Bounding Box found')
         else:
-            self.rdf.add((URIRef(self.uri), DCTERMS.spatial, URIRef(spatial.uri)))
+            self.add_tripel(URIRef(self.uri), DCTERMS.spatial, URIRef(spatial.uri))
 
         # dct:accrualPeriodicity
         periodicity = AccrualPeriodicity(self.node, self.rdf, self.uri)

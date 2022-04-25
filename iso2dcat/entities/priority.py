@@ -17,6 +17,6 @@ class InqbusPriority(BaseEntity):
             priority = self.cfg.DEFAULT_PRIORITY
             self.inc('bad')
         self.inc(str(priority))
-        self.rdf.add((URIRef(self.parent_ressource_uri), INQ.priority, Literal(priority)))
+        self.add_tripel(URIRef(self.parent_ressource_uri), INQ.priority, Literal(priority))
 
         return self.rdf

@@ -137,12 +137,14 @@ prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 prefix vcard: <http://www.w3.org/2006/vcard/ns#>
 prefix dcatde: <http://dcat-ap.de/def/dcatde/>
 
-SELECT DISTINCT ?s ?dl ?dlt ?cl
+SELECT DISTINCT ?s ?d ?dl ?dlt ?cl
     WHERE {{
         ?s a dcat:Dataset .
         OPTIONAL {
-        ?s dcat:distribution ?d .
-        ?d dct:license ?dl
+            ?s dcat:distribution ?d .
+            OPTIONAL {
+                ?d dct:license ?dl
+            }
             OPTIONAL {
                 ?d dcatde:licenseAttributionByText ?dlt
             }
@@ -457,7 +459,6 @@ class RDF2SOLR(BaseDCM):
             elif 'dlt' in res:
                 license_text = res['dlt']['value']
             else:
-                license_text = 'keine Lizenz'
                 self.logger.info('No Licence for {}'.format(res['s']['value']))
 
             licenses[dataset_uri][license_text] = 1
@@ -466,8 +467,13 @@ class RDF2SOLR(BaseDCM):
         self.logger.info('Merge Licenses')
 
         for dataset_uri, licence in progressbar.progressbar(licenses.items()):
-            if len(list(licence.keys())) > 0:
+            num_licenses = len(list(licence.keys()))
+            if num_licenses == 1:
                 res_dict[dataset_uri]['dct_license_facet'] = list(licence.keys())[0]
+            elif num_licenses > 1:
+                res_dict[dataset_uri]['dct_license_facet'] = list(licence.keys())[0]
+            else:
+                res_dict[dataset_uri]['dct_license_facet'] = "Keine Lizenz"
 
         self.logger.info('Licenses merged')
 

@@ -36,8 +36,8 @@ class FoafDocuments(BaseEntity):
             links = value.xpath('gmd:linkage/*', namespaces=self.nsm.namespaces)
             self.logger.debug('Found Landing Page {values}'.format(values=links))
             for link in links:
-                self.rdf.add((URIRef(self.parent_ressource_uri), DCAT.landingPage, URIRef(self.sanitize_url(link))))
-                self.rdf.add((URIRef(self.sanitize_url(link)), RDF.type, FOAF.Document))
+                self.add_tripel(URIRef(self.parent_ressource_uri), DCAT.landingPage, URIRef(self.sanitize_url(link)))
+                self.add_tripel(URIRef(self.sanitize_url(link)), RDF.type, FOAF.Document)
 
         values_foaf_page = self.node.xpath(QUERY_FOAF_PAGE, namespaces=self.nsm.namespaces)
         if not values_foaf_page:
@@ -50,5 +50,5 @@ class FoafDocuments(BaseEntity):
             links = value.xpath('gmd:linkage/*', namespaces=self.nsm.namespaces)
             self.logger.debug('Found FOAF Page {values}'.format(values=links))
             for link in links:
-                self.rdf.add((URIRef(self.parent_ressource_uri), FOAF.page, URIRef(self.sanitize_url(link))))
-                self.rdf.add((URIRef(self.sanitize_url(link)), RDF.type, FOAF.Document))
+                self.add_tripel(URIRef(self.parent_ressource_uri), FOAF.page, URIRef(self.sanitize_url(link)))
+                self.add_tripel(URIRef(self.sanitize_url(link)), RDF.type, FOAF.Document)

@@ -36,7 +36,7 @@ class DcatDataService(DcatResource):
 
                 base_uri = self.dcm.file_id_to_baseurl(uuid, return_fallback=True)
                 dataset_uri = base_uri + '#' + DcatDataset.dcat_class + '_' + uuid
-                self.rdf.add([URIRef(self.uri), DCAT.servesDataset, URIRef(dataset_uri)])
+                self.add_tripel(URIRef(self.uri), DCAT.servesDataset, URIRef(dataset_uri))
 
         #        dcat:endpointURL
 
@@ -51,7 +51,7 @@ class DcatDataService(DcatResource):
         )
         for uri in results:
             self.inc('service:has_enpointURI')
-            self.rdf.add([URIRef(self.uri), DCAT.endpointURL, URIRef(str(uri).strip())])
+            self.add_tripel(URIRef(self.uri), DCAT.endpointURL, URIRef(str(uri).strip()))
 
         licenses = License(self.node, self.rdf, self.uri)
         rdf = licenses.run()

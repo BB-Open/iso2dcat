@@ -1,6 +1,6 @@
 # from globalconfig.interface import IGlobalCfg
 from lxml import etree
-from rdflib import Graph, URIRef
+from rdflib import Graph, URIRef, ConjunctiveGraph
 from rdflib.namespace import RDF
 from zope import component
 
@@ -90,8 +90,11 @@ class BaseEntity(BaseDCM):
         self.node = node
         self.parent = parent
         if rdf is None:
-            rdf = Graph()
+            rdf = ConjunctiveGraph()
         self.rdf = rdf
+
+    def add_tripel(self, s, p, o):
+        self.rdf.addN([(s,p,o,self.uuid.text)])
 
     def set_namespaces(self):
         for prefix, URI in self.nsm.nsm.namespaces():
@@ -99,7 +102,6 @@ class BaseEntity(BaseDCM):
 
     def get_languages(self):
         if self.uuid in self._languages:
-            self.logger.debug('Use cached Languages')
             return self._languages[self.uuid]
         languages = self.node.xpath(LANGUAGE, namespaces=self.nsm.namespaces)
         if not languages:
@@ -111,7 +113,7 @@ class BaseEntity(BaseDCM):
 
     def add_entity_type(self):
         if self.entity_type:
-            self.rdf.add([URIRef(self.uri), RDF.type, self.entity_type])
+            self.add_tripel(URIRef(self.uri), RDF.type, self.entity_type)
 
     @property
     def uuid(self):
