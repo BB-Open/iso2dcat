@@ -9,6 +9,7 @@ from iso2dcat.entities.dates import DateMapper
 from iso2dcat.entities.foafdocuments import FoafDocuments
 from iso2dcat.entities.locationboundingbox import LocationBoundingbox
 from iso2dcat.entities.periodicity import AccrualPeriodicity
+from iso2dcat.entities.priority import InqbusPriority
 from iso2dcat.entities.publisher import Publisher, Contributor, Maintainer
 from iso2dcat.exceptions import EntityFailed
 from iso2dcat.namespace import DCATDE, DCAT, ADMS, INQ
@@ -130,5 +131,5 @@ class DcatResource(BaseEntity):
         rdf = page.run()
 
         # inq:priority
-        priority = self.dcm.id_to_priority(self.uuid)
-        self.rdf.add((URIRef(self.uri), INQ.priority, Literal(priority)))
+        priority = InqbusPriority(self.node, self.rdf, self.uri)
+        rdf = priority.run()

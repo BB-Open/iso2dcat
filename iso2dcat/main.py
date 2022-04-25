@@ -20,6 +20,7 @@ from iso2dcat.entities.foafdocuments import FoafDocuments
 from iso2dcat.entities.languagemapper import register_languagemapper, LanguageMapper
 from iso2dcat.entities.locationboundingbox import LocationBoundingbox
 from iso2dcat.entities.periodicity import AccrualPeriodicity
+from iso2dcat.entities.priority import InqbusPriority
 from iso2dcat.entities.provenance import ProvenanceStatement
 from iso2dcat.entities.publisher import Publisher, Contributor, Maintainer
 from iso2dcat.entities.rightstatement import RightsStatement
@@ -94,7 +95,8 @@ class Main(Base):
         stat = component.queryUtility(IStat)
         for klass in [CSWProcessor, Catalog, Publisher, ContactPoint, Hirarchy, Contributor, Maintainer,
                       CategoryKeywordMapper, DateMapper, LocationBoundingbox, Distribution, DcatDataService,
-                      AccrualPeriodicity, FoafDocuments, RightsStatement, ProvenanceStatement, LanguageMapper]:
+                      AccrualPeriodicity, FoafDocuments, RightsStatement, ProvenanceStatement, LanguageMapper,
+                      InqbusPriority]:
             for line in stat.get_stats(klass):
                 self.logger.info(line)
 
