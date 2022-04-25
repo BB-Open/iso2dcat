@@ -22,7 +22,8 @@ class License(BaseEntity):
         licenses = {}
 
         URI_MAPPING = {
-            'https://www.govdata.de/dl-de/by-2-0': 'http://dcat-ap.de/def/licenses/dl-by-de/2.0'
+            'https://www.govdata.de/dl-de/by-2-0': 'http://dcat-ap.de/def/licenses/dl-by-de/2.0',
+            'https://www.govdata.de/dl-de/zero-2-0' :'http://dcat-ap.de/def/licenses/dl-zero-de/2.0'
         }
         for license in license_nodes:
             try:
