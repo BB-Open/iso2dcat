@@ -92,7 +92,7 @@ class Distribution(DcatResource):
             accessURL = access_node.xpath('gmd:linkage/*', namespaces=self.nsm.namespaces)
             title = access_node.xpath('gmd:description/gco:CharacterString[text()]', namespaces=self.nsm.namespaces)
             if len(title) == 0:
-                title = 'Zugang'
+                title = 'Zugang: ' + str(accessURL)
             else:
                 title = title[0]
             self.add_distribution(title, accessURL[0])
@@ -101,7 +101,7 @@ class Distribution(DcatResource):
             downloadURL = download_node.xpath('gmd:linkage/*', namespaces=self.nsm.namespaces)
             title = download_node.xpath('gmd:description/gco:CharacterString[text()]', namespaces=self.nsm.namespaces)
             if len(title) == 0:
-                title = 'Download'
+                title = 'Download: ' + str(downloadURL)
             else:
                 title = title[0]
             self.add_distribution(title, downloadURL[0], downloadURL=downloadURL[0])
