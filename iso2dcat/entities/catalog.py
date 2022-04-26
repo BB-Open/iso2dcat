@@ -13,6 +13,9 @@ class Catalog(BaseEntity):
     catalog = {}
 
     def run(self):
+        if self.dcm.dcm is None:
+            self.logger.info('No DCM not creating Catalog')
+            return
         publishers = self.dcm.dcm['publisher']['mapping']
 
         for pub in publishers:

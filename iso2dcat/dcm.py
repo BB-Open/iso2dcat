@@ -19,6 +19,9 @@ class DCM(Base):
         self.cache_file = abs_file_path('iso2dcat/data/dcm.json')
 
     def run(self):
+        if self.cfg.DCM_URI == '':
+            self.logger.warning('No DCM file')
+            return
         try:
             self.logger.info('Update cache')
             url_dcm_file = urllib.request.urlopen(self.cfg.DCM_URI)
