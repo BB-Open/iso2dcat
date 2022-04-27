@@ -43,19 +43,19 @@ class Stat:
         for line in table.__str__().split('\n'):
             yield line
 
-    def inc(self, inst, stat, no_uuid=False, cls_name=None):
+    def inc(self, inst, stat, no_uuid=False, cls_name=None, increment=1):
         if not cls_name:
             cls_name = inst.__class__.__name__
         if cls_name not in self.data:
             self.data[cls_name] = {}
         if no_uuid:
-            increment = 1
+            _increment = increment
         else:
-            increment = [inst.uuid]
+            _increment = [inst.uuid]
         if stat not in self.data[cls_name]:
-            self.data[cls_name][stat] = increment
+            self.data[cls_name][stat] = _increment
         else:
-            self.data[cls_name][stat] += increment
+            self.data[cls_name][stat] += _increment
 
 
 def register_stat():

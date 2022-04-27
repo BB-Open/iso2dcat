@@ -27,6 +27,8 @@ class CSWProcessor(BaseEntity):
         # Important to set the namespaces only once!
         self.set_namespaces()
 
+        self.inc('Failed', no_uuid=True, increment=0)
+
     def get_constraint(self):
 
         return PropertyIsLike(propertyname='apiso:subject', literal='opendata')
@@ -43,7 +45,7 @@ class CSWProcessor(BaseEntity):
                 for record_file_name in record_file_names:
                     with open(record_file_name, 'rb') as rf:
                         batch[record_file_name] = rf.read()
-                        self.inc('processed', no_uuid=True)
+                        self.inc('Available', no_uuid=True)
                 yield batch
                 batch_start += self.cfg.BATCH_COUNT
                 if batch_start >= self.cfg.TOTAL_COUNT_LIMIT:
@@ -61,6 +63,8 @@ class CSWProcessor(BaseEntity):
             )
 
             if len(self.csw.records) > 0:
+                self.inc('Available', no_uuid=True, increment=len(self.csw.records))
+
                 yield {uuid: rec.xml for uuid, rec in self.csw.records.items()}
             else:
                 break
@@ -97,7 +101,9 @@ class CSWProcessor(BaseEntity):
                 node = objectify.parse(xml_file).getroot()
                 dcat = DCAT(node, self.rdf)
                 dcat.run()
+                self.inc('Processed', no_uuid=True)
             except EntityFailed:
+                self.inc('Failed', no_uuid=True)
                 print_error(uuid)
                 self.rdf.remove((None, None, None, dcat.uuid.text))
 

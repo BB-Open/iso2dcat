@@ -1,6 +1,6 @@
-# from globalconfig.interface import IGlobalCfg
+
 from lxml import etree
-from rdflib import Graph, URIRef, ConjunctiveGraph
+from rdflib import URIRef, ConjunctiveGraph
 from rdflib.namespace import RDF
 from zope import component
 
@@ -32,8 +32,8 @@ class Base:
             self._stat = component.queryUtility(IStat)
         return self._stat
 
-    def inc(self, stat, no_uuid=False):
-        self.stat.inc(self, stat, no_uuid)
+    def inc(self, stat, no_uuid=False, increment=1):
+        self.stat.inc(self, stat, no_uuid=no_uuid, increment=increment)
 
 
 class BaseDCM(Base):
