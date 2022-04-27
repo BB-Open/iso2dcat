@@ -76,11 +76,10 @@ class DcatResource(BaseEntity):
 
         # catalog link
         # get base_uri without fallback to decide, if catalog suffix must be added
-        base_uri = self.dcm.file_id_to_baseurl(self.uuid, return_fallback=False)
-        if base_uri:
-            catalog = base_uri + '#dcat_Catalog'
-        else:
-            catalog = self.cfg.FALLBACK_CATALOG_URL
+        base_uri = self.dcm.file_id_to_baseurl(self.uuid)
+
+        catalog = base_uri + '#dcat_Catalog'
+
         self.add_tripel(URIRef(catalog), DCAT.dataset, URIRef(self.uri))
 
         # contributorID

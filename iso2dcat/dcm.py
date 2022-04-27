@@ -48,25 +48,19 @@ class DCM(Base):
             self._id_to_priority[file['fileidentifier']] = file['priority']
         dcm_file.close()
 
-    def file_id_to_baseurl(self, file_id, return_fallback=False):
+    def file_id_to_baseurl(self, file_id):
         try:
             res = self._file_id_to_baseurl[file_id]
         except KeyError:
-            if return_fallback:
-                res = self.cfg.FALLBACK_CATALOG_URL
-            else:
-                res = None
+            res = self.cfg.FALLBACK_URL
             self.logger.warning('ISO-Dataset ID "{}" not in DCM'.format(file_id))
         return res
 
     def id_to_priority(self, uuid):
         """
-        Get the priority of the dataset or dataservice from the DCM. If no priority can be found use a priority of 100.
+        Get the priority of the dataset or dataservice from the DCM.
         """
-        try:
-            priority = self._id_to_priority[uuid]
-        except KeyError:
-            priority = self.cfg.DEFAULT_PRIORITY
+        priority = self._id_to_priority[uuid]
         return priority
 
 

@@ -124,7 +124,7 @@ class BaseEntity(BaseDCM):
     @property
     def base_uri(self):
         if self._base_uri is None:
-            self._base_uri = self.dcm.file_id_to_baseurl(self.uuid, return_fallback=True)
+            self._base_uri = self.dcm.file_id_to_baseurl(self.uuid)
         return self._base_uri
 
     @property

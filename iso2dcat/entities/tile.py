@@ -14,7 +14,7 @@ class Tile(DcatDataset):
 
         for res in results:
             parent_uuid = res.getchildren()[0]
-            base_uri = self.dcm.file_id_to_baseurl(parent_uuid, return_fallback=True)
+            base_uri = self.dcm.file_id_to_baseurl(parent_uuid)
             dataset_uri = base_uri + '#' + DcatDataset.dcat_class + '_' + parent_uuid
 
             self.add_tripel(URIRef(self.uri), DCTERMS.isPartOf, URIRef(dataset_uri))
