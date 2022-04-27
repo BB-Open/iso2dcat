@@ -1,7 +1,7 @@
 import io
 
 from lxml import objectify
-from rdflib import Graph
+from rdflib import ConjunctiveGraph
 
 from iso2dcat.entities.foafdocuments import FoafDocuments
 from tests.base import BaseTest, abs_path
@@ -17,7 +17,7 @@ class TestFoafDocument(BaseTest):
             data = rf.read()
         xml_file = io.BytesIO(data)
         node = objectify.parse(xml_file).getroot()
-        document = FoafDocuments(node, Graph(), self.cfg.FALLBACK_CATALOG_URL)
+        document = FoafDocuments(node, ConjunctiveGraph(), self.cfg.FALLBACK_URL)
         document.run()
         document.to_rdf4j(document.rdf)
         res = self.rdf4j.graph.query("""SELECT DISTINCT ?s WHERE {
@@ -31,7 +31,7 @@ class TestFoafDocument(BaseTest):
             data = rf.read()
         xml_file = io.BytesIO(data)
         node = objectify.parse(xml_file).getroot()
-        document = FoafDocuments(node, Graph(), self.cfg.FALLBACK_CATALOG_URL)
+        document = FoafDocuments(node, ConjunctiveGraph(), self.cfg.FALLBACK_URL)
         document.run()
         document.to_rdf4j(document.rdf)
         res = self.rdf4j.graph.query("""
@@ -48,7 +48,7 @@ class TestFoafDocument(BaseTest):
             data = rf.read()
         xml_file = io.BytesIO(data)
         node = objectify.parse(xml_file).getroot()
-        document = FoafDocuments(node, Graph(), self.cfg.FALLBACK_CATALOG_URL)
+        document = FoafDocuments(node, ConjunctiveGraph(), self.cfg.FALLBACK_URL)
         document.run()
         document.to_rdf4j(document.rdf)
         res = self.rdf4j.graph.query("""

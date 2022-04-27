@@ -1,7 +1,7 @@
 import io
 
 from lxml import objectify
-from rdflib import Graph
+from rdflib import ConjunctiveGraph
 
 from iso2dcat.entities.foafdocuments import FoafDocuments
 from iso2dcat.entities.locationboundingbox import LocationBoundingbox
@@ -19,7 +19,7 @@ class TestLocation(BaseTest):
             data = rf.read()
         xml_file = io.BytesIO(data)
         node = objectify.parse(xml_file).getroot()
-        location = LocationBoundingbox(node, Graph())
+        location = LocationBoundingbox(node, ConjunctiveGraph())
         location.run()
         location.to_rdf4j(location.rdf)
         res = self.rdf4j.graph.query("""
@@ -35,7 +35,7 @@ class TestLocation(BaseTest):
             data = rf.read()
         xml_file = io.BytesIO(data)
         node = objectify.parse(xml_file).getroot()
-        location = LocationBoundingbox(node, Graph())
+        location = LocationBoundingbox(node, ConjunctiveGraph())
         self.assertRaises(EntityFailed, location.run)
         location.to_rdf4j(location.rdf)
         res = self.rdf4j.graph.query("""

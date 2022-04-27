@@ -34,7 +34,7 @@ class DcatDataService(DcatResource):
                 link = item[1]
                 uuid = link.split('/')[-1]
 
-                base_uri = self.dcm.file_id_to_baseurl(uuid, return_fallback=True)
+                base_uri = self.dcm.file_id_to_baseurl(uuid)
                 dataset_uri = base_uri + '#' + DcatDataset.dcat_class + '_' + uuid
                 self.add_tripel(URIRef(self.uri), DCAT.servesDataset, URIRef(dataset_uri))
 

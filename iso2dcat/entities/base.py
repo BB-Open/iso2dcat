@@ -102,6 +102,7 @@ class BaseEntity(BaseDCM):
 
     def get_languages(self):
         if self.uuid in self._languages:
+            self.logger.debug('Use cached Languages')
             return self._languages[self.uuid]
         languages = self.node.xpath(LANGUAGE, namespaces=self.nsm.namespaces)
         if not languages:
@@ -124,7 +125,7 @@ class BaseEntity(BaseDCM):
     @property
     def base_uri(self):
         if self._base_uri is None:
-            self._base_uri = self.dcm.file_id_to_baseurl(self.uuid, return_fallback=True)
+            self._base_uri = self.dcm.file_id_to_baseurl(self.uuid)
         return self._base_uri
 
     @property
