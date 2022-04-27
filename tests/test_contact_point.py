@@ -1,7 +1,7 @@
 import io
 
 from lxml import objectify
-from rdflib import Graph
+from rdflib import ConjunctiveGraph
 
 from iso2dcat.entities.contactpoint import ContactPoint
 from iso2dcat.exceptions import EntityFailed
@@ -17,7 +17,7 @@ class TestContactPoint(BaseTest):
             data = rf.read()
         xml_file = io.BytesIO(data)
         node = objectify.parse(xml_file).getroot()
-        self.contactpoint = ContactPoint(node, rdf=Graph())
+        self.contactpoint = ContactPoint(node, rdf=ConjunctiveGraph())
         self.contactpoint.set_namespaces()
         self.contactpoint.run()
         self.contactpoint.to_rdf4j(self.contactpoint.rdf)
@@ -35,5 +35,5 @@ class TestContactPoint(BaseTest):
             data = rf.read()
         xml_file = io.BytesIO(data)
         node = objectify.parse(xml_file).getroot()
-        self.contactpoint = ContactPoint(node, rdf=Graph())
+        self.contactpoint = ContactPoint(node, rdf=ConjunctiveGraph())
         self.assertRaises(EntityFailed, self.contactpoint.run)

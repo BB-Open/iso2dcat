@@ -1,7 +1,7 @@
 import io
 
 from lxml import objectify
-from rdflib import Graph
+from rdflib import ConjunctiveGraph
 
 from iso2dcat.entities.categories import CategoryKeywordMapper
 from tests.base import BaseTest, abs_path
@@ -14,7 +14,7 @@ class TestKeyword(BaseTest):
             data = rf.read()
         xml_file = io.BytesIO(data)
         node = objectify.parse(xml_file).getroot()
-        self.keywords = CategoryKeywordMapper(node, Graph(), parent_uri='https://www.iso2dcat.de')
+        self.keywords = CategoryKeywordMapper(node, ConjunctiveGraph(), parent_uri='https://www.iso2dcat.de')
 
     def test_run(self):
         self.keywords.run()
@@ -38,7 +38,7 @@ class TestNoKeyword(BaseTest):
             data = rf.read()
         xml_file = io.BytesIO(data)
         node = objectify.parse(xml_file).getroot()
-        self.keywords = CategoryKeywordMapper(node, Graph(), parent_uri='https://www.iso2dcat.de')
+        self.keywords = CategoryKeywordMapper(node, ConjunctiveGraph(), parent_uri='https://www.iso2dcat.de')
 
     def test_run(self):
         self.keywords.run()
@@ -62,7 +62,7 @@ class TestGemet(BaseTest):
             data = rf.read()
         xml_file = io.BytesIO(data)
         node = objectify.parse(xml_file).getroot()
-        self.keywords = CategoryKeywordMapper(node, Graph(), parent_uri='https://www.iso2dcat.de')
+        self.keywords = CategoryKeywordMapper(node, ConjunctiveGraph(), parent_uri='https://www.iso2dcat.de')
 
     def test_run(self):
         self.keywords.run()
@@ -86,7 +86,7 @@ class TestOtherThesauri(BaseTest):
             data = rf.read()
         xml_file = io.BytesIO(data)
         node = objectify.parse(xml_file).getroot()
-        self.keywords = CategoryKeywordMapper(node, Graph(), parent_uri='https://www.iso2dcat.de')
+        self.keywords = CategoryKeywordMapper(node, ConjunctiveGraph(), parent_uri='https://www.iso2dcat.de')
 
     def test_run(self):
         self.keywords.run()

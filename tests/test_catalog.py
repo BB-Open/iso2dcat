@@ -18,9 +18,9 @@ class TestCatalog(BaseTest):
             ?s a foaf:Agent .
             }
         """)
-        self.assertTrue(len(res) == 8)
+        self.assertTrue(len(res) == 9)
         res = self.rdf4j.graph.query("""SELECT DISTINCT ?s WHERE {
                     ?s a dcat:Catalog .
                     }
                 """)
-        self.assertTrue(len(res) == 8)
+        self.assertTrue(len(res) == 9)

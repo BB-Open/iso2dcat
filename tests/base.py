@@ -16,7 +16,8 @@ def abs_path(path):
 
 
 class ConfigMockup:
-    FALLBACK_CATALOG_URL = 'https://www.iso2dcat.de'
+    FALLBACK_URL = 'https://www.iso2dcat.de'
+    FALLBACK_CATALOG_NAME = 'Test'
     CSW_URI = None
     PARALLEL = False
     FROM_DISK = True
@@ -25,6 +26,8 @@ class ConfigMockup:
     SAVE_DATASETS = False
     TOTAL_COUNT_LIMIT = 100
     DEFAULT_PRIORITY = 15
+    # DCM will be mocked
+    DCM_URI = 'test'
 
 
 class LoggerMockup:

@@ -102,6 +102,7 @@ class BaseEntity(BaseDCM):
 
     def get_languages(self):
         if self.uuid in self._languages:
+            self.logger.debug('Use cached Languages')
             return self._languages[self.uuid]
         languages = self.node.xpath(LANGUAGE, namespaces=self.nsm.namespaces)
         if not languages:
