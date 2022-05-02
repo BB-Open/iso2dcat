@@ -8,6 +8,10 @@ from iso2dcat.namespace import vcard
 
 
 class ContactPoint(BaseEntity):
+    _stat_title = 'ContactPoints'
+    _stat_desc = 'Details show what kind of ISO:Responsible Party is used to create the ContactPoint'
+    _stat_uuid = True
+    _stat_count = True
     dcat_class = 'vcard_Kind'
 
     simple_mapping = {
@@ -38,6 +42,7 @@ class ContactPoint(BaseEntity):
         languages = self.get_languages()
         # For each role
         for role in self.ROLES:
+            self.inc('Processed')
             # get a list of possible publishers
             results = self.node.xpath(self.PUBLISHER_ORG_EXPR, role=role,
                                       namespaces={'gmd': 'http://www.isotc211.org/2005/gmd'})
@@ -60,7 +65,7 @@ class ContactPoint(BaseEntity):
                                     self.add_tripel(URIRef(self.uri), vcard[target], Literal(hit, lang=lang))
                 break
         if len(self.rdf) == 0:
-            self.inc('bad')
+            self.inc('Bad')
             raise EntityFailed('No ContactPoint')
         else:
-            self.inc('good')
+            self.inc('Good')

@@ -14,6 +14,7 @@ class Base:
 
     _stat = None
 
+
     @property
     def logger(self):
         return component.queryUtility(ILogger)
@@ -22,9 +23,16 @@ class Base:
     def cfg(self):
         return component.queryUtility(IIsoCfg)
 
-    # @property
-    # def global_cfg(self):
-    #     return component.queryUtility(IGlobalCfg)
+
+class BaseStat(Base):
+
+    _stat_title = "Base statistics"
+    _stat_desc = "The base statistics show a histogram of different aspects of the entity"
+    _stat_count = True
+    _stat_uuid = True
+
+    def __init__(self):
+        self.stat.init(self)
 
     @property
     def stat(self):
@@ -32,11 +40,11 @@ class Base:
             self._stat = component.queryUtility(IStat)
         return self._stat
 
-    def inc(self, stat, no_uuid=False, increment=1):
-        self.stat.inc(self, stat, no_uuid=no_uuid, increment=increment)
+    def inc(self, stat, increment=1):
+        self.stat.inc(self, stat, increment=increment)
 
 
-class BaseDCM(Base):
+class BaseDCM(BaseStat):
     """Base class of all instances using the DCM data"""
 
     _dcm = None
@@ -87,6 +95,7 @@ class BaseEntity(BaseDCM):
     entity_type = None
 
     def __init__(self, node, rdf=None, parent=None):
+        super(BaseEntity, self).__init__()
         self.node = node
         self.parent = parent
         if rdf is None:

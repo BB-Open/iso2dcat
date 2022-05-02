@@ -3,7 +3,7 @@ from rdflib import Graph
 
 from iso2dcat.entities.base import BaseEntity, BaseDCM
 from iso2dcat.entities.catalog import Catalog
-from iso2dcat.entities.hierarchy import Hirarchy
+from iso2dcat.entities.hierarchy import Hierarchy
 
 
 class CatalogBuilder(BaseDCM):
@@ -18,5 +18,5 @@ class DCAT(BaseEntity):
 
     def run(self):
         self.logger.info('processing UUID: {}'.format(self.node.fileIdentifier.getchildren()[0]))
-        hirarchy = Hirarchy(self.node, self.rdf)
+        hirarchy = Hierarchy(self.node, self.rdf)
         hirarchy.run()

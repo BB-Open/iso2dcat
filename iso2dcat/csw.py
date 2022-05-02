@@ -17,6 +17,12 @@ from more_itertools import chunked
 class CSWProcessor(BaseEntity):
     count = 0
 
+    _stat_title = 'Processing statistics'
+    _stat_desc = """Number of processed datasets, and how many were DCAT compatible ("good") or not "bad".
+    Even if a ISO dataset is DCAT compatible it may have flaws, so please look further down."""
+
+    _stat_uuid = False
+
     def __init__(self):
         super(CSWProcessor, self).__init__(None, ConjunctiveGraph())
         if self.cfg.CSW_URI:
@@ -27,7 +33,7 @@ class CSWProcessor(BaseEntity):
         # Important to set the namespaces only once!
         self.set_namespaces()
 
-        self.inc('Failed', no_uuid=True, increment=0)
+        self.inc('Bad', increment=0)
 
     def get_constraint(self):
 
@@ -63,7 +69,7 @@ class CSWProcessor(BaseEntity):
             )
 
             if len(self.csw.records) > 0:
-                self.inc('Available', no_uuid=True, increment=len(self.csw.records))
+                self.inc('Processed', increment=len(self.csw.records))
 
                 yield {uuid: rec.xml for uuid, rec in self.csw.records.items()}
             else:
@@ -101,9 +107,9 @@ class CSWProcessor(BaseEntity):
                 node = objectify.parse(xml_file).getroot()
                 dcat = DCAT(node, self.rdf)
                 dcat.run()
-                self.inc('Processed', no_uuid=True)
+                self.inc('Good')
             except EntityFailed:
-                self.inc('Failed', no_uuid=True)
+                self.inc('Bad')
                 print_error(uuid)
                 self.rdf.remove((None, None, None, dcat.uuid.text))
 

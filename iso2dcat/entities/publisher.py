@@ -7,6 +7,13 @@ from iso2dcat.exceptions import EntityFailed
 
 
 class Publisher(BaseEntity):
+
+    _stat_title = 'Publishers'
+    _stat_desc = 'Details show what kind of ISO:Responsible Party is used to create the publisher'
+    _stat_uuid = True
+    _stat_count = True
+
+
     dcat_class = 'foaf_Agent'
     entity_type = FOAF.Agent
     roles = ['publisher', 'owner', 'distributor', 'custodian', 'pointOfContact']
@@ -34,6 +41,7 @@ class Publisher(BaseEntity):
         #        PUBLISHER_ORG_EXPR = ".//gmd:CI_ResponsibleParty[gmd:role/gmd:CI_RoleCode/@codeListValue=$role]"
 
         publisher = None
+        self.inc('Processed')
         # For each role
         res = {}
         for role in self.roles:
@@ -50,11 +58,11 @@ class Publisher(BaseEntity):
                 break
 
         if publisher is None:
-            self.inc('bad')
+            self.inc('Bad')
             self.role = None
             raise EntityFailed("No {klass} found".format(klass=self.dcat_class))
         else:
-            self.inc('good')
+            self.inc('Good')
 
         self.add_entity_type()
         for lang in self.get_languages():
@@ -62,10 +70,19 @@ class Publisher(BaseEntity):
 
 
 class Contributor(Publisher):
+    _stat_title = 'Contributors'
+    _stat_desc = ''
+    _stat_uuid = True
+    _stat_count = True
+
     roles = ['contributor']
     dcat_class = 'foaf_Agent_dct_Contributor'
 
 
 class Maintainer(Publisher):
+    _stat_title = 'Maintainers'
+    _stat_desc = ''
+    _stat_uuid = True
+    _stat_count = True
     roles = ['custodian']
     dcat_class = 'foaf_Agent_dcatde_Maintainer'

@@ -29,11 +29,11 @@ class AccrualPeriodicity(BaseEntity):
     def run(self):
         values = self.node.xpath(QUERY, namespaces=self.nsm.namespaces)
         if not values:
-            self.inc('bad')
+            self.inc('Bad')
             self.logger.warning('No AccrualPeriodicity found')
         else:
             self.logger.debug('Found AccrualPeriodicity {values}'.format(values=values))
-            self.inc('good')
+            self.inc('Good')
         for value in values:
             if value in self.mapping:
                 self.inc(value)

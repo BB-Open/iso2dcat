@@ -9,16 +9,30 @@ LICENSE = ".//gmd:resourceConstraints/gmd:MD_LegalConstraints/gmd:otherConstrain
 
 
 class License(BaseEntity):
+    _stat_title = 'Licenses'
+    _stat_desc = """Licenses are quite important for OpenData. There are two possible ways to attach a License in DCAT-AP.de:
+ * dcat:License
+ * dcatapde:licenseAttributionByText
+Dcat:Licenses are DCAT-URIs which have to conform to the GovData set of licenses.
+Dcatapde:licenseAttributionByText can be any License text.
+Dcat:License is strongly adviced so a not given dcat:license is counted as "Bad".
+
+ISO can have more than one License. All Licenses found by ISO2DCAT are scanned for GovData-Conform LicenseURI
+which are then mapped to GovDATA License URIs.
+Any other ISO license information is then stored as dcatapde:licenseAttributionByText entities.
+"""
 
     def __init__(self, node, rdf, parent_uri):
         super().__init__(node, rdf)
         self.parent_ressource_uri = parent_uri
 
     def run(self):
+        self.inc('Processed')
         langs = self.get_languages()
         license_nodes = self.node.xpath(LICENSE, namespaces=self.nsm.namespaces)
         if not license_nodes:
             self.inc('No License')
+            self.inc('Bad')
         licenses = {}
 
         URI_MAPPING = {
@@ -36,17 +50,17 @@ class License(BaseEntity):
                     license_obj = sj.loads(license_fixed)
                 uri_in = license_obj['url']
                 if uri_in in URI_MAPPING:
-                    self.inc('Mapping')
                     uri_out = URI_MAPPING[uri_in]
                 else:
-                    self.inc('No Mapping')
                     uri_out = uri_in
                 licenses[DCTERMS.license] = URIRef(uri_out)
-                self.inc('DCAT License')
+                self.inc('dct:License')
+                self.inc('Good')
             else:
+                if len(langs) > 0:
+                    self.inc('dactapde:licenseAttributionByText')
                 for lang in langs:
                     licenses[DCATDE.licenseAttributionByText] = Literal(license.text, lang=lang)
-                    self.inc('DCAT licenseAttributionByText')
 
         if len(list(licenses.keys())) > 0:
             for tag, license in licenses.items():

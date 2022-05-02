@@ -10,6 +10,11 @@ from iso2dcat.namespace import DCAT, ADMS
 
 @zope.interface.implementer(ICatalog)
 class Catalog(BaseEntity):
+
+    _stat_title = 'The catalogs created'
+    _stat_desc = 'Each detail line shows the name of the catalog created'
+    _stat_uuid = False
+    _stat_count = True
     catalog = {}
 
     def run(self):
@@ -28,6 +33,8 @@ class Catalog(BaseEntity):
             self.create(name, base_url)
 
     def create(self, name, base_url):
+        self.inc('Processed')
+        self.inc(name)
         foaf_agent_url = base_url + '#foaf_Agent'
         catalog_url = base_url + '#dcat_Catalog'
         self.logger.info('Create Publisher')
@@ -46,6 +53,7 @@ class Catalog(BaseEntity):
         self.rdf.add(
             (uri_cat, DCAT.themeTaxonomy, URIRef('http://publications.europa.eu/resource/authority/data-theme/')))
         self.logger.info('Catalog Created')
+        self.inc('Good')
 
         # identifier = self.node.fileIdentifier.getchildren()[0].text
         # if identifier in self.dcm.dcm:

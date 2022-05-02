@@ -26,7 +26,7 @@ class LocationBoundingbox(BaseEntity):
         subnode = self.node.xpath(LOCATION_QUERY, namespaces=self.nsm.namespaces)
 
         if not subnode:
-            self.inc('bad')
+            self.inc('Bad')
             raise EntityFailed
 
         results = {}
@@ -42,10 +42,10 @@ class LocationBoundingbox(BaseEntity):
                     results = {}
                     break
         if not results:
-            self.inc('bad')
+            self.inc('Bad')
             raise EntityFailed
         else:
-            self.inc('good')
+            self.inc('Good')
 
         geometry_string = GEOMETRY.format(
             west=results['gmd:westBoundLongitude'],

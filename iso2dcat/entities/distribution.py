@@ -17,6 +17,15 @@ DOWNLOAD = ".//gmd:transferOptions/*/gmd:onLine/gmd:CI_OnlineResource[gmd:functi
 
 
 class Distribution(DcatResource):
+
+    _stat_title = 'The distributions generated'
+    _stat_desc = \
+"""For each distribution an accessURL is mandatory. If no accessURL is found the downloadURL is used as accessURL.
+If no accessURL can be constructed this is a DCAT violation.
+dcat:accessURL: number of AccessURLs found
+dcat:downloadURL: number of DownloadURLs found
+no dcat:accessURL: number of Distributions with no URL at all"""
+
     dcat_class = 'dcat_Distribution'
     entity_type = DCAT.Distribution
     dct_format = None

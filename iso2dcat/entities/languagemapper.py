@@ -5,16 +5,17 @@ from rdflib.plugins.sparql import prepareQuery
 from zope import component
 
 from iso2dcat.component.interface import ILanguageMapper
-from iso2dcat.entities.base import Base
+from iso2dcat.entities.base import BaseStat
 from iso2dcat.path_utils import abs_file_path
 
 LANGUAGE_SOURCE_FILE = abs_file_path('iso2dcat/data/languages.rdf')
 LANGUAGE_MAPPER_PICKLE_FILE = abs_file_path('iso2dcat/data/language_mapper.pickle')
 
 
-class LanguageMapper(Base):
+class LanguageMapper(BaseStat):
 
     def __init__(self):
+        super(LanguageMapper, self).__init__()
         self._old_to_new_style = {}
         self._old_to_subject = {}
         self._subject_to_new = {}
@@ -82,9 +83,9 @@ class LanguageMapper(Base):
                 self.inc_obj(code, obj)
         return res
 
-    def inc_obj(self, stat, obj, no_uuid=False):
+    def inc_obj(self, stat, obj):
         if obj:
-            self.stat.inc(obj, stat, no_uuid, cls_name=self.__class__.__name__)
+            self.stat.inc(obj, stat, cls_name=self.__class__.__name__)
 
 
 def register_languagemapper():

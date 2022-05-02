@@ -8,10 +8,16 @@ from iso2dcat.namespace import DCAT
 
 
 class DcatDataService(DcatResource):
+
+    _stat_title = 'dcat:DataServices'
+    _stat_desc = 'A dcat:Dataservice should have an endpointURI and it should have dcat:Dataset which it serves'
+
     dcat_class = 'dcat_DataService'
     entity_type = DCAT.DataService
 
     def run(self):
+        self.inc('Processed')
+        self.inc('no endpointURI', increment=0)
         super(DcatDataService, self).run()
         SERVICE_DATASET_LINK_EXPR = './/srv:operatesOn'
         results = self.node.xpath(
@@ -23,9 +29,9 @@ class DcatDataService(DcatResource):
             }
         )
         if len(results) > 0:
-            self.inc('service:has_parent')
+            self.inc('has dcat:Dataset')
         else:
-            self.inc('service:no_parent')
+            self.inc('no dcat:Dataset')
 
         for res in results:
             for item in res.items():
@@ -49,10 +55,16 @@ class DcatDataService(DcatResource):
                 'xlink': 'http://www.w3.org/1999/xlink',
             }
         )
+        if len(results) == 0:
+            self.inc('has no enpointURI')
+        else:
+            self.inc('has enpointURI')
+
         for uri in results:
-            self.inc('service:has_enpointURI')
             self.add_tripel(URIRef(self.uri), DCAT.endpointURL, URIRef(str(uri).strip()))
 
         licenses = License(self.node, self.rdf, self.uri)
         rdf = licenses.run()
         self.add_entity_type()
+
+        self.inc('Good')

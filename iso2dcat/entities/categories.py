@@ -13,6 +13,9 @@ INSPIRE_THEME_LABELS = "gmd:identificationInfo/*/gmd:descriptiveKeywords/*"
 
 class CategoryKeywordMapper(BaseEntity):
 
+    _stat_title = 'Dcat DataServices'
+    _stat_desc = 'Each line shows the name of the catalog created'
+
     def __init__(self, node, rdf, parent_uri):
         super().__init__(node, rdf, parent_uri)
         self.parent_ressource_uri = parent_uri

@@ -9,6 +9,11 @@ QUERY = ".//gmd:dataQualityInfo/*/gmd:lineage/*/gmd:statement/gco:CharacterStrin
 
 
 class ProvenanceStatement(BaseEntity):
+    _stat_title = 'ProvenanceStatement'
+    _stat_desc = """ProvenanceStatements are quite important for OpenData. They describe the origin of the data.
+This field is not mandatory, but it is important.
+"""
+
     dcat_class = 'dct_ProvenanceStatement'
 
     @property
@@ -16,11 +21,12 @@ class ProvenanceStatement(BaseEntity):
         return self._uri
 
     def run(self):
+        self.inc('Processed')
         values = self.node.xpath(QUERY, namespaces=self.nsm.namespaces)
         if values:
-            self.inc('good')
+            self.inc('Good')
         else:
-            self.inc('bad')
+            self.inc('Bad')
             raise EntityFailed
         statement = values[0]
         hash_statement = hashlib.md5(str(statement).encode()).hexdigest()

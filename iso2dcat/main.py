@@ -15,7 +15,7 @@ from iso2dcat.entities.contactpoint import ContactPoint
 from iso2dcat.entities.dataservice import DcatDataService
 from iso2dcat.entities.dates import DateMapper
 from iso2dcat.entities.distribution import Distribution
-from iso2dcat.entities.hierarchy import Hirarchy
+from iso2dcat.entities.hierarchy import Hierarchy
 from iso2dcat.entities.foafdocuments import FoafDocuments
 from iso2dcat.entities.languagemapper import register_languagemapper, LanguageMapper
 from iso2dcat.entities.licenses import License
@@ -94,12 +94,19 @@ class Main(Base):
 
         self.logger.info('iso2dcat statistics')
         stat = component.queryUtility(IStat)
-        for klass in [CSWProcessor, Catalog, Publisher, ContactPoint, Hirarchy, Contributor, Maintainer,
+        lines = []
+        for klass in [CSWProcessor, Catalog, Publisher, ContactPoint, Hierarchy, Contributor, Maintainer,
                       CategoryKeywordMapper, DateMapper, LocationBoundingbox, Distribution, DcatDataService,
                       AccrualPeriodicity, FoafDocuments, RightsStatement, ProvenanceStatement, LanguageMapper,
                       InqbusPriority, License]:
             for line in stat.get_stats(klass):
-                self.logger.info(line)
+                lines.append(line)
+
+        for line in lines:
+            self.logger.info(line)
+        for line in lines:
+            print(line)
+
 
         # todo: RDF2Solr should be in scheduler, part of flask package
         # self.logger.info('RDF2Solr')

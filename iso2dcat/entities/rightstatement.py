@@ -10,6 +10,11 @@ QUERY = './/gmd:resourceConstraints/*/gmd:otherConstraints/gmx:Anchor'
 
 
 class RightsStatement(BaseEntity):
+    _stat_title = 'RightsStatement'
+    _stat_desc = """RightsStatement are quite important for OpenData. They describe the way the data can be used ander the given License.
+This field is not mandatory, but it is important.
+    """
+
     dcat_class = 'dct_RightsStatement'
 
     @property
@@ -17,11 +22,12 @@ class RightsStatement(BaseEntity):
         return self._uri
 
     def run(self):
+        self.inc('Processed')
         values = self.node.xpath(QUERY, namespaces=self.nsm.namespaces)
         if values:
-            self.inc('good')
+            self.inc('Good')
         else:
-            self.inc('bad')
+            self.inc('Bad')
             raise EntityFailed
         statement = values[0]
         hash_statement = hashlib.md5(str(statement).encode()).hexdigest()
