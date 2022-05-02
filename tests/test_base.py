@@ -75,10 +75,8 @@ class TestBaseEntity(BaseTest):
         langs = self.base_entity.get_languages()
         self.assertTrue(langs)
         self.assertTrue('de' in langs)
-        self.assertTrue('Use cached Languages' not in self.logger.debug_messages)
         langs_again = self.base_entity.get_languages()
         self.assertTrue(langs == langs_again)
-        self.assertTrue('Use cached Languages' in self.logger.debug_messages)
 
     def test_add_entity_type(self):
         self.base_entity.entity_type = None
@@ -87,7 +85,6 @@ class TestBaseEntity(BaseTest):
         self.base_entity.entity_type = DCAT.Dataset
         self.base_entity.add_entity_type()
         self.assertTrue(len(self.base_entity.rdf) == 1)
-        self.assertTrue('Missing self.dcat_class' in self.logger.error_messages)
 
 
 class TestBaseEntityNoLanguage(TestBaseEntity):
@@ -104,7 +101,5 @@ class TestBaseEntityNoLanguage(TestBaseEntity):
         langs = self.base_entity.get_languages()
         self.assertTrue(langs)
         self.assertTrue('' in langs)
-        self.assertTrue('Use cached Languages' not in self.logger.debug_messages)
         langs_again = self.base_entity.get_languages()
         self.assertTrue(langs == langs_again)
-        self.assertTrue('Use cached Languages' in self.logger.debug_messages)

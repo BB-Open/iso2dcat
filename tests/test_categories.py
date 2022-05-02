@@ -91,4 +91,3 @@ class TestOtherThesauri(BaseTest):
     def test_run(self):
         self.keywords.run()
         self.keywords.to_rdf4j(self.keywords.rdf)
-        self.assertTrue('Missing Data for Thesauri BE/BB Schlagwortliste, Version 1.0' in self.logger.warn_messages)

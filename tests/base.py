@@ -33,28 +33,19 @@ class ConfigMockup:
 class LoggerMockup:
 
     def __init__(self):
-        self.info_messages = []
-        self.warn_messages = []
-        self.error_messages = []
-        self.debug_messages = []
+        pass
 
     def info(self, msg):
-        self.info_messages.append(msg)
+        pass
 
     def warning(self, msg):
-        self.warn_messages.append(msg)
+        pass
 
     def error(self, msg):
-        self.error_messages.append(msg)
+        pass
 
     def debug(self, msg):
-        self.debug_messages.append(msg)
-
-    def reset(self):
-        self.debug_messages = []
-        self.error_messages = []
-        self.warn_messages = []
-        self.info_messages = []
+        pass
 
 
 class RDFDatabaseMockup:
@@ -82,7 +73,6 @@ class BaseTest(TestCase):
         self.configer_etree()
 
     def tearDown(self):
-        self.logger.reset()
         self.rdf4j.reset()
 
     def setup_components(self):
