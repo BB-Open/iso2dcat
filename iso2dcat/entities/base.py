@@ -40,8 +40,8 @@ class BaseStat(Base):
             self._stat = component.queryUtility(IStat)
         return self._stat
 
-    def inc(self, stat, increment=1):
-        self.stat.inc(self, stat, increment=increment)
+    def inc(self, stat, increment=1, no_uuid=False):
+        self.stat.inc(self, stat, increment=increment, no_uuid=no_uuid)
 
 
 class BaseDCM(BaseStat):

@@ -4,7 +4,7 @@ from lxml import objectify
 from rdflib import Graph, URIRef
 from rdflib.namespace import FOAF, RDF
 
-from iso2dcat.entities.base import Base, BaseDCM, BaseEntity
+from iso2dcat.entities.base import Base, BaseDCM, BaseEntity, BaseStat
 from iso2dcat.entities.languagemapper import LanguageMapper
 from iso2dcat.namespace import NsManager, DCAT
 from iso2dcat.statistics.stat import Stat
@@ -22,12 +22,12 @@ class TestBase(BaseTest):
         self.assertIsInstance(base.cfg, ConfigMockup)
 
     def test_stat(self):
-        base = Base()
+        base = BaseStat()
         self.assertIsInstance(base.stat, Stat)
         base.inc('test_base', no_uuid=True)
-        self.assertTrue('Base' in base.stat.data)
-        self.assertTrue('test_base' in base.stat.data['Base'])
-        self.assertTrue(base.stat.data['Base']['test_base'] == 1)
+        self.assertTrue('BaseStat' in base.stat.data)
+        self.assertTrue('test_base' in base.stat.data['BaseStat']['stat'])
+        self.assertTrue(base.stat.data['BaseStat']['stat']['test_base']['counts'] == 1)
 
 
 class TestBaseDCM(BaseTest):

@@ -85,14 +85,14 @@ class Stat:
             yield line
         yield '\n'
 
-    def inc(self, inst, stat, cls_name=None, increment=1):
+    def inc(self, inst, stat, cls_name=None, increment=1, no_uuid=False):
         entity_rec = self.get_entity_record(inst, cls_name=cls_name)
         rec = self.get_stat_record(stat, entity_rec)
         try:
             rec['counts'] += increment
         except :
             a=10
-        if entity_rec['features']['uuid']:
+        if entity_rec['features']['uuid'] and not no_uuid:
             rec['uuids'].append(inst.uuid)
 
     def init(self, inst, cls_name=None):

@@ -13,6 +13,10 @@ class TestStat(BaseTest):
         self.stat = Stat()
 
     def test_get_stat(self):
+        self._stat_count = True
+        self._stat_uuid = False
+        self._stat_title = 'Test'
+        self._stat_desc = 'Description'
         self.stat.inc(self, 'test', no_uuid=True)
         self.stat.inc(self, 'test', no_uuid=True)
         self.stat.inc(self, 'test_again', no_uuid=True)
@@ -22,6 +26,8 @@ class TestStat(BaseTest):
         self.assertTrue('test_again' in res)
         self.assertTrue('1' in res)
         self.assertTrue('2' in res)
+        self.assertTrue(self._stat_title in res)
+        self.assertTrue(self._stat_desc in res)
 
         res = '\n'.join(self.stat.get_stats(DcatDataset))
         self.assertTrue(res == '')
