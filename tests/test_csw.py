@@ -14,7 +14,6 @@ class TestCSWProcessor(BaseTest):
     def test_init(self):
         self.assertTrue(self.processor)
         self.assertTrue(self.processor.csw is None)
-        self.assertTrue('No Uri provided, make sure you use File Mode' in self.logger.error_messages)
 
     def test_run(self):
         self.processor.run()
