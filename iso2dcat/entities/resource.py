@@ -29,13 +29,14 @@ class DcatResource(BaseEntity):
         clean_languages = self.get_languages()
 
         if not titles or not descriptions:
+            self.inc('Bad')
+            self.inc('Bad Title and Description')
             raise EntityFailed('DcatRessource incomplete: Missing Title or Description')
-        # todo languages
+
         for title in titles:
             for lang in clean_languages:
                 self.add_tripel(URIRef(self.uri), DCTERMS.title, Literal(title, lang=lang))
 
-        # todo languages
         for description in descriptions:
             for lang in clean_languages:
                 self.add_tripel(URIRef(self.uri), DCTERMS.description, Literal(description, lang=lang))
@@ -46,7 +47,6 @@ class DcatResource(BaseEntity):
         except EntityFailed:
             self.logger.warning('No publisher found')
         else:
-
             self.add_tripel(URIRef(self.uri), DCTERMS.publisher, URIRef(publisher.uri))
 
         # Maintainer

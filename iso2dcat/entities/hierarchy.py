@@ -23,6 +23,7 @@ from iso2dcat.entities.tile import Tile
 # <gmd:hierarchyLevel>
 #     <gmd:MD_ScopeCode codeList="https://standards.iso.org/iso/19139/resources/gmxCodelists.xml#MD_ScopeCode" codeListValue="service">service</gmd:MD_ScopeCode>
 # </gmd:hierarchyLevel>
+from iso2dcat.exceptions import EntityFailed
 
 SCOPE_CODE_MAPPING = {
     'dataset': 'dcat:Dataset',
@@ -73,14 +74,18 @@ class Hierarchy(BaseEntity):
         #                                     <gmd:URL>https://geobroker.geobasis-bb.de/gbss.php?MODE=GetProductInformation&amp;PRODUCTID=121181a5-3b7b-44db-9436-a0906f1f5d7c</gmd:URL>
         #                             </gmd:linkage>
         self.inc('Processed')
-        if hierarchy == 'tile':
-            result = Tile(self.node, self.rdf).run()
-        elif hierarchy == 'service':
-            result = DcatDataService(self.node, self.rdf).run()
-        elif hierarchy == 'series':
-            result = DcatDataset(self.node, self.rdf).run()
-        else:
-            result = DcatDataset(self.node, self.rdf).run()
+        try:
+            if hierarchy == 'tile':
+                result = Tile(self.node, self.rdf).run()
+            elif hierarchy == 'service':
+                result = DcatDataService(self.node, self.rdf).run()
+            elif hierarchy == 'series':
+                result = DcatDataset(self.node, self.rdf).run()
+            else:
+                result = DcatDataset(self.node, self.rdf).run()
+        except EntityFailed as e:
+            self.inc('Bad')
+            raise e
 
         self.inc('Good')
         return result

@@ -8,7 +8,7 @@ from iso2dcat.exceptions import EntityFailed
 
 class Publisher(BaseEntity):
 
-    _stat_title = 'Publishers'
+    _stat_title = 'dct:publisher'
     _stat_desc = 'Details show what kind of ISO:Responsible Party is used to create the publisher'
     _stat_uuid = True
     _stat_count = True
@@ -70,8 +70,8 @@ class Publisher(BaseEntity):
 
 
 class Contributor(Publisher):
-    _stat_title = 'Contributors'
-    _stat_desc = ''
+    _stat_title = 'dct:Contributor'
+    _stat_desc = 'Special Foaf Agent using ISO:Responsible Party with role "contributor"'
     _stat_uuid = True
     _stat_count = True
 
@@ -80,8 +80,8 @@ class Contributor(Publisher):
 
 
 class Maintainer(Publisher):
-    _stat_title = 'Maintainers'
-    _stat_desc = ''
+    _stat_title = 'dcatde:Maintainer'
+    _stat_desc = 'Special Foaf Agent using ISO:Responsible Party with role "custodian"'
     _stat_uuid = True
     _stat_count = True
     roles = ['custodian']

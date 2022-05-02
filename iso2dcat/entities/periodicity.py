@@ -8,6 +8,26 @@ QUERY = 'gmd:identificationInfo[1]/*/gmd:resourceMaintenance/*/gmd:maintenanceAn
 
 class AccrualPeriodicity(BaseEntity):
 
+    _stat_title = "dct:accrualPeriodicity"
+    _stat_desc = \
+""" Convert gmd:maintenanceAndUpdateFrequency to dct:accrualPeriodicity
+Each Detail line shows one value found in ISO-Files.
+
+MAPPING:
+continual: http://publications.europa.eu/resource/authority/frequency/CONT
+fortnightly: http://publications.europa.eu/resource/authority/frequency/BIWEEKLY
+biannually: http://publications.europa.eu/resource/authority/frequency/ANNUAL_2
+annually: http://publications.europa.eu/resource/authority/frequency/ANNUAL
+irregular: http://publications.europa.eu/resource/authority/frequency/IRREG
+daily: http://publications.europa.eu/resource/authority/frequency/DAILY
+weekly: http://publications.europa.eu/resource/authority/frequency/WEEKLY
+monthly: http://publications.europa.eu/resource/authority/frequency/MONTHLY
+quarterly: http://publications.europa.eu/resource/authority/frequency/QUARTERLY
+unknown: http://publications.europa.eu/resource/authority/frequency/UNKNOWN
+asNeeded: http://inspire.ec.europa.eu/metadata-codelist/MaintenanceFrequencyCode/asNeeded
+notPlanned: http://inspire.ec.europa.eu/metadata-codelist/MaintenanceFrequencyCode/notPlanned
+"""
+
     def __init__(self, node, rdf, parent_uri):
         super().__init__(node, rdf)
         self.parent_ressource_uri = parent_uri

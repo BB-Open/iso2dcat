@@ -13,8 +13,46 @@ INSPIRE_THEME_LABELS = "gmd:identificationInfo/*/gmd:descriptiveKeywords/*"
 
 class CategoryKeywordMapper(BaseEntity):
 
-    _stat_title = 'Dcat DataServices'
-    _stat_desc = 'Each line shows the name of the catalog created'
+    _stat_title = 'Categories and Keywords'
+    _stat_desc = \
+"""Convert all gmd:keyword to dcat:keyword
+Convert gmd:topicCategory to standard dcat:theme
+Convert gmd:descriptiveKeywords to additional dcat:theme for known thesauri
+
+Category Mapping iso to dcat:
+'farming': ['AGRI', 'ENVI']
+'imageryBaseMapsEarthCover': ['AGRI', 'ENVI', 'TECH', 'GOVE', 'REGI']
+'inlandWaters': ['AGRI', 'ENVI', 'TRAN']
+'oceans': ['AGRI', 'ENVI', 'TRAN']
+'society': ['EDUC', 'SOCI']
+'biota': ['ENVI']
+'climatologyMeteorologyAtmosphere': ['ENVI', 'TECH']
+'elevation': ['ENVI', 'TECH', 'GOVE']
+'environment': ['ENVI']
+'geoscientificInformation': ['ENVI', 'TECH', 'REGI']
+'utilitiesCommunication': ['ENVI', 'ENER', 'GOVE']
+'transportation': ['TRAN']
+'structure': ['TRAN', 'REGI']
+'economy': ['ECON']
+'health': ['HEAL']
+'boundaries': ['GOVE', 'REGI']
+'location': ['GOVE', 'REGI']
+'planningCadastre': ['GOVE', 'REGI']
+'intelligenceMilitary': ['JUST']
+
+Currently known thesauri:
+ * GEMET - INSPIRE themes, version 1.0
+
+Details:
+Good: Keyword or topic Category found
+Bad: No Keyword or topic Category found
+good_kw: Keyword found and converted
+bad_kw: No Keyword found
+good_cat: topic Category found and converted
+bad_cat: No topic Category found
+good_additional_cat: Keywords of known Thesauri found and converted
+bad_additional_cat: No Keywords of known Thesauri found and converted
+"""
 
     def __init__(self, node, rdf, parent_uri):
         super().__init__(node, rdf, parent_uri)
@@ -48,12 +86,18 @@ class CategoryKeywordMapper(BaseEntity):
         }
 
     def run(self):
+        self.inc('Processed')
         results_kw = self.node.xpath(KEYWORDS,
                                      namespaces=self.nsm.namespaces)
         results_cat = self.node.xpath(CATEGORIES,
                                       namespaces=self.nsm.namespaces)
         results_theme_label = self.node.xpath(INSPIRE_THEME_LABELS,
                                               namespaces=self.nsm.namespaces)
+
+        if results_kw or results_cat:
+            self.inc('Good')
+        else:
+            self.inc('Bad')
 
         if results_kw:
             self.inc('good_kw')

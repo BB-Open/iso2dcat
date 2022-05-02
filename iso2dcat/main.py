@@ -13,6 +13,7 @@ from iso2dcat.entities.catalog import Catalog
 from iso2dcat.entities.categories import CategoryKeywordMapper
 from iso2dcat.entities.contactpoint import ContactPoint
 from iso2dcat.entities.dataservice import DcatDataService
+from iso2dcat.entities.dataset import DcatDataset
 from iso2dcat.entities.dates import DateMapper
 from iso2dcat.entities.distribution import Distribution
 from iso2dcat.entities.hierarchy import Hierarchy
@@ -24,7 +25,9 @@ from iso2dcat.entities.periodicity import AccrualPeriodicity
 from iso2dcat.entities.priority import InqbusPriority
 from iso2dcat.entities.provenance import ProvenanceStatement
 from iso2dcat.entities.publisher import Publisher, Contributor, Maintainer
+from iso2dcat.entities.resource import DcatResource
 from iso2dcat.entities.rightstatement import RightsStatement
+from iso2dcat.entities.tile import Tile
 from iso2dcat.log.log import register_logger
 from iso2dcat.namespace import register_nsmanager
 from iso2dcat.rdf_database.db import register_db
@@ -95,10 +98,15 @@ class Main(Base):
         self.logger.info('iso2dcat statistics')
         stat = component.queryUtility(IStat)
         lines = []
-        for klass in [CSWProcessor, Catalog, Publisher, ContactPoint, Hierarchy, Contributor, Maintainer,
-                      CategoryKeywordMapper, DateMapper, LocationBoundingbox, Distribution, DcatDataService,
-                      AccrualPeriodicity, FoafDocuments, RightsStatement, ProvenanceStatement, LanguageMapper,
-                      InqbusPriority, License]:
+        for klass in [
+            CSWProcessor, Catalog, Hierarchy, DcatResource,
+            DcatDataService, DcatDataset, Tile,
+            Distribution,
+            ContactPoint, Contributor, Maintainer, Publisher,
+            CategoryKeywordMapper, DateMapper, LocationBoundingbox,
+            AccrualPeriodicity, FoafDocuments, RightsStatement, ProvenanceStatement,
+            InqbusPriority, License,
+            LanguageMapper]:
             for line in stat.get_stats(klass):
                 lines.append(line)
 
@@ -106,7 +114,6 @@ class Main(Base):
             self.logger.info(line)
         for line in lines:
             print(line)
-
 
         # todo: RDF2Solr should be in scheduler, part of flask package
         # self.logger.info('RDF2Solr')

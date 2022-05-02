@@ -11,7 +11,7 @@ from iso2dcat.namespace import DCAT, ADMS
 @zope.interface.implementer(ICatalog)
 class Catalog(BaseEntity):
 
-    _stat_title = 'The catalogs created'
+    _stat_title = 'dcat:Catalog'
     _stat_desc = 'Each detail line shows the name of the catalog created'
     _stat_uuid = False
     _stat_count = True

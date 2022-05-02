@@ -88,10 +88,10 @@ class Stat:
     def inc(self, inst, stat, cls_name=None, increment=1, no_uuid=False):
         entity_rec = self.get_entity_record(inst, cls_name=cls_name)
         rec = self.get_stat_record(stat, entity_rec)
-        try:
-            rec['counts'] += increment
-        except :
-            a=10
+        # try:
+        rec['counts'] += increment
+        # except :
+        #     ra
         if entity_rec['features']['uuid'] and not no_uuid:
             rec['uuids'].append(inst.uuid)
 
@@ -101,6 +101,8 @@ class Stat:
     def get_entity_record(self, inst, cls_name=None):
         if not cls_name:
             cls_name = inst.__class__.__name__
+        else:
+            pass
         if cls_name not in self.data:
             features = {
                 'uuid': inst._stat_uuid,
@@ -144,6 +146,9 @@ class Stat:
 
 
 def register_stat():
+    stat = component.queryUtility(IStat)
+    if stat:
+        return stat
     stat = Stat()
     component.provideUtility(stat, IStat)
     return stat

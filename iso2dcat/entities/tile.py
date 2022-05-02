@@ -7,6 +7,12 @@ from iso2dcat.entities.dataset import DcatDataset
 
 class Tile(DcatDataset):
 
+    _stat_title = "Tiles"
+    _stat_desc = \
+"""A dcat:Dataset has to have a dct:title, dct:description and at least one dcat:Distribution.
+Tiles are special Dataset with dct:isPartOf
+"""
+
     def run(self):
         super(Tile, self).run()
         TILE_DATASET_LINK_EXPR = './/gmd:parentIdentifier'

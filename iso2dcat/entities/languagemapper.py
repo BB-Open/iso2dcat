@@ -14,6 +14,11 @@ LANGUAGE_MAPPER_PICKLE_FILE = abs_file_path('iso2dcat/data/language_mapper.pickl
 
 class LanguageMapper(BaseStat):
 
+    _stat_uuid = True
+    _stat_count = True
+    _stat_title = "LanguageMapper"
+    _stat_desc = ""
+
     def __init__(self):
         super(LanguageMapper, self).__init__()
         self._old_to_new_style = {}
@@ -71,6 +76,7 @@ class LanguageMapper(BaseStat):
                 self._old_to_new_style[old] = self._subject_to_new[uri]
 
     def convert(self, codes, obj):
+        self.inc_obj('Processed', obj)
         res = []
         for code in codes:
             if code in self._old_to_new_style:
@@ -81,6 +87,7 @@ class LanguageMapper(BaseStat):
             else:
                 res.append(code)
                 self.inc_obj(code, obj)
+        self.inc_obj('Good', obj)
         return res
 
     def inc_obj(self, stat, obj):

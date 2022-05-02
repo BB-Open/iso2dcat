@@ -13,6 +13,17 @@ GEOMETRY = "<gml:Envelope srsName='http://www.opengis.net/def/crs/EPSG/0/4326'><
 class LocationBoundingbox(BaseEntity):
     dcat_class = 'dct_Location'
 
+    _stat_title = 'dct:Location'
+    _stat_desc = \
+"""Convert gmd:EX_GeographicBoundingBox to dct:Location by parsing directions:
+    * gmd:southBoundLatitude
+    * gmd:northBoundLatitude
+    * gmd:westBoundLongitude
+    * gmd:eastBoundLongitude
+Good: Bounding box with directions found
+Bad: Bounding Box missing or incomplete
+"""
+
     def __init__(self, node, rdf):
 
         super().__init__(node, rdf)
@@ -24,6 +35,7 @@ class LocationBoundingbox(BaseEntity):
 
     def run(self):
         subnode = self.node.xpath(LOCATION_QUERY, namespaces=self.nsm.namespaces)
+        self.inc('Processed')
 
         if not subnode:
             self.inc('Bad')

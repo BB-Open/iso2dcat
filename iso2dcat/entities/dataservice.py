@@ -4,20 +4,20 @@ from rdflib import URIRef
 from iso2dcat.entities.dataset import DcatDataset
 from iso2dcat.entities.licenses import License
 from iso2dcat.entities.resource import DcatResource
+from iso2dcat.exceptions import EntityFailed
 from iso2dcat.namespace import DCAT
 
 
 class DcatDataService(DcatResource):
 
     _stat_title = 'dcat:DataServices'
-    _stat_desc = 'A dcat:Dataservice should have an endpointURI and it should have dcat:Dataset which it serves'
+    _stat_desc = 'A dcat:Dataservice has to have an endpointURI and it should have dcat:Dataset which it serves'
 
     dcat_class = 'dcat_DataService'
     entity_type = DCAT.DataService
 
     def run(self):
         self.inc('Processed')
-        self.inc('no endpointURI', increment=0)
         super(DcatDataService, self).run()
         SERVICE_DATASET_LINK_EXPR = './/srv:operatesOn'
         results = self.node.xpath(
@@ -57,6 +57,8 @@ class DcatDataService(DcatResource):
         )
         if len(results) == 0:
             self.inc('has no enpointURI')
+            self.inc('Bad')
+            raise EntityFailed('Missing Endpoint URI')
         else:
             self.inc('has enpointURI')
 

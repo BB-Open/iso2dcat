@@ -8,7 +8,7 @@ from iso2dcat.namespace import vcard
 
 
 class ContactPoint(BaseEntity):
-    _stat_title = 'ContactPoints'
+    _stat_title = 'ContactPoints (vcard:Kinds)'
     _stat_desc = 'Details show what kind of ISO:Responsible Party is used to create the ContactPoint'
     _stat_uuid = True
     _stat_count = True

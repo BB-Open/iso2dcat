@@ -9,7 +9,7 @@ QUERY = ".//gmd:dataQualityInfo/*/gmd:lineage/*/gmd:statement/gco:CharacterStrin
 
 
 class ProvenanceStatement(BaseEntity):
-    _stat_title = 'ProvenanceStatement'
+    _stat_title = 'dct:ProvenanceStatement'
     _stat_desc = """ProvenanceStatements are quite important for OpenData. They describe the origin of the data.
 This field is not mandatory, but it is important.
 """

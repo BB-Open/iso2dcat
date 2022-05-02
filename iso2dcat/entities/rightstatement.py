@@ -10,7 +10,7 @@ QUERY = './/gmd:resourceConstraints/*/gmd:otherConstraints/gmx:Anchor'
 
 
 class RightsStatement(BaseEntity):
-    _stat_title = 'RightsStatement'
+    _stat_title = 'dct:RightsStatement'
     _stat_desc = """RightsStatement are quite important for OpenData. They describe the way the data can be used ander the given License.
 This field is not mandatory, but it is important.
     """

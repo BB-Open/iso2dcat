@@ -18,13 +18,14 @@ DOWNLOAD = ".//gmd:transferOptions/*/gmd:onLine/gmd:CI_OnlineResource[gmd:functi
 
 class Distribution(DcatResource):
 
-    _stat_title = 'The distributions generated'
+    _stat_title = 'dcat:Distribution'
     _stat_desc = \
 """For each distribution an accessURL is mandatory. If no accessURL is found the downloadURL is used as accessURL.
 If no accessURL can be constructed this is a DCAT violation.
 dcat:accessURL: number of AccessURLs found
 dcat:downloadURL: number of DownloadURLs found
-no dcat:accessURL: number of Distributions with no URL at all"""
+no dcat:accessURL: number of Distributions with no URL at all
+no dcat:accessURL and no dcat:downloadURL: number of Files with missing distribution"""
 
     dcat_class = 'dcat_Distribution'
     entity_type = DCAT.Distribution
@@ -70,6 +71,7 @@ no dcat:accessURL: number of Distributions with no URL at all"""
             self.add_tripel(URIRef(uri), DCTERMS.provenance, URIRef(self.provenance.uri))
 
     def run(self):
+        self.inc('Processed')
         self.languages = self.get_languages()
         self.rightstatement = RightsStatement(self.node, self.rdf)
         self.provenance = ProvenanceStatement(self.node, self.rdf)
@@ -91,7 +93,8 @@ no dcat:accessURL: number of Distributions with no URL at all"""
         else:
             self.inc('no dcat:accessURL')
             if not download_nodes:
-                self.inc('no dcat:accessURL')
+                self.inc('no dcat:accessURL and no dcat:downloadURL')
+                self.inc('Bad')
                 raise EntityFailed('No AccessURL for Distribution')
 
         if download_nodes:
@@ -114,3 +117,4 @@ no dcat:accessURL: number of Distributions with no URL at all"""
             else:
                 title = title[0]
             self.add_distribution(title, downloadURL[0], downloadURL=downloadURL[0])
+        self.inc('Good')
