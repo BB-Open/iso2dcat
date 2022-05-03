@@ -32,7 +32,8 @@ class BaseStat(Base):
     _stat_uuid = True
 
     def __init__(self):
-        self.stat.init(self)
+        if self.stat:
+            self.stat.init(self)
 
     @property
     def stat(self):

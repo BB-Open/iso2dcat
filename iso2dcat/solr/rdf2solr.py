@@ -266,6 +266,7 @@ class RDF2SOLR(BaseDCM):
 
         # Register statistics
         register_stat()
+        self.stat.init(self)
 
         # Register RDF Database to write final results
         db = register_db()
