@@ -8,7 +8,12 @@ from iso2dcat.entities.base import Base, BaseDCM, BaseEntity, BaseStat
 from iso2dcat.entities.languagemapper import LanguageMapper
 from iso2dcat.namespace import NsManager, DCAT
 from iso2dcat.statistics.stat import Stat
-from tests.base import BaseTest, LoggerMockup, ConfigMockup, DCMMockup, RDFDatabaseMockup, abs_path
+from tests.base import BaseTest, \
+    LoggerMockup, \
+    ConfigMockup, \
+    DCMMockup, \
+    RDFDatabaseMockup, \
+    abs_path
 
 
 class TestBase(BaseTest):
@@ -27,7 +32,8 @@ class TestBase(BaseTest):
         base.inc('test_base', no_uuid=True)
         self.assertTrue('BaseStat' in base.stat.data)
         self.assertTrue('test_base' in base.stat.data['BaseStat']['stat'])
-        self.assertTrue(base.stat.data['BaseStat']['stat']['test_base']['counts'] == 1)
+        data = base.stat.data['BaseStat']['stat']['test_base']['counts']
+        self.assertTrue(data == 1)
 
 
 class TestBaseDCM(BaseTest):
@@ -60,7 +66,8 @@ class TestBaseEntity(BaseTest):
 
     def setUp(self):
         super(TestBaseEntity, self).setUp()
-        with open(abs_path('testdata/0a2c35a5-81b9-4ecd-a223-d40592c0ba12.xml'), 'rb') as rf:
+        path = abs_path('testdata/0a2c35a5-81b9-4ecd-a223-d40592c0ba12.xml')
+        with open(path, 'rb') as rf:
             data = rf.read()
         xml_file = io.BytesIO(data)
         node = objectify.parse(xml_file).getroot()
@@ -68,8 +75,11 @@ class TestBaseEntity(BaseTest):
 
     def test_namespaces(self):
         self.base_entity.set_namespaces()
+        ns = self.base_entity.rdf.namespace_manager.namespaces()
         for prefix, URI in self.base_entity.nsm.nsm.namespaces():
-            self.assertTrue((prefix, URIRef(URI)) in self.base_entity.rdf.namespace_manager.namespaces())
+            self.assertTrue(
+                (prefix, URIRef(URI)) in ns
+            )
 
     def test_get_languages(self):
         langs = self.base_entity.get_languages()

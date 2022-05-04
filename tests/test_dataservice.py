@@ -11,7 +11,8 @@ class TestDataservice(BaseTest):
 
     def setUp(self):
         super(TestDataservice, self).setUp()
-        with open(abs_path('testdata/0b240f09-a9e5-4bc1-9351-c2a9a9b2cfab.xml'), 'rb') as rf:
+        path = abs_path('testdata/0b240f09-a9e5-4bc1-9351-c2a9a9b2cfab.xml')
+        with open(path, 'rb') as rf:
             data = rf.read()
         xml_file = io.BytesIO(data)
         node = objectify.parse(xml_file).getroot()
@@ -37,7 +38,8 @@ class TestDataServiceNoParent(TestDataservice):
 
     def setUp(self):
         super(TestDataServiceNoParent, self).setUp()
-        with open(abs_path('testdata/724acaf6-670f-4f1d-ac1c-fbadd3f9e93e.xml'), 'rb') as rf:
+        path = abs_path('testdata/724acaf6-670f-4f1d-ac1c-fbadd3f9e93e.xml')
+        with open(path, 'rb') as rf:
             data = rf.read()
         xml_file = io.BytesIO(data)
         node = objectify.parse(xml_file).getroot()

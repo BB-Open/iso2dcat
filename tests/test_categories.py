@@ -10,11 +10,16 @@ from tests.base import BaseTest, abs_path
 class TestKeyword(BaseTest):
     def setUp(self):
         super(TestKeyword, self).setUp()
-        with open(abs_path('testdata/0a2c35a5-81b9-4ecd-a223-d40592c0ba12.xml'), 'rb') as rf:
+        path = abs_path('testdata/0a2c35a5-81b9-4ecd-a223-d40592c0ba12.xml')
+        with open(path, 'rb') as rf:
             data = rf.read()
         xml_file = io.BytesIO(data)
         node = objectify.parse(xml_file).getroot()
-        self.keywords = CategoryKeywordMapper(node, ConjunctiveGraph(), parent_uri='https://www.iso2dcat.de')
+        self.keywords = CategoryKeywordMapper(
+            node,
+            ConjunctiveGraph(),
+            parent_uri='https://www.iso2dcat.de'
+        )
 
     def test_run(self):
         self.keywords.run()
@@ -38,7 +43,11 @@ class TestNoKeyword(BaseTest):
             data = rf.read()
         xml_file = io.BytesIO(data)
         node = objectify.parse(xml_file).getroot()
-        self.keywords = CategoryKeywordMapper(node, ConjunctiveGraph(), parent_uri='https://www.iso2dcat.de')
+        self.keywords = CategoryKeywordMapper(
+            node,
+            ConjunctiveGraph(),
+            parent_uri='https://www.iso2dcat.de'
+        )
 
     def test_run(self):
         self.keywords.run()
@@ -58,11 +67,16 @@ class TestNoKeyword(BaseTest):
 class TestGemet(BaseTest):
     def setUp(self):
         super(TestGemet, self).setUp()
-        with open(abs_path('testdata/8ce339ec-c60b-4c26-a790-20f75756e255.xml'), 'rb') as rf:
+        path = abs_path('testdata/8ce339ec-c60b-4c26-a790-20f75756e255.xml')
+        with open(path, 'rb') as rf:
             data = rf.read()
         xml_file = io.BytesIO(data)
         node = objectify.parse(xml_file).getroot()
-        self.keywords = CategoryKeywordMapper(node, ConjunctiveGraph(), parent_uri='https://www.iso2dcat.de')
+        self.keywords = CategoryKeywordMapper(
+            node,
+            ConjunctiveGraph(),
+            parent_uri='https://www.iso2dcat.de'
+        )
 
     def test_run(self):
         self.keywords.run()
@@ -82,11 +96,16 @@ class TestGemet(BaseTest):
 class TestOtherThesauri(BaseTest):
     def setUp(self):
         super(TestOtherThesauri, self).setUp()
-        with open(abs_path('testdata/4263d50f-2ede-454c-a1c8-d5bf3f095418.xml'), 'rb') as rf:
+        path = abs_path('testdata/4263d50f-2ede-454c-a1c8-d5bf3f095418.xml')
+        with open(path, 'rb') as rf:
             data = rf.read()
         xml_file = io.BytesIO(data)
         node = objectify.parse(xml_file).getroot()
-        self.keywords = CategoryKeywordMapper(node, ConjunctiveGraph(), parent_uri='https://www.iso2dcat.de')
+        self.keywords = CategoryKeywordMapper(
+            node,
+            ConjunctiveGraph(),
+            parent_uri='https://www.iso2dcat.de',
+        )
 
     def test_run(self):
         self.keywords.run()

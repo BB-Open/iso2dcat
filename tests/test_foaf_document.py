@@ -13,11 +13,15 @@ class TestFoafDocument(BaseTest):
         super(TestFoafDocument, self).setUp()
 
     def test_landing_page(self):
-        with open(abs_path('testdata/E04D90A6-35F5-480D-ABD7-640C48A6694D.xml'), 'rb') as rf:
+        path = abs_path('testdata/E04D90A6-35F5-480D-ABD7-640C48A6694D.xml')
+        with open(path, 'rb') as rf:
             data = rf.read()
         xml_file = io.BytesIO(data)
         node = objectify.parse(xml_file).getroot()
-        document = FoafDocuments(node, ConjunctiveGraph(), self.cfg.FALLBACK_URL)
+        document = FoafDocuments(node,
+                                 ConjunctiveGraph(),
+                                 self.cfg.FALLBACK_URL
+                                 )
         document.run()
         document.to_rdf4j(document.rdf)
         res = self.rdf4j.graph.query("""SELECT DISTINCT ?s WHERE {
@@ -27,11 +31,15 @@ class TestFoafDocument(BaseTest):
         self.assertTrue(len(res) > 0)
 
     def test_foaf_page(self):
-        with open(abs_path('testdata/80543203-185e-4d17-8454-2a98bd405182.xml'), 'rb') as rf:
+        path = abs_path('testdata/80543203-185e-4d17-8454-2a98bd405182.xml')
+        with open(path, 'rb') as rf:
             data = rf.read()
         xml_file = io.BytesIO(data)
         node = objectify.parse(xml_file).getroot()
-        document = FoafDocuments(node, ConjunctiveGraph(), self.cfg.FALLBACK_URL)
+        document = FoafDocuments(node,
+                                 ConjunctiveGraph(),
+                                 self.cfg.FALLBACK_URL
+                                 )
         document.run()
         document.to_rdf4j(document.rdf)
         res = self.rdf4j.graph.query("""
@@ -48,7 +56,10 @@ class TestFoafDocument(BaseTest):
             data = rf.read()
         xml_file = io.BytesIO(data)
         node = objectify.parse(xml_file).getroot()
-        document = FoafDocuments(node, ConjunctiveGraph(), self.cfg.FALLBACK_URL)
+        document = FoafDocuments(node,
+                                 ConjunctiveGraph(),
+                                 self.cfg.FALLBACK_URL
+                                 )
         document.run()
         document.to_rdf4j(document.rdf)
         res = self.rdf4j.graph.query("""
@@ -60,7 +71,7 @@ class TestFoafDocument(BaseTest):
                 """)
         self.assertTrue(len(res) == 0)
         res = self.rdf4j.graph.query("""SELECT DISTINCT ?s WHERE {
-                                                            ?s dcat:landingPage ?o .
-                                                            }
-                                                        """)
+                                            ?s dcat:landingPage ?o .
+                                        }
+                                    """)
         self.assertTrue(len(res) == 0)

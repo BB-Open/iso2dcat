@@ -18,4 +18,3 @@ class TestLanguageMapper(BaseTest):
         self.assertTrue(res == ['de'])
         res = self.language_mapper.convert(['hallo'], None)
         self.assertTrue(res == ['hallo'])
-

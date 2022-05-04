@@ -10,7 +10,8 @@ class TestTiles(BaseTest):
 
     def setUp(self):
         super(TestTiles, self).setUp()
-        with open(abs_path('testdata/80543203-185e-4d17-8454-2a98bd405182.xml'), 'rb') as rf:
+        path = abs_path('testdata/80543203-185e-4d17-8454-2a98bd405182.xml')
+        with open(path, 'rb') as rf:
             data = rf.read()
         xml_file = io.BytesIO(data)
         node = objectify.parse(xml_file).getroot()
@@ -33,5 +34,3 @@ class TestTiles(BaseTest):
             }}
         """.format(uri=self.tile.uri))
         self.assertTrue(len(res) == 1)
-
-

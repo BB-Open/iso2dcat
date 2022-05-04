@@ -87,5 +87,7 @@ class BaseTest(TestCase):
 
     def configer_etree(self):
         self.parser = etree.XMLParser(remove_blank_text=True)
-        self.lookup = etree.ElementNamespaceClassLookup(objectify.ObjectifyElementClassLookup())
+        self.lookup = etree.ElementNamespaceClassLookup(
+            objectify.ObjectifyElementClassLookup()
+        )
         self.parser.setElementClassLookup(self.lookup)
