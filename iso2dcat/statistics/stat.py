@@ -109,17 +109,17 @@ class Stat:
                 'count': inst._stat_count,
             }
             stat = {
-                'Processed' : {
-                    'counts' : 0,
-                    'uuids' : [],
+                'Processed': {
+                    'counts': 0,
+                    'uuids': [],
                 },
-                'Good' : {
-                    'counts' : 0,
-                    'uuids' : [],
+                'Good': {
+                    'counts': 0,
+                    'uuids': [],
                 },
-                'Bad' : {
-                    'counts' : 0,
-                    'uuids' : [],
+                'Bad': {
+                    'counts': 0,
+                    'uuids': [],
                 },
             }
             entity_rec = {

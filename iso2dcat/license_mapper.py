@@ -9,8 +9,8 @@ prefix skos: <http://www.w3.org/2004/02/skos/core#>
 
 SELECT  ?s ?pl
     WHERE {{
-    	?s a skos:Concept .
-      	?s skos:prefLabel ?pl .
+        ?s a skos:Concept .
+        ?s skos:prefLabel ?pl .
     }}
 """
 

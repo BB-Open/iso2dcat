@@ -24,7 +24,12 @@ def print_error(uuid):
 
     for trace in trace_back:
         stack_trace.append(
-            "File : %s , Line : %d, Func.Name : %s, Message : %s" % (trace[0], trace[1], trace[2], trace[3]))
+            "File : %s , Line : %d, Func.Name : %s, Message : %s" % (
+                trace[0],
+                trace[1],
+                trace[2],
+                trace[3])
+        )
 
     logger.error("Exception type : %s " % ex_type.__name__)
     logger.error("Exception message : %s" % ex_value)

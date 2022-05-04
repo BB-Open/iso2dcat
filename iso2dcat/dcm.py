@@ -33,7 +33,7 @@ class DCM(Base):
                 url_dcm_file.close()
             else:
                 self.logger.info('Could not read source, read cache without update.')
-        except:
+        except Exception:
             self.logger.info('Could not read source, read cache without update.')
         dcm_file = open(self.cache_file, mode='rb')
         self.dcm = json.loads(dcm_file.read())
@@ -44,7 +44,9 @@ class DCM(Base):
         files = self.dcm['dcm']['mapping']
         self.logger.info('Mapping Files to Base Url')
         for file in files:
-            self._file_id_to_baseurl[file['fileidentifier']] = self._id_to_baseurl[file['publisher_id']]
+            self._file_id_to_baseurl[file['fileidentifier']] = self._id_to_baseurl[
+                file['publisher_id']
+            ]
             self._id_to_priority[file['fileidentifier']] = file['priority']
         dcm_file.close()
 

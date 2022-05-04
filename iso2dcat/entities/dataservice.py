@@ -11,7 +11,8 @@ from iso2dcat.namespace import DCAT
 class DcatDataService(DcatResource):
 
     _stat_title = 'dcat:DataServices'
-    _stat_desc = 'A dcat:Dataservice has to have an endpointURI and it should have dcat:Dataset which it serves'
+    _stat_desc = 'A dcat:Dataservice has to have an endpointURI ' \
+                 'and it should have dcat:Dataset which it serves'
 
     dcat_class = 'dcat_DataService'
     entity_type = DCAT.DataService

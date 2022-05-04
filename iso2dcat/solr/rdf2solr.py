@@ -44,11 +44,11 @@ SELECT DISTINCT ?s ?dt ?dd ?type ?prio
     WHERE {
         VALUES ?type { dcat:Dataset dcat:DataService }
         ?s a ?type .
-  		?s dct:title ?dt .
-  		FILTER (lang(?dt) = "" || lang(?dt) = "de")
+        ?s dct:title ?dt .
+        FILTER (lang(?dt) = "" || lang(?dt) = "de")
         OPTIONAL {
             ?s dct:description ?dd .
-  		    FILTER (lang(?dd) = "" || lang(?dd) = "de")
+            FILTER (lang(?dd) = "" || lang(?dd) = "de")
         }
         OPTIONAL {
             ?s inq:priority ?prio

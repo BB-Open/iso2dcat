@@ -106,7 +106,8 @@ class Main(Base):
             CategoryKeywordMapper, DateMapper, LocationBoundingbox,
             AccrualPeriodicity, FoafDocuments, RightsStatement, ProvenanceStatement,
             InqbusPriority, License,
-            LanguageMapper]:
+            LanguageMapper
+        ]:
             for line in stat.get_stats(klass):
                 lines.append(line)
 

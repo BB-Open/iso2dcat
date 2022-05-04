@@ -18,8 +18,9 @@ class CSWProcessor(BaseEntity):
     count = 0
 
     _stat_title = 'Processing statistics'
-    _stat_desc = """Number of processed datasets, and how many were DCAT compatible ("good") or not "bad".
-    Even if a ISO dataset is DCAT compatible it may have flaws, so please look further down."""
+    _stat_desc = """Number of processed datasets,
+and how many were DCAT compatible ("good") or not "bad".
+Even if a ISO dataset is DCAT compatible it may have flaws, so please look further down."""
 
     _stat_uuid = False
 
@@ -99,7 +100,11 @@ class CSWProcessor(BaseEntity):
                 lookup = etree.ElementNamespaceClassLookup(objectify.ObjectifyElementClassLookup())
                 parser.setElementClassLookup(lookup)
                 if self.cfg.SAVE_DATASETS:
-                    with open('{}/{}{}.xml'.format(self.cfg.CSW_PATH, self.cfg.CSW_PREFIX, uuid), 'wb') as outfile:
+                    with open('{}/{}{}.xml'.format(
+                        self.cfg.CSW_PATH,
+                        self.cfg.CSW_PREFIX,
+                        uuid
+                    ), 'wb') as outfile:
                         outfile.write(rec)
 
                 xml_file = io.BytesIO(rec)

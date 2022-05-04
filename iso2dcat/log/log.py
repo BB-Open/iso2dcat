@@ -92,7 +92,6 @@ class Logger:
             )
             get_logger = colorlog.getLogger
 
-
         except Exception as e:  # noqa E841
             #   print(e)
             get_logger = getLogger
@@ -117,7 +116,10 @@ class Logger:
         Has to be setup when the output filename is known
         """
         if not os.path.exists(self.cfg.LOG_PATH):
-            self.error(ERROR, """Log file directory "{path}" does not exists""".format(path=self.cfg.LOG_PATH))
+            self.error(
+                ERROR,
+                """Log file directory "{path}" does not exists""".format(path=self.cfg.LOG_PATH)
+            )
             dir_not_found_hint(self.cfg.LOG_PATH)
             raise LogPathNotExists
 

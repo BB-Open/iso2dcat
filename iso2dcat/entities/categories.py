@@ -14,8 +14,7 @@ INSPIRE_THEME_LABELS = "gmd:identificationInfo/*/gmd:descriptiveKeywords/*"
 class CategoryKeywordMapper(BaseEntity):
 
     _stat_title = 'Categories and Keywords'
-    _stat_desc = \
-"""Convert all gmd:keyword to dcat:keyword
+    _stat_desc = """Convert all gmd:keyword to dcat:keyword
 Convert gmd:topicCategory to standard dcat:theme
 Convert gmd:descriptiveKeywords to additional dcat:theme for known thesauri
 
@@ -115,10 +114,20 @@ bad_additional_cat: No Keywords of known Thesauri found and converted
 #        self.logger.info('Set Keywords')
         for keyword in results_kw:
             for lang in languages:
-                self.add_tripel(URIRef(self.parent_ressource_uri), DCAT.keyword, Literal(keyword, lang=lang))
+                self.add_tripel(
+                    URIRef(self.parent_ressource_uri),
+                    DCAT.keyword,
+                    Literal(keyword, lang=lang)
+                )
                 if str(keyword).upper() in self.dcat_themes:
-                    self.add_tripel(URIRef(self.parent_ressource_uri), DCAT.theme, URIRef(
-                        'http://publications.europa.eu/resource/authority/data-theme/' + str(keyword).upper()))
+                    self.add_tripel(
+                        URIRef(self.parent_ressource_uri),
+                        DCAT.theme,
+                        URIRef(
+                            'http://publications.europa.eu/resource/authority/data-theme/'
+                            + str(keyword).upper()
+                        )
+                    )
         # create categories
 #        self.logger.info('Set Default Categories')
         for keyword in results_cat:
@@ -134,9 +143,14 @@ bad_additional_cat: No Keywords of known Thesauri found and converted
         # todo: Make Themes as dictionary
         additional_cat_found = False
         for node in results_theme_label:
-            label = node.xpath('gmd:thesaurusName/gmd:CI_Citation/gmd:title/gco:CharacterString[text()]',
-                               namespaces=self.nsm.namespaces)
-            keywords = node.xpath('gmd:keyword/gco:CharacterString', namespaces=self.nsm.namespaces)
+            label = node.xpath(
+                'gmd:thesaurusName/gmd:CI_Citation/gmd:title/gco:CharacterString[text()]',
+                namespaces=self.nsm.namespaces
+            )
+            keywords = node.xpath(
+                'gmd:keyword/gco:CharacterString',
+                namespaces=self.nsm.namespaces
+            )
             if label:
                 label = label[0]
 
@@ -153,13 +167,37 @@ bad_additional_cat: No Keywords of known Thesauri found and converted
                     additional_cat_found = True
                     for keyword_uri in keyword_uris:
                         self.logger.debug('Additional Categorie found for: ' + keyword)
-                        self.add_tripel(URIRef(mapper.base), RDF.type, SKOS.ConceptScheme)
-                        self.add_tripel(keyword_uri, RDF.type, SKOS.Concept)
-                        self.add_tripel(keyword_uri, SKOS.inScheme, URIRef(mapper.base))
-                        self.add_tripel(URIRef(self.parent_ressource_uri), DCAT.theme, keyword_uri)
+                        self.add_tripel(
+                            URIRef(mapper.base),
+                            RDF.type,
+                            SKOS.ConceptScheme
+                        )
+                        self.add_tripel(
+                            keyword_uri,
+                            RDF.type,
+                            SKOS.Concept
+                        )
+                        self.add_tripel(
+                            keyword_uri,
+                            SKOS.inScheme,
+                            URIRef(mapper.base)
+                        )
+                        self.add_tripel(
+                            URIRef(self.parent_ressource_uri),
+                            DCAT.theme,
+                            keyword_uri
+                        )
                         for lang in languages:
-                            self.add_tripel(keyword_uri, SKOS.prefLabel, Literal(keyword, lang=lang))
-                            self.add_tripel(URIRef(mapper.base), DCTERMS.title, Literal(label, lang=lang))
+                            self.add_tripel(
+                                keyword_uri,
+                                SKOS.prefLabel,
+                                Literal(keyword, lang=lang)
+                            )
+                            self.add_tripel(
+                                URIRef(mapper.base),
+                                DCTERMS.title,
+                                Literal(label, lang=lang)
+                            )
         if additional_cat_found:
             self.inc('good_additional_cat')
         else:

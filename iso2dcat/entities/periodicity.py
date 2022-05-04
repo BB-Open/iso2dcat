@@ -9,8 +9,7 @@ QUERY = 'gmd:identificationInfo[1]/*/gmd:resourceMaintenance/*/gmd:maintenanceAn
 class AccrualPeriodicity(BaseEntity):
 
     _stat_title = "dct:accrualPeriodicity"
-    _stat_desc = \
-""" Convert gmd:maintenanceAndUpdateFrequency to dct:accrualPeriodicity
+    _stat_desc = """Convert gmd:maintenanceAndUpdateFrequency to dct:accrualPeriodicity
 Each Detail line shows one value found in ISO-Files.
 
 MAPPING:
@@ -42,8 +41,10 @@ notPlanned: http://inspire.ec.europa.eu/metadata-codelist/MaintenanceFrequencyCo
             'monthly': "http://publications.europa.eu/resource/authority/frequency/MONTHLY",
             'quarterly': "http://publications.europa.eu/resource/authority/frequency/QUARTERLY",
             'unknown': "http://publications.europa.eu/resource/authority/frequency/UNKNOWN",
-            'asNeeded': 'http://inspire.ec.europa.eu/metadata-codelist/MaintenanceFrequencyCode/asNeeded',
-            'notPlanned': 'http://inspire.ec.europa.eu/metadata-codelist/MaintenanceFrequencyCode/notPlanned'
+            'asNeeded':
+                'http://inspire.ec.europa.eu/metadata-codelist/MaintenanceFrequencyCode/asNeeded',
+            'notPlanned':
+                'http://inspire.ec.europa.eu/metadata-codelist/MaintenanceFrequencyCode/notPlanned'
         }
 
     def run(self):
@@ -58,6 +59,9 @@ notPlanned: http://inspire.ec.europa.eu/metadata-codelist/MaintenanceFrequencyCo
             if value in self.mapping:
                 self.inc(value)
                 self.add_tripel(
-                    URIRef(self.parent_ressource_uri), DCTERMS.accrualPeriodicity, URIRef(self.mapping[value]))
+                    URIRef(self.parent_ressource_uri),
+                    DCTERMS.accrualPeriodicity,
+                    URIRef(self.mapping[value])
+                )
             else:
                 self.logger.warning('Missing AccrualPeriodicity Mapping for "' + value + '"')

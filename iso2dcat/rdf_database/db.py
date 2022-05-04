@@ -25,7 +25,12 @@ class RDFDatabase(Base):
             data = data.encode('utf-8')
 
         try:
-            return self.rdf4j.add_data_to_repo(self.cfg.WRITE_TO, data, content_type, auth=self.auth)
+            return self.rdf4j.add_data_to_repo(
+                self.cfg.WRITE_TO,
+                data,
+                content_type,
+                auth=self.auth
+            )
         except TerminatingError as e:
             self.logger.error('Could not write data cause of TerminatingError.')
             self.logger.error(data)

@@ -11,7 +11,8 @@ class DcatDataset(DcatResource):
     entity_type = DCAT.Dataset
 
     _stat_title = 'dcat:Dataset'
-    _stat_desc = 'A dcat:Dataset has to have a dct:title, dct:description and at least one dcat:Distribution'
+    _stat_desc = 'A dcat:Dataset has to have a dct:title, ' \
+                 'dct:description and at least one dcat:Distribution'
 
     def run(self):
         super(DcatDataset, self).run()

@@ -19,10 +19,6 @@ from iso2dcat.entities.dataset import DcatDataset
 # <CodeDefinition gml:id="MD_ScopeCode_model">
 # <CodeDefinition gml:id="MD_ScopeCode_tile">
 from iso2dcat.entities.tile import Tile
-
-# <gmd:hierarchyLevel>
-#     <gmd:MD_ScopeCode codeList="https://standards.iso.org/iso/19139/resources/gmxCodelists.xml#MD_ScopeCode" codeListValue="service">service</gmd:MD_ScopeCode>
-# </gmd:hierarchyLevel>
 from iso2dcat.exceptions import EntityFailed
 
 SCOPE_CODE_MAPPING = {
@@ -35,7 +31,8 @@ SCOPE_CODE_MAPPING = {
 
 class Hierarchy(BaseEntity):
     _stat_title = 'Statistics in ISO datatset types'
-    _stat_desc = 'ISO has several dataset types. ISO2DCAT represents ISO:service as dcat:DataService and all other as dcat:DataSet'
+    _stat_desc = 'ISO has several dataset types. ' \
+                 'ISO2DCAT represents ISO:service as dcat:DataService and all other as dcat:DataSet'
 
 #    dataset = 0
 #    distribution = 0
@@ -44,7 +41,10 @@ class Hierarchy(BaseEntity):
     def run(self):
         HIERARCHY_EXPR = './/gmd:hierarchyLevel/gmd:MD_ScopeCode'
 
-        res = self.node.xpath(HIERARCHY_EXPR, namespaces={'gmd': 'http://www.isotc211.org/2005/gmd'})
+        res = self.node.xpath(
+            HIERARCHY_EXPR,
+            namespaces={'gmd': 'http://www.isotc211.org/2005/gmd'}
+        )
 
         if len(res) == 0:
             self.inc('Bad')

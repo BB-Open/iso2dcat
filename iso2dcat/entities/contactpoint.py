@@ -9,7 +9,8 @@ from iso2dcat.namespace import vcard
 
 class ContactPoint(BaseEntity):
     _stat_title = 'ContactPoints (vcard:Kinds)'
-    _stat_desc = 'Details show what kind of ISO:Responsible Party is used to create the ContactPoint'
+    _stat_desc = 'Details show what kind of ISO:Responsible ' \
+                 'Party is used to create the ContactPoint'
     _stat_uuid = True
     _stat_count = True
     dcat_class = 'vcard_Kind'
@@ -62,7 +63,11 @@ class ContactPoint(BaseEntity):
                         for hit in hits:
                             if hit:
                                 for lang in languages:
-                                    self.add_tripel(URIRef(self.uri), vcard[target], Literal(hit, lang=lang))
+                                    self.add_tripel(
+                                        URIRef(self.uri),
+                                        vcard[target],
+                                        Literal(hit, lang=lang)
+                                    )
                 break
         if len(self.rdf) == 0:
             self.inc('Bad')

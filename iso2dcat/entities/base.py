@@ -4,7 +4,14 @@ from rdflib import URIRef, ConjunctiveGraph
 from rdflib.namespace import RDF
 from zope import component
 
-from iso2dcat.component.interface import IDCM, ILogger, IStat, IRDFDatabase, INamespaceManager, ILanguageMapper, IIsoCfg
+from iso2dcat.component.interface import \
+    IDCM, \
+    ILogger, \
+    IStat, \
+    IRDFDatabase, \
+    INamespaceManager, \
+    ILanguageMapper, \
+    IIsoCfg
 
 LANGUAGE = './/gmd:language/*/@codeListValue'
 
@@ -13,7 +20,6 @@ class Base:
     """Base class of all instances. Gives access to logger, configuration and statistics"""
 
     _stat = None
-
 
     @property
     def logger(self):
@@ -104,7 +110,7 @@ class BaseEntity(BaseDCM):
         self.rdf = rdf
 
     def add_tripel(self, s, p, o):
-        self.rdf.addN([(s,p,o,self.uuid.text)])
+        self.rdf.addN([(s, p, o, self.uuid.text)])
 
     def set_namespaces(self):
         for prefix, URI in self.nsm.nsm.namespaces():

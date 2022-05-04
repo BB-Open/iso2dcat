@@ -6,17 +6,21 @@ from rdflib.namespace import FOAF, RDF
 from iso2dcat.entities.base import BaseEntity
 from iso2dcat.namespace import DCAT
 
-QUERY_LANDING_PAGE = './/gmd:transferOptions/*/gmd:onLine/gmd:CI_OnlineResource[not(gmd:function/*/@codeListValue)]'
-QUERY_FOAF_PAGE = ".//gmd:transferOptions/*/gmd:onLine/gmd:CI_OnlineResource[gmd:function/*/@codeListValue = 'information' or gmd:function/*/@codeListValue = 'search']"
+QUERY_LANDING_PAGE = './/gmd:transferOptions/*/gmd:onLine/gmd:CI_OnlineResource' \
+    '[not(gmd:function/*/@codeListValue)]'
+QUERY_FOAF_PAGE = ".//gmd:transferOptions/*/gmd:onLine/gmd:CI_OnlineResource" \
+    "[gmd:function/*/@codeListValue = 'information' or gmd:function/*/@codeListValue = 'search']"
 
 
 class FoafDocuments(BaseEntity):
     dcat_class = 'foaf_document'
 
     _stat_title = 'foaf:Document'
-    _stat_desc = \
-"""Convert gmd:CI_OnlineResource[not(gmd:function/*/@codeListValue)] to dcat:landingPage
-Convert gmd:CI_OnlineResource[gmd:function/*/@codeListValue = 'information' or gmd:function/*/@codeListValue = 'search'] to foaf:Page
+    _stat_desc = """Convert gmd:CI_OnlineResource[not(gmd:function/*/@codeListValue)]
+    to dcat:landingPage
+Convert gmd:CI_OnlineResource
+    [gmd:function/*/@codeListValue = 'information' or gmd:function/*/@codeListValue = 'search']
+    to foaf:Page
 """
 
     def __init__(self, node, rdf, parent_uri):
@@ -42,7 +46,11 @@ Convert gmd:CI_OnlineResource[gmd:function/*/@codeListValue = 'information' or g
             links = value.xpath('gmd:linkage/*', namespaces=self.nsm.namespaces)
             self.logger.debug('Found Landing Page {values}'.format(values=links))
             for link in links:
-                self.add_tripel(URIRef(self.parent_ressource_uri), DCAT.landingPage, URIRef(self.sanitize_url(link)))
+                self.add_tripel(
+                    URIRef(self.parent_ressource_uri),
+                    DCAT.landingPage,
+                    URIRef(self.sanitize_url(link))
+                )
                 self.add_tripel(URIRef(self.sanitize_url(link)), RDF.type, FOAF.Document)
 
         values_foaf_page = self.node.xpath(QUERY_FOAF_PAGE, namespaces=self.nsm.namespaces)
@@ -56,7 +64,11 @@ Convert gmd:CI_OnlineResource[gmd:function/*/@codeListValue = 'information' or g
             links = value.xpath('gmd:linkage/*', namespaces=self.nsm.namespaces)
             self.logger.debug('Found FOAF Page {values}'.format(values=links))
             for link in links:
-                self.add_tripel(URIRef(self.parent_ressource_uri), FOAF.page, URIRef(self.sanitize_url(link)))
+                self.add_tripel(
+                    URIRef(self.parent_ressource_uri),
+                    FOAF.page,
+                    URIRef(self.sanitize_url(link))
+                )
                 self.add_tripel(URIRef(self.sanitize_url(link)), RDF.type, FOAF.Document)
 
         if values_foaf_page or values_landing:

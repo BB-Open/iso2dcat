@@ -5,17 +5,20 @@ from iso2dcat.entities.base import BaseEntity
 from iso2dcat.exceptions import EntityFailed
 from iso2dcat.namespace import LOCN, GSP
 
-LOCATION_QUERY = 'gmd:identificationInfo/*/gmd:extent/*/gmd:geographicElement/gmd:EX_GeographicBoundingBox|gmd:identificationInfo/*/srv:extent/*/gmd:geographicElement/gmd:EX_GeographicBoundingBox'
+LOCATION_QUERY = 'gmd:identificationInfo/*/gmd:extent/*/gmd:geographicElement/' \
+                 'gmd:EX_GeographicBoundingBox|gmd:identificationInfo/*/srv:extent/' \
+                 '*/gmd:geographicElement/gmd:EX_GeographicBoundingBox'
 
-GEOMETRY = "<gml:Envelope srsName='http://www.opengis.net/def/crs/EPSG/0/4326'><gml:lowerCorner>{south} {west}</gml:lowerCorner><gml:upperCorner>{north} {east}</gml:upperCorner></gml:Envelope>"
+GEOMETRY = "<gml:Envelope srsName='http://www.opengis.net/def/crs/EPSG/0/4326'>" \
+           "<gml:lowerCorner>{south} {west}</gml:lowerCorner>" \
+           "<gml:upperCorner>{north} {east}</gml:upperCorner></gml:Envelope>"
 
 
 class LocationBoundingbox(BaseEntity):
     dcat_class = 'dct_Location'
 
     _stat_title = 'dct:Location'
-    _stat_desc = \
-"""Convert gmd:EX_GeographicBoundingBox to dct:Location by parsing directions:
+    _stat_desc = """Convert gmd:EX_GeographicBoundingBox to dct:Location by parsing directions:
     * gmd:southBoundLatitude
     * gmd:northBoundLatitude
     * gmd:westBoundLongitude
@@ -66,4 +69,8 @@ Bad: Bounding Box missing or incomplete
             south=results['gmd:southBoundLatitude'])
 
         self.add_tripel(URIRef(self.uri), RDF.type, DCTERMS.Location)
-        self.add_tripel(URIRef(self.uri), LOCN.geometry, Literal(geometry_string, datatype=GSP.gmlLiteral))
+        self.add_tripel(
+            URIRef(self.uri),
+            LOCN.geometry,
+            Literal(geometry_string, datatype=GSP.gmlLiteral)
+        )

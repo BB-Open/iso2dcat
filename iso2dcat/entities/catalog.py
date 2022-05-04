@@ -51,7 +51,10 @@ class Catalog(BaseEntity):
         self.rdf.add((URIRef(uri_cat), ADMS.identifier, Literal(uri_cat)))
         self.rdf.add((URIRef(uri_cat), DCTERMS.identifier, Literal(uri_cat)))
         self.rdf.add(
-            (uri_cat, DCAT.themeTaxonomy, URIRef('http://publications.europa.eu/resource/authority/data-theme/')))
+            (uri_cat,
+             DCAT.themeTaxonomy,
+             URIRef('http://publications.europa.eu/resource/authority/data-theme/'))
+        )
         self.logger.info('Catalog Created')
         self.inc('Good')
 

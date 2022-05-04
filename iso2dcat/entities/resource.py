@@ -39,7 +39,11 @@ class DcatResource(BaseEntity):
 
         for description in descriptions:
             for lang in clean_languages:
-                self.add_tripel(URIRef(self.uri), DCTERMS.description, Literal(description, lang=lang))
+                self.add_tripel(
+                    URIRef(self.uri),
+                    DCTERMS.description,
+                    Literal(description, lang=lang)
+                )
 
         publisher = Publisher(self.node, self.rdf)
         try:
@@ -84,7 +88,10 @@ class DcatResource(BaseEntity):
 
         # contributorID
         self.add_tripel(
-            URIRef(self.uri), DCATDE.contributorID, URIRef('http://dcat-ap.de/def/contributors/landBrandenburg'))
+            URIRef(self.uri),
+            DCATDE.contributorID,
+            URIRef('http://dcat-ap.de/def/contributors/landBrandenburg')
+        )
         # identifier is uuid
         self.add_tripel(URIRef(self.uri), DCTERMS.identifier, Literal(self.uuid))
         self.add_tripel(URIRef(self.uri), ADMS.identifier, Literal(self.uuid))

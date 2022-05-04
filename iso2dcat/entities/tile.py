@@ -8,15 +8,18 @@ from iso2dcat.entities.dataset import DcatDataset
 class Tile(DcatDataset):
 
     _stat_title = "Tiles"
-    _stat_desc = \
-"""A dcat:Dataset has to have a dct:title, dct:description and at least one dcat:Distribution.
+    _stat_desc = """
+A dcat:Dataset has to have a dct:title, dct:description and at least one dcat:Distribution.
 Tiles are special Dataset with dct:isPartOf
 """
 
     def run(self):
         super(Tile, self).run()
         TILE_DATASET_LINK_EXPR = './/gmd:parentIdentifier'
-        results = self.node.xpath(TILE_DATASET_LINK_EXPR, namespaces={'gmd': 'http://www.isotc211.org/2005/gmd'})
+        results = self.node.xpath(
+            TILE_DATASET_LINK_EXPR,
+            namespaces={'gmd': 'http://www.isotc211.org/2005/gmd'}
+        )
 
         for res in results:
             parent_uuid = res.getchildren()[0]

@@ -12,15 +12,17 @@ from iso2dcat.entities.rightstatement import RightsStatement
 from iso2dcat.exceptions import EntityFailed
 from iso2dcat.namespace import DCAT
 
-ACCESS = ".//gmd:transferOptions/*/gmd:onLine/gmd:CI_OnlineResource[not(gmd:function/*/@codeListValue = 'download')]"
-DOWNLOAD = ".//gmd:transferOptions/*/gmd:onLine/gmd:CI_OnlineResource[gmd:function/*/@codeListValue = 'download']"
+ACCESS = ".//gmd:transferOptions/*/gmd:onLine/gmd:CI_OnlineResource" \
+         "[not(gmd:function/*/@codeListValue = 'download')]"
+DOWNLOAD = ".//gmd:transferOptions/*/gmd:onLine/gmd:CI_OnlineResource" \
+           "[gmd:function/*/@codeListValue = 'download']"
 
 
 class Distribution(DcatResource):
 
     _stat_title = 'dcat:Distribution'
-    _stat_desc = \
-"""For each distribution an accessURL is mandatory. If no accessURL is found the downloadURL is used as accessURL.
+    _stat_desc = """For each distribution an accessURL is mandatory.
+If no accessURL is found the downloadURL is used as accessURL.
 If no accessURL can be constructed this is a DCAT violation.
 dcat:accessURL: number of AccessURLs found
 dcat:downloadURL: number of DownloadURLs found
@@ -102,7 +104,10 @@ no dcat:accessURL and no dcat:downloadURL: number of Files with missing distribu
 
         for access_node in access_nodes:
             accessURL = access_node.xpath('gmd:linkage/*', namespaces=self.nsm.namespaces)
-            title = access_node.xpath('gmd:description/gco:CharacterString[text()]', namespaces=self.nsm.namespaces)
+            title = access_node.xpath(
+                'gmd:description/gco:CharacterString[text()]',
+                namespaces=self.nsm.namespaces
+            )
             if len(title) == 0:
                 title = 'Zugang: ' + accessURL[0]
             else:
@@ -111,7 +116,10 @@ no dcat:accessURL and no dcat:downloadURL: number of Files with missing distribu
 
         for download_node in download_nodes:
             downloadURL = download_node.xpath('gmd:linkage/*', namespaces=self.nsm.namespaces)
-            title = download_node.xpath('gmd:description/gco:CharacterString[text()]', namespaces=self.nsm.namespaces)
+            title = download_node.xpath(
+                'gmd:description/gco:CharacterString[text()]',
+                namespaces=self.nsm.namespaces
+            )
             if len(title) == 0:
                 title = 'Download: ' + downloadURL[0]
             else:
