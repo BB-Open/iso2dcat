@@ -151,8 +151,9 @@ class Main(Base):
         #     pass
         # pprint.pprint(self.rdf2solr.test1().docs)
         self.logger.info('Shutdown Components')
-        self.shutdown_components()
         self.logger.info('iso2dcat finished')
+        self.shutdown_components()
+
 
 
 ALL_PREFIXES = [
