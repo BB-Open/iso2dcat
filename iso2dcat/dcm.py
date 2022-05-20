@@ -19,7 +19,7 @@ class DCM(Base):
         self.cache_file = abs_file_path('iso2dcat/data/dcm.json')
 
     def run(self):
-        if self.cfg.DCM_URI == '':
+        if self.cfg.DCM_URI == '' or self.cfg.DCM_URI is None:
             self.logger.warning('No DCM file')
             return
         try:
