@@ -67,7 +67,6 @@ class Main(Base):
         # unregister languagemapper
         unregister_languagemapper()
 
-
     def setup_components(self, args=None, env='Production', cfg=None, visitor=None):
         # Get the local configuration
         if cfg:

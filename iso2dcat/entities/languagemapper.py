@@ -107,6 +107,5 @@ def register_languagemapper():
     component.provideUtility(language_mapper, ILanguageMapper)
     return language_mapper
 
-
 def unregister_languagemapper():
-    component.queryUtility(None, ILanguageMapper)
+    component.provideUtility(None, ILanguageMapper)
