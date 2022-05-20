@@ -74,3 +74,6 @@ def register_thesauri():
     gemet_mapper = GemetMapper(None)
     component.provideUtility(gemet_mapper, IGemetMapper)
     return gemet_mapper
+
+def unregister_thesauri():
+    component.provideUtility(None, IGemetMapper)

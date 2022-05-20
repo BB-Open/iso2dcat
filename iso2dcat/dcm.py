@@ -73,3 +73,6 @@ def register_dcm():
     dcm = DCM()
     component.provideUtility(dcm, IDCM)
     return dcm
+
+def unregister_dcm():
+    component.provideUtility(None, IDCM)

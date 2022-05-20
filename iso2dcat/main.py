@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
 
 import zope
-from pkan_config.config import register_config, get_config
+from pkan_config.config import register_config, get_config, unregister_config
 from zope import component
 
 from iso2dcat.component.interface import IStat, IIsoCfg
 from iso2dcat.csw import CSWProcessor
 from iso2dcat.dcat import CatalogBuilder
-from iso2dcat.dcm import register_dcm
+from iso2dcat.dcm import register_dcm, unregister_dcm
 from iso2dcat.entities.base import Base, BaseEntity
 from iso2dcat.entities.catalog import Catalog
 from iso2dcat.entities.categories import CategoryKeywordMapper
@@ -18,7 +18,7 @@ from iso2dcat.entities.dates import DateMapper
 from iso2dcat.entities.distribution import Distribution
 from iso2dcat.entities.hierarchy import Hierarchy
 from iso2dcat.entities.foafdocuments import FoafDocuments
-from iso2dcat.entities.languagemapper import register_languagemapper, LanguageMapper
+from iso2dcat.entities.languagemapper import register_languagemapper, LanguageMapper, unregister_languagemapper
 from iso2dcat.entities.licenses import License
 from iso2dcat.entities.locationboundingbox import LocationBoundingbox
 from iso2dcat.entities.periodicity import AccrualPeriodicity
@@ -28,11 +28,11 @@ from iso2dcat.entities.publisher import Publisher, Contributor, Maintainer
 from iso2dcat.entities.resource import DcatResource
 from iso2dcat.entities.rightstatement import RightsStatement
 from iso2dcat.entities.tile import Tile
-from iso2dcat.log.log import register_logger
-from iso2dcat.namespace import register_nsmanager
-from iso2dcat.rdf_database.db import register_db
-from iso2dcat.statistics.stat import register_stat
-from iso2dcat.thesauri_mapper import register_thesauri
+from iso2dcat.log.log import register_logger, unregister_logger
+from iso2dcat.namespace import register_nsmanager, unregister_nsmanager
+from iso2dcat.rdf_database.db import register_db, unregister_db
+from iso2dcat.statistics.stat import register_stat, unregister_stat
+from iso2dcat.thesauri_mapper import register_thesauri, unregister_thesauri
 
 
 class Main(Base):
@@ -40,6 +40,33 @@ class Main(Base):
     csw_proc = None
     dcm = None
     nsm = None
+
+    def shutdown_components(self):
+
+        # Unregister the global configuration
+        unregister_config()
+
+        # Setup the logging facility for this measurement ID
+        unregister_logger()
+
+        # Unregister the namespace manager
+        unregister_nsmanager()
+
+        # Unregister statistics
+        unregister_stat()
+
+        # Unregister Thesauri
+        unregister_thesauri()
+
+        # Unregister RDF Database to write final results
+        unregister_db()
+
+        # unregister the DCM-Interface
+        unregister_dcm()
+
+        # unregister languagemapper
+        unregister_languagemapper()
+
 
     def setup_components(self, args=None, env='Production', cfg=None, visitor=None):
         # Get the local configuration
@@ -124,6 +151,8 @@ class Main(Base):
         # except Exception:
         #     pass
         # pprint.pprint(self.rdf2solr.test1().docs)
+        self.logger.info('Shutdown Components')
+        self.shutdown_components()
         self.logger.info('iso2dcat finished')
 
 

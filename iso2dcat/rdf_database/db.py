@@ -52,3 +52,6 @@ def register_db():
     db = RDFDatabase()
     component.provideUtility(db, IRDFDatabase)
     return db
+
+def unregister_db():
+    component.provideUtility(None, IRDFDatabase)

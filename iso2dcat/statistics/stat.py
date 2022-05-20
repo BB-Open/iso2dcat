@@ -152,3 +152,7 @@ def register_stat():
     stat = Stat()
     component.provideUtility(stat, IStat)
     return stat
+
+
+def unregister_stat():
+    component.provideUtility(None, IStat)

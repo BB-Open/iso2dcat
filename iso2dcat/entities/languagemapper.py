@@ -106,3 +106,7 @@ def register_languagemapper():
             pickle.dump(language_mapper, out_file)
     component.provideUtility(language_mapper, ILanguageMapper)
     return language_mapper
+
+
+def unregister_languagemapper():
+    component.queryUtility(None, ILanguageMapper)

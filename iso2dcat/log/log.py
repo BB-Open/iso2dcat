@@ -182,6 +182,10 @@ def register_logger(visitor=None):
     return logger
 
 
+def unregister_logger():
+    component.provideUtility(None, ILogger)
+
+
 def register_db_logger():
     # prohibit more than one logger instance
     logger = component.queryUtility(ILogger)

@@ -55,3 +55,7 @@ def register_nsmanager():
     nsm = NsManager()
     component.provideUtility(nsm, INamespaceManager)
     return nsm
+
+
+def unregister_nsmanager():
+    component.provideUtility(None, INamespaceManager)
