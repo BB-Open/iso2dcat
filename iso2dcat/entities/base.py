@@ -84,13 +84,18 @@ class BaseDCM(BaseStat):
             self._nsm = component.queryUtility(INamespaceManager)
         return self._nsm
 
-    def to_rdf4j(self, rdf):
-        self.logger.info('Write Data to RDF4J store')
+    def serialize(self, rdf):
         try:
             rdf_ttl = rdf.serialize(format='turtle')
-        except:
-            self.logger.error('Could not serialize')
+        except Exception as e:
+            self.logger.error(e)
+            self.logger.error('Could not serialize the dataset')
             raise EntityFailed('Unserializable RDF')
+        return rdf_ttl
+
+    def to_rdf4j(self, rdf):
+        self.logger.info('Write Data to RDF4J store')
+        rdf_ttl = self.serialize(rdf)
         self.rdf4j.insert_data(rdf_ttl, 'text/turtle')
         self.logger.info('Data written')
 
