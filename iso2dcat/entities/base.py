@@ -12,6 +12,7 @@ from iso2dcat.component.interface import \
     INamespaceManager, \
     ILanguageMapper, \
     IIsoCfg
+from iso2dcat.exceptions import EntityFailed
 
 LANGUAGE = './/gmd:language/*/@codeListValue'
 
@@ -85,7 +86,11 @@ class BaseDCM(BaseStat):
 
     def to_rdf4j(self, rdf):
         self.logger.info('Write Data to RDF4J store')
-        rdf_ttl = rdf.serialize(format='turtle')
+        try:
+            rdf_ttl = rdf.serialize(format='turtle')
+        except:
+            self.logger.error('Could not serialize')
+            raise EntityFailed('Unserializable RDF')
         self.rdf4j.insert_data(rdf_ttl, 'text/turtle')
         self.logger.info('Data written')
 
