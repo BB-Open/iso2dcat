@@ -151,7 +151,7 @@ class Logger:
         self.logger.setLevel(self.cfg.log_level)
 
         self.setup_console_logger(formatter)
-        self.setup_file_logger(formatter)
+        # self.setup_file_logger(formatter)
 
     def db_log(self, level, msg, file_id):
         if self.db_log_func is None:
