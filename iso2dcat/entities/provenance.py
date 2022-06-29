@@ -2,7 +2,7 @@ import hashlib
 
 from iso2dcat.entities.base import BaseEntity
 from iso2dcat.exceptions import EntityFailed
-from rdflib import URIRef, Literal
+from rdflib import Literal
 from rdflib.namespace import RDF, DCTERMS, RDFS
 
 QUERY = ".//gmd:dataQualityInfo/*/gmd:lineage/*/gmd:statement/gco:CharacterString"
@@ -32,6 +32,7 @@ This field is not mandatory, but it is important.
         statement = values[0]
         hash_statement = hashlib.md5(str(statement).encode()).hexdigest()
         self._uri = self.base_uri + '#' + self.dcat_class + '_' + hash_statement
-        self.add_tripel(URIRef(self.uri), RDF.type, DCTERMS.ProvenanceStatement)
+        uri_ref = self.make_uri_ref(self.uri)
+        self.add_tripel(uri_ref, RDF.type, DCTERMS.ProvenanceStatement)
         for lang in self.get_languages():
-            self.add_tripel(URIRef(self.uri), RDFS.label, Literal(statement, lang=lang))
+            self.add_tripel(uri_ref, RDFS.label, Literal(statement, lang=lang))

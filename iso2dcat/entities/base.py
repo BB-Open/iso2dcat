@@ -16,6 +16,7 @@ from iso2dcat.exceptions import EntityFailed
 
 LANGUAGE = './/gmd:language/*/@codeListValue'
 
+INVALID_URI_CHARS = '<>" {}|\\^`'
 
 class Base:
     """Base class of all instances. Gives access to logger, configuration and statistics"""
@@ -52,6 +53,13 @@ class BaseStat(Base):
         self.stat.inc(self, stat, increment=increment, no_uuid=no_uuid)
 
 
+def check_invalid_uri_chars(uri):
+    for c in INVALID_URI_CHARS:
+        if c in uri:
+            return c
+    return None
+
+
 class BaseDCM(BaseStat):
     """Base class of all instances using the DCM data"""
 
@@ -84,20 +92,21 @@ class BaseDCM(BaseStat):
             self._nsm = component.queryUtility(INamespaceManager)
         return self._nsm
 
-    def serialize(self, rdf):
-        try:
-            rdf_ttl = rdf.serialize(format='turtle')
-        except Exception as e:
-            self.logger.error(e)
-            self.logger.error('Could not serialize the dataset')
-            raise EntityFailed('Unserializable RDF')
-        return rdf_ttl
-
     def to_rdf4j(self, rdf):
         self.logger.info('Write Data to RDF4J store')
-        rdf_ttl = self.serialize(rdf)
+        rdf_ttl = rdf.serialize(format='turtle')
         self.rdf4j.insert_data(rdf_ttl, 'text/turtle')
         self.logger.info('Data written')
+
+    def make_uri_ref(self, uri):
+        invalid_char = check_invalid_uri_chars(str(uri))
+        if invalid_char:
+            message = f'Invalid Char "{invalid_char}"'
+            self.inc(message)
+            self.logger.error(message)
+            raise EntityFailed(message)
+        else:
+            return URIRef(uri)
 
 
 class BaseEntity(BaseDCM):
@@ -140,7 +149,7 @@ class BaseEntity(BaseDCM):
 
     def add_entity_type(self):
         if self.entity_type:
-            self.add_tripel(URIRef(self.uri), RDF.type, self.entity_type)
+            self.add_tripel(self.make_uri_ref(self.uri), RDF.type, self.entity_type)
 
     @property
     def uuid(self):

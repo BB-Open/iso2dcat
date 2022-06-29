@@ -1,4 +1,4 @@
-from rdflib import Literal, URIRef
+from rdflib import Literal
 from rdflib.namespace import RDF, SKOS, DCTERMS
 from zope import component
 
@@ -110,20 +110,22 @@ bad_additional_cat: No Keywords of known Thesauri found and converted
 
         languages = self.get_languages()
 
+        parent_uri_ref = self.make_uri_ref(self.parent_ressource_uri)
+
         # create keywords as keyword
 #        self.logger.info('Set Keywords')
         for keyword in results_kw:
             for lang in languages:
                 self.add_tripel(
-                    URIRef(self.parent_ressource_uri),
+                    parent_uri_ref,
                     DCAT.keyword,
                     Literal(keyword, lang=lang)
                 )
                 if str(keyword).upper() in self.dcat_themes:
                     self.add_tripel(
-                        URIRef(self.parent_ressource_uri),
+                        parent_uri_ref,
                         DCAT.theme,
-                        URIRef(
+                        self.make_uri_ref(
                             'http://publications.europa.eu/resource/authority/data-theme/'
                             + str(keyword).upper()
                         )
@@ -134,7 +136,7 @@ bad_additional_cat: No Keywords of known Thesauri found and converted
             if keyword in self.keywords_to_themes:
                 cats = self.keywords_to_themes[keyword]
                 for cat in cats:
-                    self.add_tripel(URIRef(self.parent_ressource_uri), DCAT.theme, URIRef(
+                    self.add_tripel(parent_uri_ref, DCAT.theme, self.make_uri_ref(
                         'http://publications.europa.eu/resource/authority/data-theme/' + cat))
 
 #        self.logger.info('Set Additional Categories')
@@ -159,6 +161,7 @@ bad_additional_cat: No Keywords of known Thesauri found and converted
                 if not mapper:
                     self.logger.warning('Missing Data for Thesauri ' + label)
                     continue
+                mapper_uri_ref = self.make_uri_ref(mapper.base)
                 for keyword in keywords:
                     keyword_uris = mapper.keyword_to_uri(keyword)
                     if not keyword_uris:
@@ -168,7 +171,7 @@ bad_additional_cat: No Keywords of known Thesauri found and converted
                     for keyword_uri in keyword_uris:
                         self.logger.debug('Additional Categorie found for: ' + keyword)
                         self.add_tripel(
-                            URIRef(mapper.base),
+                            mapper_uri_ref,
                             RDF.type,
                             SKOS.ConceptScheme
                         )
@@ -180,10 +183,10 @@ bad_additional_cat: No Keywords of known Thesauri found and converted
                         self.add_tripel(
                             keyword_uri,
                             SKOS.inScheme,
-                            URIRef(mapper.base)
+                            mapper_uri_ref
                         )
                         self.add_tripel(
-                            URIRef(self.parent_ressource_uri),
+                            parent_uri_ref,
                             DCAT.theme,
                             keyword_uri
                         )
@@ -194,7 +197,7 @@ bad_additional_cat: No Keywords of known Thesauri found and converted
                                 Literal(keyword, lang=lang)
                             )
                             self.add_tripel(
-                                URIRef(mapper.base),
+                                mapper_uri_ref,
                                 DCTERMS.title,
                                 Literal(label, lang=lang)
                             )

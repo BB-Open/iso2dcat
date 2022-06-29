@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-from rdflib import URIRef
 from rdflib.namespace import DCTERMS
 
 from iso2dcat.entities.dataset import DcatDataset
@@ -26,7 +25,7 @@ Tiles are special Dataset with dct:isPartOf
             base_uri = self.dcm.file_id_to_baseurl(parent_uuid)
             dataset_uri = base_uri + '#' + DcatDataset.dcat_class + '_' + parent_uuid
 
-            self.add_tripel(URIRef(self.uri), DCTERMS.isPartOf, URIRef(dataset_uri))
+            self.add_tripel(self.make_uri_ref(self.uri), DCTERMS.isPartOf, self.make_uri_ref(dataset_uri))
 
         if len(res) > 0:
             self.inc('tile:has_parent')

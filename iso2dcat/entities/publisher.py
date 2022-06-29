@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from rdflib import URIRef, Literal
+from rdflib import Literal
 from rdflib.namespace import FOAF
 
 from iso2dcat.entities.base import BaseEntity
@@ -73,7 +73,7 @@ class Publisher(BaseEntity):
 
         self.add_entity_type()
         for lang in self.get_languages():
-            self.add_tripel(URIRef(self.uri), FOAF.name, Literal(publisher, lang=lang))
+            self.add_tripel(self.make_uri_ref(self.uri), FOAF.name, Literal(publisher, lang=lang))
 
 
 class Contributor(Publisher):

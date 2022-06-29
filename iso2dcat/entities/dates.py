@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from rdflib import Literal, URIRef
+from rdflib import Literal
 from rdflib.namespace import DCTERMS, XSD
 
 from iso2dcat.entities.base import BaseEntity
@@ -24,13 +24,14 @@ class DateMapper(BaseEntity):
         # todo: Role fields as fields on data
         self.inc('Processed')
         self.inc('Good')
+        parent_uri_ref = self.make_uri_ref(self.parent_ressource_uri)
         self.add_tripel(
-            URIRef(self.parent_ressource_uri),
+            parent_uri_ref,
             DCTERMS.modified,
             Literal(datetime.now(), datatype=XSD.dateTimeStamp)
         )
         self.add_tripel(
-            URIRef(self.parent_ressource_uri),
+            parent_uri_ref,
             DCTERMS.issued,
             Literal(datetime.now(), datatype=XSD.dateTimeStamp)
         )

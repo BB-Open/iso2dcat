@@ -1,4 +1,4 @@
-from rdflib import URIRef, Literal
+from rdflib import Literal
 from rdflib.namespace import RDF, DCTERMS
 
 from iso2dcat.entities.base import BaseEntity
@@ -68,9 +68,11 @@ Bad: Bounding Box missing or incomplete
             north=results['gmd:northBoundLatitude'],
             south=results['gmd:southBoundLatitude'])
 
-        self.add_tripel(URIRef(self.uri), RDF.type, DCTERMS.Location)
+        uri_ref = self.make_uri_ref(self.uri)
+
+        self.add_tripel(uri_ref, RDF.type, DCTERMS.Location)
         self.add_tripel(
-            URIRef(self.uri),
+            uri_ref,
             LOCN.geometry,
             Literal(geometry_string, datatype=GSP.gmlLiteral)
         )

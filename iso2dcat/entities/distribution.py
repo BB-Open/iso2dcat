@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from urllib.parse import quote, urlparse
 
-from rdflib import URIRef, RDF, Literal
+from rdflib import RDF, Literal
 from rdflib.namespace import DCTERMS
 
 from iso2dcat.entities.dates import DateMapper
@@ -38,39 +38,36 @@ no dcat:accessURL and no dcat:downloadURL: number of Files with missing distribu
 
     def add_entity_type(self):
         pass
-        # self.add_tripel([URIRef(self.uri), RDF.type, self.entity_type])
+        # self.add_tripel([self.make_uri_ref(self.uri), RDF.type, self.entity_type])
 
     def base_uri(self):
         return None
 
     def make_uri(self, accessURL):
-        return self.sanitize_url(accessURL)
-
-    def sanitize_url(self, url):
-        parsed_url = urlparse(url.text)
-        if '|' in parsed_url.query:
-            out_url = parsed_url._replace(query=quote(parsed_url.query))
-            return out_url.geturl()
-        return url.text
+        return accessURL
 
     def add_distribution(self, title, accessURL, downloadURL=None):
         uri = self.make_uri(accessURL)
-        self.add_tripel(URIRef(uri), RDF.type, self.entity_type)
+        uri_ref = self.make_uri_ref(uri)
+        accessURL_ref = self.make_uri_ref(accessURL)
+        if downloadURL:
+            downloadURL_ref = self.make_uri_ref(downloadURL)
+        self.add_tripel(uri_ref, RDF.type, self.entity_type)
         for lang in self.languages:
-            self.add_tripel(URIRef(uri), DCTERMS.title, Literal(title, lang=lang))
-        self.add_tripel(URIRef(uri), DCAT.accessURL, URIRef(self.sanitize_url(accessURL)))
-        self.add_tripel(URIRef(self.parent), DCAT.distribution, URIRef(uri))
+            self.add_tripel(uri_ref, DCTERMS.title, Literal(title, lang=lang))
+        self.add_tripel(uri_ref, DCAT.accessURL, accessURL_ref)
+        self.add_tripel(self.make_uri_ref(self.parent), DCAT.distribution, uri_ref)
 
         if downloadURL is not None:
-            self.add_tripel(URIRef(uri), DCAT.downloadURL, URIRef(self.sanitize_url(downloadURL)))
+            self.add_tripel(uri_ref, DCAT.downloadURL, downloadURL_ref)
 
         licenses = License(self.node, self.rdf, uri)
         rdf = licenses.run()
 
         if self.rightstatement:
-            self.add_tripel(URIRef(uri), DCTERMS.accessRights, URIRef(self.rightstatement.uri))
+            self.add_tripel(uri_ref, DCTERMS.accessRights, self.make_uri_ref(self.rightstatement.uri))
         if self.provenance:
-            self.add_tripel(URIRef(uri), DCTERMS.provenance, URIRef(self.provenance.uri))
+            self.add_tripel(uri_ref, DCTERMS.provenance, self.make_uri_ref(self.provenance.uri))
 
     def run(self):
         self.inc('Processed')
@@ -102,6 +99,8 @@ no dcat:accessURL and no dcat:downloadURL: number of Files with missing distribu
         if download_nodes:
             self.inc('dcat:downloadURL')
 
+        dist_counter = 0
+
         for access_node in access_nodes:
             accessURL = access_node.xpath('gmd:linkage/*', namespaces=self.nsm.namespaces)
             title = access_node.xpath(
@@ -112,7 +111,11 @@ no dcat:accessURL and no dcat:downloadURL: number of Files with missing distribu
                 title = 'Zugang: ' + accessURL[0]
             else:
                 title = title[0]
-            self.add_distribution(title, accessURL[0])
+            try:
+                self.add_distribution(title, accessURL[0])
+                dist_counter += 1
+            except EntityFailed:
+                pass
 
         for download_node in download_nodes:
             downloadURL = download_node.xpath('gmd:linkage/*', namespaces=self.nsm.namespaces)
@@ -124,5 +127,14 @@ no dcat:accessURL and no dcat:downloadURL: number of Files with missing distribu
                 title = 'Download: ' + downloadURL[0]
             else:
                 title = title[0]
-            self.add_distribution(title, downloadURL[0], downloadURL=downloadURL[0])
-        self.inc('Good')
+            try:
+                self.add_distribution(title, downloadURL[0], downloadURL=downloadURL[0])
+                dist_counter += 1
+            except EntityFailed:
+                pass
+        if dist_counter > 0:
+            self.inc('Good')
+        else:
+            self.inc('No valid Distribution')
+            self.inc('Bad')
+            raise EntityFailed('No valid Distribution')

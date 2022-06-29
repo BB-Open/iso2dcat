@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from rdflib import URIRef, Literal
+from rdflib import Literal
 from rdflib.namespace import DCTERMS
 
 from iso2dcat.entities.base import BaseEntity
@@ -33,14 +33,16 @@ class DcatResource(BaseEntity):
             self.inc('Bad Title and Description')
             raise EntityFailed('DcatRessource incomplete: Missing Title or Description')
 
+        uri_ref = self.make_uri_ref(self.uri)
+
         for title in titles:
             for lang in clean_languages:
-                self.add_tripel(URIRef(self.uri), DCTERMS.title, Literal(title, lang=lang))
+                self.add_tripel(uri_ref, DCTERMS.title, Literal(title, lang=lang))
 
         for description in descriptions:
             for lang in clean_languages:
                 self.add_tripel(
-                    URIRef(self.uri),
+                    uri_ref,
                     DCTERMS.description,
                     Literal(description, lang=lang)
                 )
@@ -51,13 +53,13 @@ class DcatResource(BaseEntity):
         except EntityFailed:
             self.logger.warning('No publisher found')
         else:
-            self.add_tripel(URIRef(self.uri), DCTERMS.publisher, URIRef(publisher.uri))
+            self.add_tripel(uri_ref, DCTERMS.publisher, self.make_uri_ref(publisher.uri))
 
         # Maintainer
         maintainer = Maintainer(self.node, self.rdf)
         if publisher.role == 'custodian':
             # do not create two identical foaf agents
-            self.add_tripel(URIRef(self.uri), DCATDE.maintainer, URIRef(publisher.uri))
+            self.add_tripel(uri_ref, DCATDE.maintainer, self.make_uri_ref(publisher.uri))
             maintainer.inc('good')
             maintainer.inc('reused_publisher')
             self.logger.info('Reused Publisher as Maintainer, cause same role custodian')
@@ -68,7 +70,7 @@ class DcatResource(BaseEntity):
             except EntityFailed:
                 self.logger.warning('No Maintainer found')
             else:
-                self.add_tripel(URIRef(self.uri), DCATDE.maintainer, URIRef(maintainer.uri))
+                self.add_tripel(uri_ref, DCATDE.maintainer, self.make_uri_ref(maintainer.uri))
 
         contact = ContactPoint(self.node, self.rdf)
         try:
@@ -76,7 +78,7 @@ class DcatResource(BaseEntity):
         except EntityFailed:
             self.logger.warning('No Contact Point')
         else:
-            self.add_tripel(URIRef(self.uri), DCAT.contactPoint, URIRef(contact.uri))
+            self.add_tripel(uri_ref, DCAT.contactPoint, self.make_uri_ref(contact.uri))
 
         # catalog link
         # get base_uri without fallback to decide, if catalog suffix must be added
@@ -84,17 +86,17 @@ class DcatResource(BaseEntity):
 
         catalog = base_uri + '#dcat_Catalog'
 
-        self.add_tripel(URIRef(catalog), DCAT.dataset, URIRef(self.uri))
+        self.add_tripel(self.make_uri_ref(catalog), DCAT.dataset, uri_ref)
 
         # contributorID
         self.add_tripel(
-            URIRef(self.uri),
+            uri_ref,
             DCATDE.contributorID,
-            URIRef('http://dcat-ap.de/def/contributors/landBrandenburg')
+            self.make_uri_ref('http://dcat-ap.de/def/contributors/landBrandenburg')
         )
         # identifier is uuid
-        self.add_tripel(URIRef(self.uri), DCTERMS.identifier, Literal(self.uuid))
-        self.add_tripel(URIRef(self.uri), ADMS.identifier, Literal(self.uuid))
+        self.add_tripel(uri_ref, DCTERMS.identifier, Literal(self.uuid))
+        self.add_tripel(uri_ref, ADMS.identifier, Literal(self.uuid))
 
         # contributor
         contributor = Contributor(self.node, self.rdf)
@@ -103,7 +105,7 @@ class DcatResource(BaseEntity):
         except EntityFailed:
             self.logger.warning('No Contributor found')
         else:
-            self.add_tripel(URIRef(self.uri), DCTERMS.contributor, URIRef(contributor.uri))
+            self.add_tripel(uri_ref, DCTERMS.contributor, self.make_uri_ref(contributor.uri))
 
         # categories
         categories = CategoryKeywordMapper(self.node, self.rdf, self.uri)
@@ -126,7 +128,7 @@ class DcatResource(BaseEntity):
         except EntityFailed:
             self.logger.warning('No Bounding Box found')
         else:
-            self.add_tripel(URIRef(self.uri), DCTERMS.spatial, URIRef(spatial.uri))
+            self.add_tripel(uri_ref, DCTERMS.spatial, self.make_uri_ref(spatial.uri))
 
         # dct:accrualPeriodicity
         periodicity = AccrualPeriodicity(self.node, self.rdf, self.uri)

@@ -1,9 +1,10 @@
 from urllib.parse import urlparse, quote
 
-from rdflib import URIRef
+
 from rdflib.namespace import FOAF, RDF
 
 from iso2dcat.entities.base import BaseEntity
+from iso2dcat.exceptions import EntityFailed
 from iso2dcat.namespace import DCAT
 
 QUERY_LANDING_PAGE = './/gmd:transferOptions/*/gmd:onLine/gmd:CI_OnlineResource' \
@@ -27,13 +28,6 @@ Convert gmd:CI_OnlineResource
         super().__init__(node, rdf)
         self.parent_ressource_uri = parent_uri
 
-    def sanitize_url(self, url):
-        parsed_url = urlparse(url.text)
-        if '|' in parsed_url.query:
-            out_url = parsed_url._replace(query=quote(parsed_url.query))
-            return out_url.geturl()
-        return url.text
-
     def run(self):
         values_landing = self.node.xpath(QUERY_LANDING_PAGE, namespaces=self.nsm.namespaces)
         if not values_landing:
@@ -46,12 +40,18 @@ Convert gmd:CI_OnlineResource
             links = value.xpath('gmd:linkage/*', namespaces=self.nsm.namespaces)
             self.logger.debug('Found Landing Page {values}'.format(values=links))
             for link in links:
+                try:
+                    target = self.make_uri_ref(link)
+                    parent = self.make_uri_ref(self.parent_ressource_uri)
+                except EntityFailed:
+                    # do not add with invalid chars
+                    continue
                 self.add_tripel(
-                    URIRef(self.parent_ressource_uri),
+                    parent,
                     DCAT.landingPage,
-                    URIRef(self.sanitize_url(link))
+                    target
                 )
-                self.add_tripel(URIRef(self.sanitize_url(link)), RDF.type, FOAF.Document)
+                self.add_tripel(target, RDF.type, FOAF.Document)
 
         values_foaf_page = self.node.xpath(QUERY_FOAF_PAGE, namespaces=self.nsm.namespaces)
         if not values_foaf_page:
@@ -63,13 +63,20 @@ Convert gmd:CI_OnlineResource
         for value in values_foaf_page:
             links = value.xpath('gmd:linkage/*', namespaces=self.nsm.namespaces)
             self.logger.debug('Found FOAF Page {values}'.format(values=links))
+
             for link in links:
+                try:
+                    target = self.make_uri_ref(link)
+                    parent = self.make_uri_ref(self.parent_ressource_uri)
+                except EntityFailed:
+                    # do not add with invalid chars
+                    continue
                 self.add_tripel(
-                    URIRef(self.parent_ressource_uri),
+                    parent,
                     FOAF.page,
-                    URIRef(self.sanitize_url(link))
+                    target
                 )
-                self.add_tripel(URIRef(self.sanitize_url(link)), RDF.type, FOAF.Document)
+                self.add_tripel(target, RDF.type, FOAF.Document)
 
         if values_foaf_page or values_landing:
             self.inc('Good')

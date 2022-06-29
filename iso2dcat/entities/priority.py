@@ -1,4 +1,4 @@
-from rdflib import URIRef, Literal
+from rdflib import Literal
 
 from iso2dcat.entities.base import BaseEntity
 from iso2dcat.namespace import INQ
@@ -23,6 +23,6 @@ In details the distribution of priorities is shown"""
             priority = self.cfg.DEFAULT_PRIORITY
             self.inc('Bad')
         self.inc(str(priority))
-        self.add_tripel(URIRef(self.parent_ressource_uri), INQ.priority, Literal(priority))
+        self.add_tripel(self.make_uri_ref(self.parent_ressource_uri), INQ.priority, Literal(priority))
 
         return self.rdf

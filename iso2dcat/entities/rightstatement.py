@@ -1,6 +1,6 @@
 import hashlib
 
-from rdflib import URIRef, Literal
+from rdflib import Literal
 from rdflib.namespace import RDF, DCTERMS, RDFS
 
 from iso2dcat.entities.base import BaseEntity
@@ -33,6 +33,7 @@ This field is not mandatory, but it is important.
         statement = values[0]
         hash_statement = hashlib.md5(str(statement).encode()).hexdigest()
         self._uri = self.base_uri + '#' + self.dcat_class + '_' + hash_statement
-        self.add_tripel(URIRef(self.uri), RDF.type, DCTERMS.RightsStatement)
+        uri_ref = self.make_uri_ref(self.uri)
+        self.add_tripel(uri_ref, RDF.type, DCTERMS.RightsStatement)
         for lang in self.get_languages():
-            self.add_tripel(URIRef(self.uri), RDFS.label, Literal(statement, lang=lang))
+            self.add_tripel(uri_ref, RDFS.label, Literal(statement, lang=lang))

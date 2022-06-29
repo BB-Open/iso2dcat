@@ -112,9 +112,6 @@ Even if a ISO dataset is DCAT compatible it may have flaws, so please look furth
                 node = objectify.parse(xml_file).getroot()
                 dcat = DCAT(node, self.rdf)
                 dcat.run()
-                # todo: this is not very efficient
-                # test serializing
-                self.serialize(self.rdf)
                 self.inc('Good')
             except EntityFailed:
                 self.inc('Bad')

@@ -1,4 +1,3 @@
-from rdflib import URIRef
 from rdflib.namespace import DCTERMS
 
 from iso2dcat.entities.base import BaseEntity
@@ -59,9 +58,9 @@ notPlanned: http://inspire.ec.europa.eu/metadata-codelist/MaintenanceFrequencyCo
             if value in self.mapping:
                 self.inc(value)
                 self.add_tripel(
-                    URIRef(self.parent_ressource_uri),
+                    self.make_uri_ref(self.parent_ressource_uri),
                     DCTERMS.accrualPeriodicity,
-                    URIRef(self.mapping[value])
+                    self.make_uri_ref(self.mapping[value])
                 )
             else:
                 self.logger.warning('Missing AccrualPeriodicity Mapping for "' + value + '"')

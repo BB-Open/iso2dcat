@@ -1,6 +1,4 @@
 # -*- coding: utf-8 -*-
-from rdflib import URIRef
-
 from iso2dcat.entities.dataset import DcatDataset
 from iso2dcat.entities.licenses import License
 from iso2dcat.entities.resource import DcatResource
@@ -34,6 +32,7 @@ class DcatDataService(DcatResource):
         else:
             self.inc('no dcat:Dataset')
 
+        uri_ref = self.make_uri_ref(self.uri)
         for res in results:
             for item in res.items():
                 if item[0] != '{http://www.w3.org/1999/xlink}href':
@@ -43,7 +42,7 @@ class DcatDataService(DcatResource):
 
                 base_uri = self.dcm.file_id_to_baseurl(uuid)
                 dataset_uri = base_uri + '#' + DcatDataset.dcat_class + '_' + uuid
-                self.add_tripel(URIRef(self.uri), DCAT.servesDataset, URIRef(dataset_uri))
+                self.add_tripel(uri_ref, DCAT.servesDataset, self.make_uri_ref(dataset_uri))
 
         #        dcat:endpointURL
 
@@ -64,7 +63,7 @@ class DcatDataService(DcatResource):
             self.inc('has enpointURI')
 
         for uri in results:
-            self.add_tripel(URIRef(self.uri), DCAT.endpointURL, URIRef(str(uri).strip()))
+            self.add_tripel(uri_ref, DCAT.endpointURL, self.make_uri_ref(str(uri).strip()))
 
         licenses = License(self.node, self.rdf, self.uri)
         rdf = licenses.run()

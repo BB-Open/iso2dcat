@@ -1,5 +1,5 @@
 import simplejson as sj
-from rdflib import URIRef, Literal
+from rdflib import Literal
 from rdflib.namespace import DCTERMS
 
 from iso2dcat.entities.base import BaseEntity
@@ -59,7 +59,7 @@ dcatapde:licenseAttributionByText entities.
                     uri_out = URI_MAPPING[uri_in]
                 else:
                     uri_out = uri_in
-                licenses[DCTERMS.license] = URIRef(uri_out)
+                licenses[DCTERMS.license] = self.make_uri_ref(uri_out)
                 self.inc('dct:License')
                 self.inc('Good')
             else:
@@ -70,4 +70,4 @@ dcatapde:licenseAttributionByText entities.
 
         if len(list(licenses.keys())) > 0:
             for tag, license in licenses.items():
-                self.add_tripel(URIRef(self.parent_ressource_uri), tag, license)
+                self.add_tripel(self.make_uri_ref(self.parent_ressource_uri), tag, license)

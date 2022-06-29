@@ -125,8 +125,9 @@ class Logger:
 
         log_file_path = os.path.join(
             self.cfg.LOG_PATH,
-            '{id}.log'.format(id=self.meas_id),
+            '{id}.log'.format(id='iso2dcat'),
         )
+        print(f'Log file is {log_file_path}')
         file_handler = FileHandler(log_file_path)
         file_handler_formatter = formatter
         file_handler.setFormatter(file_handler_formatter)
@@ -150,6 +151,7 @@ class Logger:
         self.logger.setLevel(self.cfg.log_level)
 
         self.setup_console_logger(formatter)
+        self.setup_file_logger(formatter)
 
     def db_log(self, level, msg, file_id):
         if self.db_log_func is None:

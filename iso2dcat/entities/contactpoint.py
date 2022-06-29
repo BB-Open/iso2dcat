@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from rdflib import Literal, URIRef
+from rdflib import Literal
 
 from iso2dcat.entities.base import BaseEntity
 from iso2dcat.exceptions import EntityFailed
@@ -64,7 +64,7 @@ class ContactPoint(BaseEntity):
                             if hit:
                                 for lang in languages:
                                     self.add_tripel(
-                                        URIRef(self.uri),
+                                        self.make_uri_ref(self.uri),
                                         vcard[target],
                                         Literal(hit, lang=lang)
                                     )
