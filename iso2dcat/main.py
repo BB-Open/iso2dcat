@@ -8,7 +8,7 @@ from iso2dcat.component.interface import IStat, IIsoCfg, IDCM
 from iso2dcat.csw import CSWProcessor
 from iso2dcat.dcat import CatalogBuilder
 from iso2dcat.dcm import register_dcm, unregister_dcm
-from iso2dcat.entities.base import Base, BaseEntity
+from iso2dcat.entities.base import Base
 from iso2dcat.entities.catalog import Catalog
 from iso2dcat.entities.categories import CategoryKeywordMapper
 from iso2dcat.entities.contactpoint import ContactPoint
