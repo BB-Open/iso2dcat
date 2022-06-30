@@ -4,11 +4,11 @@ import zope
 from pkan_config.config import register_config, get_config, unregister_config
 from zope import component
 
-from iso2dcat.component.interface import IStat, IIsoCfg
+from iso2dcat.component.interface import IStat, IIsoCfg, IDCM
 from iso2dcat.csw import CSWProcessor
 from iso2dcat.dcat import CatalogBuilder
 from iso2dcat.dcm import register_dcm, unregister_dcm
-from iso2dcat.entities.base import Base, BaseEntity
+from iso2dcat.entities.base import Base
 from iso2dcat.entities.catalog import Catalog
 from iso2dcat.entities.categories import CategoryKeywordMapper
 from iso2dcat.entities.contactpoint import ContactPoint
@@ -36,10 +36,6 @@ from iso2dcat.thesauri_mapper import register_thesauri, unregister_thesauri
 
 
 class Main(Base):
-    db = None
-    csw_proc = None
-    dcm = None
-    nsm = None
 
     def shutdown_components(self):
 
@@ -85,7 +81,7 @@ class Main(Base):
         self.logger.info('iso2dcat starting')
 
         # Register the namespace manager
-        self.nsm = register_nsmanager()
+        register_nsmanager()
 
         # Register statistics
         register_stat()
@@ -94,10 +90,10 @@ class Main(Base):
         register_thesauri()
 
         # Register RDF Database to write final results
-        self.db = register_db()
+        register_db()
 
         # Register the DCM-Interface
-        self.dcm = register_dcm()
+        register_dcm()
 
         # register language mapper
         self.logger.info('loading Languages')
@@ -108,17 +104,18 @@ class Main(Base):
         self.setup_components(visitor=visitor, cfg=cfg)
 
         self.logger.info('loading DCM file')
-        self.dcm.run()
+        dcm = component.queryUtility(IDCM)
+        dcm.run()
         self.logger.info('DCM file loaded')
 
         self.logger.info('Build Catalogs')
-        self.catalog_builder = CatalogBuilder()
-        self.catalog_builder.run()
+        catalog_builder = CatalogBuilder()
+        catalog_builder.run()
         self.logger.info('Build Catalogs finished')
 
         self.logger.info('processing ISO files')
-        self.csw_proc = CSWProcessor()
-        self.csw_proc.run()
+        csw_proc = CSWProcessor()
+        csw_proc.run()
         self.logger.info('ISO files processed')
 
         self.logger.info('iso2dcat statistics')
