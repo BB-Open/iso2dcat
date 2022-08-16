@@ -276,6 +276,8 @@ class RDF2SOLR(BaseDCM):
         data_sets = self.format_data(db_name)
         self.logger.info('rdf datasets loaded')
         self.solr = pysolr.Solr(self.cfg.SOLR_URI, auth=('writer', 'Sas242!!'))
+        self.logger.info('delete everything')
+        self.solr.delete('*:*')
         self.logger.info('writing datasets to solr')
         for key, data_set in progressbar.progressbar(data_sets.items()):
             self.solr.add(data_set)
