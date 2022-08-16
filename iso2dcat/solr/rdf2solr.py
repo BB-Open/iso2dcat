@@ -517,7 +517,7 @@ class RDF2SOLR(BaseDCM):
             else:
                 format_uri = res['df']['value']
                 if format_uri in self.fm.mapping:
-                    format_text = self.lcm.mapping[format_uri]
+                    format_text = self.fm.mapping[format_uri]
                 else:
                     format_text = format_uri
                     self.logger.warning('No EU Format {}'.format(format_uri))
