@@ -63,10 +63,12 @@ dcatapde:licenseAttributionByText entities.
                 self.inc('dct:License')
                 self.inc('Good')
             else:
+                self.inc('dactapde:licenseAttributionByText')
                 if len(langs) > 0:
-                    self.inc('dactapde:licenseAttributionByText')
-                for lang in langs:
-                    licenses[DCATDE.licenseAttributionByText] = Literal(license.text, lang=lang)
+                    for lang in langs:
+                        licenses[DCATDE.licenseAttributionByText] = Literal(license.text, lang=lang)
+                else:
+                    licenses[DCATDE.licenseAttributionByText] = Literal(license.text)
 
         if len(list(licenses.keys())) > 0:
             for tag, license in licenses.items():
