@@ -44,15 +44,16 @@ dcatapde:licenseAttributionByText entities.
             'https://www.govdata.de/dl-de/zero-2-0': 'http://dcat-ap.de/def/licenses/dl-zero-de/2.0'
         }
         for license in license_nodes:
-            if license.text.startswith('{') and license.text.endswith('}'):
+            license_text = license.text.strip()
+            if license_text.startswith('{') and license_text.endswith('}'):
                 try:
-                    license_obj = sj.loads(license.text)
+                    license_obj = sj.loads(license_text)
                 except Exception as e:
                     self.inc('JSON Error')
                     self.logger.error('JSON Error in: {}'.format(
                         self.node.fileIdentifier.getchildren()[0])
                     )
-                    license_fixed = license.text.replace('\\\\', "\\")
+                    license_fixed = license_text.replace('\\\\', "\\")
                     try:
                         license_obj = sj.loads(license_fixed)
                     except Exception as e:
@@ -60,9 +61,9 @@ dcatapde:licenseAttributionByText entities.
                         self.inc('dactapde:licenseAttributionByText')
                         if len(langs) > 0:
                             for lang in langs:
-                                licenses[DCATDE.licenseAttributionByText] = Literal(license.text, lang=lang)
+                                licenses[DCATDE.licenseAttributionByText] = Literal(license_text, lang=lang)
                         else:
-                            licenses[DCATDE.licenseAttributionByText] = Literal(license.text)
+                            licenses[DCATDE.licenseAttributionByText] = Literal(license_text)
                         continue
                 uri_in = license_obj['url']
                 if uri_in in URI_MAPPING:
@@ -76,9 +77,9 @@ dcatapde:licenseAttributionByText entities.
                 self.inc('dactapde:licenseAttributionByText')
                 if len(langs) > 0:
                     for lang in langs:
-                        licenses[DCATDE.licenseAttributionByText] = Literal(license.text, lang=lang)
+                        licenses[DCATDE.licenseAttributionByText] = Literal(license_text, lang=lang)
                 else:
-                    licenses[DCATDE.licenseAttributionByText] = Literal(license.text)
+                    licenses[DCATDE.licenseAttributionByText] = Literal(license_text)
 
         if len(list(licenses.keys())) > 0:
             for tag, license in licenses.items():
