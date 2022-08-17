@@ -73,8 +73,6 @@ dcatapde:licenseAttributionByText entities.
                 self.inc('dct:License')
                 self.inc('Good')
             else:
-                if '{' in license.text:
-                    pass
                 self.inc('dactapde:licenseAttributionByText')
                 if len(langs) > 0:
                     for lang in langs:
