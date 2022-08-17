@@ -16,7 +16,7 @@ from iso2dcat.exceptions import EntityFailed
 
 LANGUAGE = './/gmd:language/*/@codeListValue'
 
-INVALID_URI_CHARS = '<>" {}|\\^`'
+INVALID_URI_CHARS = '<>" {}|\\^`[]'
 
 class Base:
     """Base class of all instances. Gives access to logger, configuration and statistics"""

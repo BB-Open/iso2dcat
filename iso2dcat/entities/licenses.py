@@ -44,7 +44,7 @@ dcatapde:licenseAttributionByText entities.
             'https://www.govdata.de/dl-de/zero-2-0': 'http://dcat-ap.de/def/licenses/dl-zero-de/2.0'
         }
         for license in license_nodes:
-            if license.text[0] == '{' and license.text[-1] == '}':
+            if license.text.startswith('{') and license.text.endswith('}'):
                 try:
                     license_obj = sj.loads(license.text)
                 except Exception as e:
@@ -53,7 +53,17 @@ dcatapde:licenseAttributionByText entities.
                         self.node.fileIdentifier.getchildren()[0])
                     )
                     license_fixed = license.text.replace('\\\\', "\\")
-                    license_obj = sj.loads(license_fixed)
+                    try:
+                        license_obj = sj.loads(license_fixed)
+                    except Exception as e:
+                        self.logger.error('Could not parse JSON-Like License')
+                        self.inc('dactapde:licenseAttributionByText')
+                        if len(langs) > 0:
+                            for lang in langs:
+                                licenses[DCATDE.licenseAttributionByText] = Literal(license.text, lang=lang)
+                        else:
+                            licenses[DCATDE.licenseAttributionByText] = Literal(license.text)
+                        continue
                 uri_in = license_obj['url']
                 if uri_in in URI_MAPPING:
                     uri_out = URI_MAPPING[uri_in]
@@ -63,6 +73,8 @@ dcatapde:licenseAttributionByText entities.
                 self.inc('dct:License')
                 self.inc('Good')
             else:
+                if '{' in license.text:
+                    pass
                 self.inc('dactapde:licenseAttributionByText')
                 if len(langs) > 0:
                     for lang in langs:
