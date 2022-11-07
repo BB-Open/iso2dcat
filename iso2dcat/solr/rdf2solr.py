@@ -306,8 +306,17 @@ class RDF2SOLR(BaseDCM):
 
             res_dict[s_uri]['dct_title'] = res['dt']['value']
 
+            if 'xml:lang' in res['dt']:
+                res_dict[s_uri]['dct_title_lang'] = res['dt']['xml:lang']
+            else:
+                pass
+
             if 'dd' in res:
                 res_dict[s_uri]['dct_description'] = res['dd']['value']
+                if 'xml:lang' in res['dd']:
+                    res_dict[s_uri]['dct_description_lang'] = res['dt']['xml:lang']
+                else:
+                    pass
 
             if 'type' in res:
                 if res['type']['value'] == 'http://www.w3.org/ns/dcat#DataService':
