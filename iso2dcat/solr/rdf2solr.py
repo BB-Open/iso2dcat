@@ -276,6 +276,8 @@ class RDF2SOLR(BaseDCM):
         data_sets = self.format_data(db_name)
         self.logger.info('rdf datasets loaded')
         self.solr = pysolr.Solr(self.cfg.SOLR_URI, auth=('writer', 'Sas242!!'))
+        self.logger.info('delete everything')
+        self.solr.delete(q='*:*', commit=False)
         self.logger.info('writing datasets to solr')
         for key, data_set in progressbar.progressbar(data_sets.items()):
             self.solr.add(data_set)
@@ -304,8 +306,17 @@ class RDF2SOLR(BaseDCM):
 
             res_dict[s_uri]['dct_title'] = res['dt']['value']
 
+            if 'xml:lang' in res['dt']:
+                res_dict[s_uri]['dct_title_lang'] = res['dt']['xml:lang']
+            else:
+                pass
+
             if 'dd' in res:
                 res_dict[s_uri]['dct_description'] = res['dd']['value']
+                if 'xml:lang' in res['dd']:
+                    res_dict[s_uri]['dct_description_lang'] = res['dt']['xml:lang']
+                else:
+                    pass
 
             if 'type' in res:
                 if res['type']['value'] == 'http://www.w3.org/ns/dcat#DataService':
@@ -515,7 +526,7 @@ class RDF2SOLR(BaseDCM):
             else:
                 format_uri = res['df']['value']
                 if format_uri in self.fm.mapping:
-                    format_text = self.lcm.mapping[format_uri]
+                    format_text = self.fm.mapping[format_uri]
                 else:
                     format_text = format_uri
                     self.logger.warning('No EU Format {}'.format(format_uri))

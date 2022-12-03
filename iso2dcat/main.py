@@ -100,7 +100,7 @@ class Main(Base):
         self.language_mapper = register_languagemapper()
         self.logger.info('Languages file loaded')
 
-    def run(self, visitor=None, cfg=None):
+    def run(self, visitor=None, cfg=None, stat_file=None):
         self.setup_components(visitor=visitor, cfg=cfg)
 
         self.logger.info('loading DCM file')
@@ -136,8 +136,11 @@ class Main(Base):
 
         for line in lines:
             self.logger.info(line)
-        for line in lines:
-            print(line)
+        if stat_file:
+            f = open(stat_file, mode='w')
+            text = '\n'.join(lines)
+            f.write(text)
+            f.close()
 
         # todo: RDF2Solr should be in scheduler, part of flask package
         # self.logger.info('RDF2Solr')
@@ -171,7 +174,7 @@ ALL_PREFIXES = [
 
 if __name__ == '__main__':
     m = Main()
-    m.run()
+    m.run(stat_file='test.txt')
     # m.setup_components()
     # prefixes = 'PREFIX ' + '\nPREFIX '.join(ALL_PREFIXES)
     #
