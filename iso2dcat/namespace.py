@@ -21,7 +21,8 @@ NAMESPACES = {
     'adms': 'http://www.w3.org/ns/adms#',
     'locn': 'https://www.w3.org/ns/locn',
     'dct': 'http://purl.org/dc/terms/',
-    'inq': 'http://inqbus.de/ns'
+    'inq': 'http://inqbus.de/ns',
+    'dcat': 'http://www.w3.org/ns/dcat#',
 }
 
 DCATDE = Namespace('http://dcat-ap.de/def/dcatde/')
