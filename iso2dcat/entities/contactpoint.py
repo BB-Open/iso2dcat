@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*-
-
+from pkan_config.namespaces import VCARD, NAMESPACES
 from rdflib import Literal
 
 from iso2dcat.entities.base import BaseEntity
 from iso2dcat.exceptions import EntityFailed
-from iso2dcat.namespace import vcard
 
 
 class ContactPoint(BaseEntity):
@@ -31,8 +30,8 @@ class ContactPoint(BaseEntity):
     # The list of roles defining the order to lookup
     ROLES = ['pointOfContact', 'distributor', 'custodian', 'publisher', 'owner']
 
-    namespaces = {'vcard': vcard}
-    entity_type = vcard.Kind
+    namespaces = {'vcard': VCARD}
+    entity_type = VCARD.Kind
 
     def run(self):
         """
@@ -46,7 +45,7 @@ class ContactPoint(BaseEntity):
             self.inc('Processed')
             # get a list of possible publishers
             results = self.node.xpath(self.PUBLISHER_ORG_EXPR, role=role,
-                                      namespaces={'gmd': 'http://www.isotc211.org/2005/gmd'})
+                                      namespaces=self.nsm.namespaces)
 
             if not results:
                 continue
@@ -65,7 +64,7 @@ class ContactPoint(BaseEntity):
                                 for lang in languages:
                                     self.add_tripel(
                                         self.make_uri_ref(self.uri),
-                                        vcard[target],
+                                        VCARD[target],
                                         Literal(hit, lang=lang)
                                     )
                 break

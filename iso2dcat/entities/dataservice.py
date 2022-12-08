@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
+from pkan_config.namespaces import DCAT
+
 from iso2dcat.entities.dataset import DcatDataset
 from iso2dcat.entities.licenses import License
 from iso2dcat.entities.resource import DcatResource
 from iso2dcat.exceptions import EntityFailed
-from iso2dcat.namespace import DCAT
+
 
 
 class DcatDataService(DcatResource):
@@ -21,11 +23,7 @@ class DcatDataService(DcatResource):
         SERVICE_DATASET_LINK_EXPR = './/srv:operatesOn'
         results = self.node.xpath(
             SERVICE_DATASET_LINK_EXPR,
-            namespaces={
-                'gmd': 'http://www.isotc211.org/2005/gmd',
-                'srv': 'http://www.isotc211.org/2005/srv',
-                'xlink': 'http://www.w3.org/1999/xlink',
-            }
+            namespaces=self.nsm.namespaces
         )
         if len(results) > 0:
             self.inc('has dcat:Dataset')
@@ -49,11 +47,7 @@ class DcatDataService(DcatResource):
         ENDPOINT_EXPR = ".//srv:connectPoint/gmd:CI_OnlineResource/gmd:linkage/*"
         results = self.node.xpath(
             ENDPOINT_EXPR,
-            namespaces={
-                'gmd': 'http://www.isotc211.org/2005/gmd',
-                'srv': 'http://www.isotc211.org/2005/srv',
-                'xlink': 'http://www.w3.org/1999/xlink',
-            }
+            namespaces=self.nsm.namespaces
         )
         if len(results) == 0:
             self.inc('has no enpointURI')

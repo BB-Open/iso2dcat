@@ -1,9 +1,8 @@
 from rdflib import Literal
-from rdflib.namespace import RDF, SKOS, DCTERMS
+from pkan_config.namespaces import RDF, SKOS, DCTERMS, DCAT
 from zope import component
 
 from iso2dcat.entities.base import BaseEntity
-from iso2dcat.namespace import DCAT
 from iso2dcat.thesauri_mapper import KNOWN_THESAURI
 
 KEYWORDS = 'gmd:identificationInfo/*/gmd:descriptiveKeywords/*/gmd:keyword/gco:CharacterString'

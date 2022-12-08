@@ -1,11 +1,10 @@
 from urllib.parse import urlparse, quote
 
 
-from rdflib.namespace import FOAF, RDF
+from pkan_config.namespaces import FOAF, RDF, DCAT
 
 from iso2dcat.entities.base import BaseEntity
 from iso2dcat.exceptions import EntityFailed
-from iso2dcat.namespace import DCAT
 
 QUERY_LANDING_PAGE = './/gmd:transferOptions/*/gmd:onLine/gmd:CI_OnlineResource' \
     '[not(gmd:function/*/@codeListValue)]'

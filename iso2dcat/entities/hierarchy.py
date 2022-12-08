@@ -43,7 +43,7 @@ class Hierarchy(BaseEntity):
 
         res = self.node.xpath(
             HIERARCHY_EXPR,
-            namespaces={'gmd': 'http://www.isotc211.org/2005/gmd'}
+            namespaces=self.nsm.namespaces
         )
 
         if len(res) == 0:

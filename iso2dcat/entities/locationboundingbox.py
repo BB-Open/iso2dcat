@@ -1,9 +1,9 @@
 from rdflib import Literal
-from rdflib.namespace import RDF, DCTERMS
+from pkan_config.namespaces import RDF, DCTERMS
 
 from iso2dcat.entities.base import BaseEntity
 from iso2dcat.exceptions import EntityFailed
-from iso2dcat.namespace import LOCN, GSP
+from pkan_config.namespaces import LOCN, GSP
 
 LOCATION_QUERY = 'gmd:identificationInfo/*/gmd:extent/*/gmd:geographicElement/' \
                  'gmd:EX_GeographicBoundingBox|gmd:identificationInfo/*/srv:extent/' \

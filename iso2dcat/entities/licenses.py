@@ -1,9 +1,7 @@
 import simplejson as sj
+from pkan_config.namespaces import DCATDE, DCTERMS
 from rdflib import Literal
-from rdflib.namespace import DCTERMS
-
 from iso2dcat.entities.base import BaseEntity
-from iso2dcat.namespace import DCATDE
 
 LICENSE = ".//gmd:resourceConstraints/gmd:MD_LegalConstraints/" \
           "gmd:otherConstraints/gco:CharacterString[text()]"

@@ -1,4 +1,4 @@
-from rdflib.namespace import DCTERMS
+from pkan_config.namespaces import DCTERMS
 
 from iso2dcat.entities.base import BaseEntity
 
