@@ -197,6 +197,9 @@ SELECT DISTINCT ?s ?df ?dft
         OPTIONAL {
         ?df dct:title ?dft
         }
+        OPTIONAL {
+        ?df skos:prefLabel ?dfl
+        }
     }}
 """
 
@@ -523,6 +526,8 @@ class RDF2SOLR(BaseDCM):
 
             if 'dft' in res:
                 format_text = res['dft']['value']
+            elif 'dfl' in res:
+                format_text = res['dfl']['value']
             else:
                 format_uri = res['df']['value']
                 if format_uri in self.fm.mapping:
