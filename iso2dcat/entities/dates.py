@@ -1,7 +1,7 @@
 from datetime import datetime
 
 from rdflib import Literal
-from rdflib.namespace import DCTERMS, XSD
+from pkan_config.namespaces import DCTERMS, XSD
 
 from iso2dcat.entities.base import BaseEntity
 

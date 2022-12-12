@@ -1,6 +1,7 @@
 import pickle
 
-from rdflib import Graph, Namespace
+from pkan_config.namespaces import EUVOC, DC
+from rdflib import Graph
 from rdflib.plugins.sparql import prepareQuery
 from zope import component
 
@@ -49,8 +50,8 @@ class LanguageMapper(BaseStat):
                 }"""
         query = prepareQuery(
             language_query,
-            initNs={"euvoc": Namespace('http://publications.europa.eu/ontology/euvoc#'),
-                    "dc": Namespace('http://purl.org/dc/elements/1.1/')}
+            initNs={"euvoc": EUVOC,
+                    "dc": DC}
         )
         qres = g.query(query)
         for row in qres:

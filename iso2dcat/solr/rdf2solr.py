@@ -189,13 +189,16 @@ prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 prefix vcard: <http://www.w3.org/2006/vcard/ns#>
 prefix dcatde: <http://dcat-ap.de/def/dcatde/>
 
-SELECT DISTINCT ?s ?df ?dft
+SELECT DISTINCT ?s ?df ?dft ?dfl
     WHERE {{
         ?s a dcat:Dataset .
         ?s dcat:distribution ?d .
         ?d dct:format ?df
         OPTIONAL {
         ?df dct:title ?dft
+        }
+        OPTIONAL {
+        ?df skos:prefLabel ?dfl
         }
     }}
 """
@@ -523,6 +526,8 @@ class RDF2SOLR(BaseDCM):
 
             if 'dft' in res:
                 format_text = res['dft']['value']
+            elif 'dfl' in res:
+                format_text = res['dfl']['value']
             else:
                 format_uri = res['df']['value']
                 if format_uri in self.fm.mapping:

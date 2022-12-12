@@ -1,8 +1,8 @@
 
 from lxml import etree
 from rdflib import URIRef, ConjunctiveGraph
-from rdflib.namespace import RDF
 from zope import component
+from pkan_config.namespaces import RDF
 
 from iso2dcat.component.interface import \
     IDCM, \

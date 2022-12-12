@@ -1,7 +1,7 @@
+from pkan_config.namespaces import INQ
 from rdflib import Literal
 
 from iso2dcat.entities.base import BaseEntity
-from iso2dcat.namespace import INQ
 
 
 class InqbusPriority(BaseEntity):

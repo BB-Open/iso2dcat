@@ -1,16 +1,12 @@
 # -*- coding: utf-8 -*-
-from urllib.parse import quote, urlparse
-
+from pkan_config.namespaces import DCAT, DCTERMS
 from rdflib import RDF, Literal
-from rdflib.namespace import DCTERMS
 
-from iso2dcat.entities.dates import DateMapper
 from iso2dcat.entities.licenses import License
 from iso2dcat.entities.provenance import ProvenanceStatement
 from iso2dcat.entities.resource import DcatResource
 from iso2dcat.entities.rightstatement import RightsStatement
 from iso2dcat.exceptions import EntityFailed
-from iso2dcat.namespace import DCAT
 
 ACCESS = ".//gmd:transferOptions/*/gmd:onLine/gmd:CI_OnlineResource" \
          "[not(gmd:function/*/@codeListValue = 'download')]"

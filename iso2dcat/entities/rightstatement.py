@@ -1,7 +1,7 @@
 import hashlib
 
 from rdflib import Literal
-from rdflib.namespace import RDF, DCTERMS, RDFS
+from pkan_config.namespaces import RDF, DCTERMS, RDFS
 
 from iso2dcat.entities.base import BaseEntity
 from iso2dcat.exceptions import EntityFailed

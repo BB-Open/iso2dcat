@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 import zope
 from rdflib import Literal
-from rdflib.namespace import FOAF, RDF, DCTERMS
+
 
 from iso2dcat.component.interface import ICatalog
 from iso2dcat.entities.base import BaseEntity
-from iso2dcat.namespace import DCAT, ADMS
+from pkan_config.namespaces import RDF, FOAF, DCTERMS, DCAT, ADMS
 
 
 @zope.interface.implementer(ICatalog)

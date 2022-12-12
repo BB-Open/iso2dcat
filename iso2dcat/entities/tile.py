@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from rdflib.namespace import DCTERMS
+from pkan_config.namespaces import DCTERMS
 
 from iso2dcat.entities.dataset import DcatDataset
 
@@ -17,7 +17,7 @@ Tiles are special Dataset with dct:isPartOf
         TILE_DATASET_LINK_EXPR = './/gmd:parentIdentifier'
         results = self.node.xpath(
             TILE_DATASET_LINK_EXPR,
-            namespaces={'gmd': 'http://www.isotc211.org/2005/gmd'}
+            namespaces=self.nsm.namespaces
         )
 
         for res in results:

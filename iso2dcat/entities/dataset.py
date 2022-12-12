@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*-
+from pkan_config.namespaces import DCAT
 
 from iso2dcat.entities.distribution import Distribution
 from iso2dcat.entities.resource import DcatResource
 from iso2dcat.exceptions import EntityFailed
-from iso2dcat.namespace import DCAT
-
 
 class DcatDataset(DcatResource):
     dcat_class = 'dcat_Dataset'

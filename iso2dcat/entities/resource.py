@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
+from pkan_config.namespaces import DCATDE, DCAT, ADMS
+from pkan_config.namespaces import DCTERMS
 from rdflib import Literal
-from rdflib.namespace import DCTERMS
 
 from iso2dcat.entities.base import BaseEntity
 from iso2dcat.entities.categories import CategoryKeywordMapper
@@ -12,7 +13,6 @@ from iso2dcat.entities.periodicity import AccrualPeriodicity
 from iso2dcat.entities.priority import InqbusPriority
 from iso2dcat.entities.publisher import Publisher, Contributor, Maintainer
 from iso2dcat.exceptions import EntityFailed
-from iso2dcat.namespace import DCATDE, DCAT, ADMS, INQ
 
 TITLE = './/gmd:identificationInfo[1]/*/gmd:citation/*/gmd:title/gco:CharacterString[text()]'
 DESCRIPTION = './/gmd:identificationInfo[1]/*/gmd:abstract/gco:CharacterString[text()]'
