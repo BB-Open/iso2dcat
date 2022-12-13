@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 import datetime
 import os
-from logging import ERROR, FileHandler, Formatter, StreamHandler, getLogger
+from logging import ERROR, Formatter, StreamHandler, getLogger
+from logging.handlers import RotatingFileHandler
 from sys import stdout
 
 import zope
@@ -126,7 +127,7 @@ class Logger:
             '{id}.log'.format(id='iso2dcat'),
         )
         print(f'Log file is {log_file_path}')
-        file_handler = FileHandler(log_file_path)
+        file_handler = RotatingFileHandler(log_file_path, backupCount=5, maxBytes=1000000)
         file_handler_formatter = formatter
         file_handler.setFormatter(file_handler_formatter)
         file_handler.setLevel(self.cfg.log_level_file)
