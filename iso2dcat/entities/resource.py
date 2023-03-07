@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
-from pkan_config.namespaces import DCATDE, DCAT, ADMS
-from pkan_config.namespaces import DCTERMS
+from datetime import datetime
+
+from pkan_config.namespaces import DCATDE, DCAT, ADMS, RDF, SKOS, DCTERMS, XSD
 from rdflib import Literal
 
 from iso2dcat.entities.base import BaseEntity
@@ -84,10 +85,6 @@ class DcatResource(BaseEntity):
         # get base_uri without fallback to decide, if catalog suffix must be added
         base_uri = self.dcm.file_id_to_baseurl(self.uuid)
 
-        catalog = base_uri + '#dcat_Catalog'
-
-        self.add_tripel(self.make_uri_ref(catalog), DCAT.dataset, uri_ref)
-
         # contributorID
         self.add_tripel(
             uri_ref,
@@ -96,7 +93,12 @@ class DcatResource(BaseEntity):
         )
         # identifier is uuid
         self.add_tripel(uri_ref, DCTERMS.identifier, Literal(self.uuid))
-        self.add_tripel(uri_ref, ADMS.identifier, Literal(self.uuid))
+        adms_uri = base_uri + '#adms_Identifier_' + self.uuid
+        adms_uri_ref = self.make_uri_ref(adms_uri)
+        self.add_tripel(uri_ref, ADMS.identifier, adms_uri_ref)
+        self.add_tripel(adms_uri_ref, RDF.type, ADMS.Identifier)
+        self.add_tripel(adms_uri_ref, SKOS.notation, Literal(self.uuid))
+        self.add_tripel(adms_uri_ref, DCTERMS.issued, Literal(datetime.now(), datatype=XSD.dateTimeStamp))
 
         # contributor
         contributor = Contributor(self.node, self.rdf)

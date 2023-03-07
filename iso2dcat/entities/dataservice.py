@@ -20,6 +20,17 @@ class DcatDataService(DcatResource):
     def run(self):
         self.inc('Processed')
         super(DcatDataService, self).run()
+
+        # catalog link
+        # get base_uri without fallback to decide, if catalog suffix must be added
+        base_uri = self.dcm.file_id_to_baseurl(self.uuid)
+
+        catalog = base_uri + '#dcat_Catalog'
+
+        uri_ref = self.make_uri_ref(self.uri)
+
+        self.add_tripel(self.make_uri_ref(catalog), DCAT.service, uri_ref)
+
         SERVICE_DATASET_LINK_EXPR = './/srv:operatesOn'
         results = self.node.xpath(
             SERVICE_DATASET_LINK_EXPR,
@@ -41,6 +52,7 @@ class DcatDataService(DcatResource):
                 base_uri = self.dcm.file_id_to_baseurl(uuid)
                 dataset_uri = base_uri + '#' + DcatDataset.dcat_class + '_' + uuid
                 self.add_tripel(uri_ref, DCAT.servesDataset, self.make_uri_ref(dataset_uri))
+                self.add_tripel(self.make_uri_ref(catalog), DCAT.dataset, self.make_uri_ref(dataset_uri))
 
         #        dcat:endpointURL
 

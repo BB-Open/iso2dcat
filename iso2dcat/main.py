@@ -2,6 +2,8 @@
 
 import zope
 from pkan_config.config import register_config, get_config, unregister_config
+from pyrdf4j.rdf4j import RDF4J
+from requests.auth import HTTPBasicAuth
 from zope import component
 
 from iso2dcat.component.interface import IStat, IIsoCfg, IDCM
@@ -173,6 +175,13 @@ ALL_PREFIXES = [
 ]
 
 if __name__ == '__main__':
+    # create empty database
+    register_config(env='Production')
+    cfg = get_config()
+    rdf4j = RDF4J(rdf4j_base=cfg.RDF4J_BASE)
+    auth = HTTPBasicAuth(cfg.ADMIN_USER, cfg.ADMIN_PASS)
+    rdf4j.create_repository(cfg.WRITE_TO, repo_type=cfg.RDF_REPO_TYPE, overwrite=True, auth=auth)
+
     m = Main()
     m.run(stat_file='test.txt')
     # m.setup_components()

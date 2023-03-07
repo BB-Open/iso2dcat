@@ -8,10 +8,10 @@ from iso2dcat.thesauri_mapper import KNOWN_THESAURI
 KEYWORDS = 'gmd:identificationInfo/*/gmd:descriptiveKeywords/*/gmd:keyword/gco:CharacterString'
 CATEGORIES = 'gmd:identificationInfo[1]/*/gmd:topicCategory/*'
 INSPIRE_THEME_LABELS = "gmd:identificationInfo/*/gmd:descriptiveKeywords/*"
+THEME_URI = 'http://publications.europa.eu/resource/authority/data-theme'
 
 
 class CategoryKeywordMapper(BaseEntity):
-
     _stat_title = 'Categories and Keywords'
     _stat_desc = """Convert all gmd:keyword to dcat:keyword
 Convert gmd:topicCategory to standard dcat:theme
@@ -112,7 +112,7 @@ bad_additional_cat: No Keywords of known Thesauri found and converted
         parent_uri_ref = self.make_uri_ref(self.parent_ressource_uri)
 
         # create keywords as keyword
-#        self.logger.info('Set Keywords')
+        #        self.logger.info('Set Keywords')
         for keyword in results_kw:
             for lang in languages:
                 self.add_tripel(
@@ -125,20 +125,28 @@ bad_additional_cat: No Keywords of known Thesauri found and converted
                         parent_uri_ref,
                         DCAT.theme,
                         self.make_uri_ref(
-                            'http://publications.europa.eu/resource/authority/data-theme/'
+                            THEME_URI + '/'
                             + str(keyword).upper()
                         )
                     )
+                    self.add_tripel(self.make_uri_ref(
+                        THEME_URI + '/'
+                        + str(keyword).upper()
+                    ), SKOS.inScheme, self.make_uri_ref(THEME_URI))
         # create categories
-#        self.logger.info('Set Default Categories')
+        #        self.logger.info('Set Default Categories')
         for keyword in results_cat:
             if keyword in self.keywords_to_themes:
                 cats = self.keywords_to_themes[keyword]
                 for cat in cats:
                     self.add_tripel(parent_uri_ref, DCAT.theme, self.make_uri_ref(
-                        'http://publications.europa.eu/resource/authority/data-theme/' + cat))
+                        THEME_URI + '/' + cat))
+                    self.add_tripel(self.make_uri_ref(
+                        THEME_URI + '/'
+                        + cat
+                    ), SKOS.inScheme, self.make_uri_ref(THEME_URI))
 
-#        self.logger.info('Set Additional Categories')
+        #        self.logger.info('Set Additional Categories')
         # additional categories
         # todo: Improve additional categories
         # todo: Make Themes as dictionary
@@ -182,7 +190,7 @@ bad_additional_cat: No Keywords of known Thesauri found and converted
                         self.add_tripel(
                             keyword_uri,
                             SKOS.inScheme,
-                            mapper_uri_ref
+                            self.make_uri_ref(mapper_uri_ref)
                         )
                         self.add_tripel(
                             parent_uri_ref,

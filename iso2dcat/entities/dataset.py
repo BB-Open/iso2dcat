@@ -18,6 +18,16 @@ class DcatDataset(DcatResource):
 
         self.inc('Processed')
 
+        # catalog link
+        # get base_uri without fallback to decide, if catalog suffix must be added
+        base_uri = self.dcm.file_id_to_baseurl(self.uuid)
+
+        catalog = base_uri + '#dcat_Catalog'
+
+        uri_ref = self.make_uri_ref(self.uri)
+
+        self.add_tripel(self.make_uri_ref(catalog), DCAT.dataset, uri_ref)
+
         try:
             distribution = Distribution(self.node, self.rdf, self.uri).run()
         except EntityFailed:

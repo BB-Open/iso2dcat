@@ -63,7 +63,7 @@ Even if a ISO dataset is DCAT compatible it may have flaws, so please look furth
         while True:
             self.csw.getrecords2(
                 constraints=[self.get_constraint()],
-                startposition=batch_start,
+                startposition=batch_start + 1, # +1 is important, otherwise we have one file twice
                 maxrecords=self.cfg.BATCH_COUNT,
                 outputschema=self.cfg.CSW_OUTPUT_SCHEMA,
                 esn='full',

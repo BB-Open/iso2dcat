@@ -5,7 +5,7 @@ from rdflib import Literal
 
 from iso2dcat.component.interface import ICatalog
 from iso2dcat.entities.base import BaseEntity
-from pkan_config.namespaces import RDF, FOAF, DCTERMS, DCAT, ADMS
+from pkan_config.namespaces import RDF, FOAF, DCTERMS, DCAT, ADMS, SKOS
 
 
 @zope.interface.implementer(ICatalog)
@@ -48,6 +48,12 @@ class Catalog(BaseEntity):
         self.rdf.add((uri_cat, DCTERMS.title, Literal(name, lang='de')))
         self.rdf.add((uri_cat, DCTERMS.publisher, uri_pub))
         self.rdf.add((uri_cat, DCTERMS.description, Literal(name, lang='de')))
+        adms_uri = base_url + '#adms_Identifier'
+        adms_uri_ref = self.make_uri_ref(adms_uri)
+        self.rdf.add((uri_cat, ADMS.identifier, adms_uri_ref))
+        self.rdf.add((adms_uri_ref, RDF.type, ADMS.Identifier))
+        self.rdf.add((adms_uri_ref, SKOS.notation, Literal(name)))
+
         self.rdf.add((uri_cat, ADMS.identifier, Literal(uri_cat)))
         self.rdf.add((uri_cat, DCTERMS.identifier, Literal(uri_cat)))
         self.rdf.add(
