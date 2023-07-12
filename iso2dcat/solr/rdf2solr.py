@@ -474,9 +474,10 @@ class RDF2SOLR(BaseDCM):
             elif 'dlt' in res:
                 license_text = res['dlt']['value']
             else:
+                license_text = None
                 self.logger.info('No Licence for {}'.format(res['s']['value']))
-
-            licenses[dataset_uri][license_text] = 1
+            if license_text:
+                licenses[dataset_uri][license_text] = 1
 
         self.logger.info('Licenses processed')
         self.logger.info('Merge Licenses')
