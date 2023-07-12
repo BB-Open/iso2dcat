@@ -116,14 +116,14 @@ class Logger:
         File logger
         Has to be setup when the output filename is known
         """
-        if not os.path.exists(self.cfg.LOG_PATH):
-            msg = """Log file directory "{path}" does not exists""".format(path=self.cfg.LOG_PATH)
+        if not os.path.exists(self.cfg.PKAN_LOG_DIR):
+            msg = """Log file directory "{path}" does not exists""".format(path=self.cfg.PKAN_LOG_DIR)
 
-            dir_not_found_hint(self.cfg.LOG_PATH)
+            dir_not_found_hint(self.cfg.PKAN_LOG_DIR)
             raise LogPathNotExists(msg)
 
         log_file_path = os.path.join(
-            self.cfg.LOG_PATH,
+            self.cfg.PKAN_LOG_DIR,
             '{id}.log'.format(id='iso2dcat'),
         )
         print(f'Log file is {log_file_path}')
