@@ -83,14 +83,22 @@ prefix foaf: <http://xmlns.com/foaf/0.1/>
 prefix skos: <http://www.w3.org/2004/02/skos/core#>
 prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 
-SELECT DISTINCT ?s ?p ?pt
+SELECT DISTINCT ?s ?p ?pt ?dp ?dpt
     WHERE {{
         ?c dcat:dataset ?s .
         ?c dct:publisher ?p .
         OPTIONAL {{
            ?p foaf:name ?pt
            }}
+      OPTIONAL {{
+  		?s dct:publisher ?dp
+          OPTIONAL {{
+          	?dp foaf:name ?dpt
+          }}
+
+  }}
         FILTER (lang(?pt) = "" || lang(?pt) = "de")
+      FILTER (lang(?dpt) = "" || lang(?dpt) = "de")
     }}
 """
 
@@ -395,7 +403,10 @@ class RDF2SOLR(BaseDCM):
             dataset_uri = res['s']['value']
             if dataset_uri not in res_dict:
                 continue
-            if res['pt']:
+            if res['dpt']:
+                res_dict[dataset_uri]['dct_publisher'] = res['dpt']['value']
+                res_dict[dataset_uri]['dct_publisher_facet'] = res['dpt']['value']
+            elif res['pt']:
                 res_dict[dataset_uri]['dct_publisher'] = res['pt']['value']
                 res_dict[dataset_uri]['dct_publisher_facet'] = res['pt']['value']
             else:
