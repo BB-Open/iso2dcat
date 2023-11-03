@@ -43,18 +43,23 @@ no dcat:accessURL and no dcat:downloadURL: number of Files with missing distribu
         return accessURL
 
     def add_distribution(self, title, accessURL, downloadURL=None):
+        if not accessURL and not downloadURL:
+            self.logger.warning('No Url provided')
+            raise EntityFailed('No Url provided')
         uri = self.make_uri(accessURL)
         uri_ref = self.make_uri_ref(uri)
         accessURL_ref = self.make_uri_ref(accessURL)
         if downloadURL:
             downloadURL_ref = self.make_uri_ref(downloadURL)
+        else:
+            downloadURL_ref = None
         self.add_tripel(uri_ref, RDF.type, self.entity_type)
         for lang in self.languages:
             self.add_tripel(uri_ref, DCTERMS.title, Literal(title, lang=lang))
         self.add_tripel(uri_ref, DCAT.accessURL, accessURL_ref)
         self.add_tripel(self.make_uri_ref(self.parent), DCAT.distribution, uri_ref)
 
-        if downloadURL is not None:
+        if downloadURL_ref:
             self.add_tripel(uri_ref, DCAT.downloadURL, downloadURL_ref)
 
         licenses = License(self.node, self.rdf, uri)

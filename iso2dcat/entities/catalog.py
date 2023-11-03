@@ -27,7 +27,10 @@ class Catalog(BaseEntity):
         publishers = self.dcm.dcm['publisher']['mapping']
 
         for pub in publishers:
-            name = pub['publisher_name']
+            if 'publisher_name' in pub:
+                name = pub['publisher_name']
+            else:
+                name = pub['publisher_url']
             self.logger.info('Working on ' + name)
             base_url = pub['publisher_url']
             self.create(name, base_url)

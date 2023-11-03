@@ -40,14 +40,17 @@ class DCM(Base):
         publishers = self.dcm['publisher']['mapping']
         self.logger.info('Mapping publishers to Base Url')
         for pub in publishers:
-            self._id_to_baseurl[pub['publisher_id']] = pub['publisher_url']
+            if 'publisher_id' in pub and 'publisher_url' in pub:
+                self._id_to_baseurl[pub['publisher_id']] = pub['publisher_url']
         files = self.dcm['dcm']['mapping']
         self.logger.info('Mapping Files to Base Url')
         for file in files:
-            self._file_id_to_baseurl[file['fileidentifier']] = self._id_to_baseurl[
-                file['publisher_id']
-            ]
-            self._id_to_priority[file['fileidentifier']] = file['priority']
+            if 'publisher_id' in file and 'fileidentifier' in file:
+                self._file_id_to_baseurl[file['fileidentifier']] = self._id_to_baseurl[
+                    file['publisher_id']
+                ]
+            if 'fileidentifier' in file and 'priority' in file:
+                self._id_to_priority[file['fileidentifier']] = file['priority']
         dcm_file.close()
 
     def file_id_to_baseurl(self, file_id):

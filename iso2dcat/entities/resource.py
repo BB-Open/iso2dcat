@@ -75,11 +75,12 @@ class DcatResource(BaseEntity):
 
         contact = ContactPoint(self.node, self.rdf)
         try:
-            rdf = contact.run()
+            uris = contact.run()
         except EntityFailed:
             self.logger.warning('No Contact Point')
         else:
-            self.add_tripel(uri_ref, DCAT.contactPoint, self.make_uri_ref(contact.uri))
+            for uri in uris:
+                self.add_tripel(uri_ref, DCAT.contactPoint, self.make_uri_ref(uri))
 
         # catalog link
         # get base_uri without fallback to decide, if catalog suffix must be added

@@ -100,6 +100,9 @@ class BaseDCM(BaseStat):
 
     def make_uri_ref(self, uri):
         invalid_char = check_invalid_uri_chars(str(uri))
+        if not uri:
+            self.logger.error('Empty Uri')
+            raise EntityFailed('Empty Uri')
         if invalid_char:
             message = f'Invalid Char "{invalid_char}"'
             self.inc(message)

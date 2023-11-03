@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from pkan_config.namespaces import VCARD, NAMESPACES
-from rdflib import Literal
+from rdflib import Literal, RDF
 
 from iso2dcat.entities.base import BaseEntity
 from iso2dcat.exceptions import EntityFailed
@@ -40,6 +40,7 @@ class ContactPoint(BaseEntity):
         :return: vcard
         """
         languages = self.get_languages()
+        contact_uris = []
         # For each role
         for role in self.ROLES:
             self.inc('Processed')
@@ -51,25 +52,46 @@ class ContactPoint(BaseEntity):
                 continue
             else:
                 self.inc(role)
-                self.add_entity_type()
-                for result in results:
-                    # For each simple mapping
+                result_objects = []
+                for idx, result in enumerate(results):
+                    result_triples = {}
+
                     for selector, target in self.simple_mapping.items():
                         # get a list of possible publishers
                         hits = result.xpath('.//' + selector + '/gco:CharacterString[text()]',
                                             namespaces=self.nsm.namespaces)
-
-                        for hit in hits:
-                            if hit:
-                                for lang in languages:
-                                    self.add_tripel(
-                                        self.make_uri_ref(self.uri),
-                                        VCARD[target],
-                                        Literal(hit, lang=lang)
-                                    )
+                        hit = ''
+                        for element in hits:
+                            if not hit:
+                                hit = str(element)
+                            else:
+                                hit = hit + ', ' + str(element)
+                        if hit:
+                            result_triples[VCARD[target]] = hit
+                            # for lang in languages:
+                            #     self.add_tripel(
+                            #         self.make_uri_ref(uri),
+                            #         VCARD[target],
+                            #         Literal(hit, lang=lang)
+                            #     )
+                    if result_triples not in result_objects:
+                        result_objects.append(result_triples)
+                # sorting makes sure _0 is the one with the most information. Could be helpfull for frontend or if just
+                #  one result should be added to triple store
+                sortedResults = sorted(result_objects, key=lambda x: len(x), reverse=True)
+                for idx, result in enumerate(sortedResults):
+                    # For each simple mapping
+                    uri = self.uri + '_' + str(idx)
+                    contact_uris.append(uri)
+                    uri_ref = self.make_uri_ref(uri)
+                    self.add_tripel(uri_ref, RDF.type, self.entity_type)
+                    for field, value in result.items():
+                        for lang in languages:
+                            self.add_tripel(uri_ref, field, Literal(value, lang=lang))
                 break
         if len(self.rdf) == 0:
             self.inc('Bad')
             raise EntityFailed('No ContactPoint')
         else:
             self.inc('Good')
+        return contact_uris
