@@ -117,6 +117,7 @@ SELECT DISTINCT ?s ?c ?p ?o
         ?c ?p ?o .
         FILTER (lang(?o) = "" || lang(?o) = "de")
     }}
+    ORDER BY ASC(?c)
 """
 
 THEMES_FOR_DATASET = """
@@ -421,21 +422,29 @@ class RDF2SOLR(BaseDCM):
         sparql = CONTACT_FOR_DATASET
         results = self.rdf4j.query_repository(db_name, sparql)
         contacts = {}
+        dataset_2_contacts = {}
 
         for res in progressbar.progressbar(results['results']['bindings']):
             dataset_uri = res['s']['value']
-            if dataset_uri not in contacts:
-                contacts[dataset_uri] = {}
+            contact_uri = res['c']['value']
+            if contact_uri not in contacts:
+                contacts[contact_uri] = {}
             tag = self.nsm.uri2prefix_name(res['p']['value'])
-            contacts[dataset_uri][tag] = res['o']['value']
+            contacts[contact_uri][tag] = res['o']['value']
+            if dataset_uri not in dataset_2_contacts:
+                dataset_2_contacts[dataset_uri] = [contact_uri, ]
+            elif contact_uri not in dataset_2_contacts[dataset_uri]:
+                dataset_2_contacts[dataset_uri].append(contact_uri)
 
         self.logger.info('Contacts processed')
         self.logger.info('Merge Contacts')
 
-        for dataset_uri, contact in progressbar.progressbar(contacts.items()):
+        for dataset_uri, contact_uris in progressbar.progressbar(dataset_2_contacts.items()):
             if dataset_uri not in res_dict:
                 continue
-            res_dict[dataset_uri]['dcat_contactPoint'] = json.dumps(contact)
+            res_dict[dataset_uri]['dcat_contactPoint'] = []
+            for contact_uri in contact_uris:
+                res_dict[dataset_uri]['dcat_contactPoint'].append(json.dumps(contacts[contact_uri]))
         self.logger.info('Contacts merged')
 
     def format_themes(self, res_dict, db_name):
