@@ -28,7 +28,7 @@ class ContactPoint(BaseEntity):
     PUBLISHER_ORG_EXPR = './/gmd:CI_ResponsibleParty[gmd:role/gmd:CI_RoleCode/@codeListValue=$role]'
 
     # The list of roles defining the order to lookup
-    ROLES = ['pointOfContact', 'distributor', 'custodian', 'publisher', 'owner']
+    ROLES = ['pointOfContact', 'distributor', 'custodian', 'publisher', 'owner', 'author']
 
     namespaces = {'vcard': VCARD}
     entity_type = VCARD.Kind
