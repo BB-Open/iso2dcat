@@ -520,7 +520,7 @@ class RDF2SOLR(BaseDCM):
             if license_text:
                 licenses[dataset_uri][license_text] = 1
             if license_text:
-                res_dict[dataset_uri]['dcat_distribution'][dist_uri]['license'] = license_text
+                res_dict[dataset_uri]['dcat_distribution'][dist_uri]['dct_license'] = license_text
 
         self.logger.info('Licenses processed')
         self.logger.info('Merge Licenses')
@@ -528,9 +528,9 @@ class RDF2SOLR(BaseDCM):
         for dataset_uri, licence in progressbar.progressbar(licenses.items()):
             num_licenses = len(list(licence.keys()))
             if num_licenses == 1:
-                res_dict[dataset_uri]['dct_license_facet'] = list(licence.keys())
+                res_dict[dataset_uri]['dct_license_facet'] = list(licence.keys())[0]
             elif num_licenses > 1:
-                res_dict[dataset_uri]['dct_license_facet'] = list(licence.keys())
+                res_dict[dataset_uri]['dct_license_facet'] = list(licence.keys())[0]
             else:
                 res_dict[dataset_uri]['dct_license_facet'] = "Keine Lizenz"
 
