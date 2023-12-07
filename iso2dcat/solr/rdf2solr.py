@@ -73,7 +73,7 @@ prefix foaf: <http://xmlns.com/foaf/0.1/>
 prefix skos: <http://www.w3.org/2004/02/skos/core#>
 prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 
-SELECT DISTINCT ?s ?p ?d ?f ?ft
+SELECT DISTINCT ?s ?p ?d ?f ?ft ?license
     WHERE {{
         VALUES ?p { dct:title dct:format dcat:accessURL dcat:downloadURL }
         ?s dcat:distribution ?d .
@@ -81,6 +81,9 @@ SELECT DISTINCT ?s ?p ?d ?f ?ft
         OPTIONAL {{
            ?f dct:title ?ft
            }}
+        OPTIONAL {{
+            ?d dct:license ?license
+        }}
     }}
 """
 
@@ -399,6 +402,8 @@ class RDF2SOLR(BaseDCM):
             datasets[dataset_uri][distribution][predicate] = value
             if 'ft' in res and predicate == 'dct_title':
                 datasets[dataset_uri][distribution][predicate] = res['ft']['value']
+            if 'license' in res:
+                datasets[dataset_uri][distribution]['dct_license'] = res['license']['value']
 
         self.logger.info('Distributions processed')
         self.logger.info('Merge Distributions')
