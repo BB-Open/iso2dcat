@@ -57,7 +57,7 @@ SELECT DISTINCT ?s ?dt ?dd ?type ?prio ?landing ?modified ?keyword
             ?s dct:modified ?modified
         }
         OPTIONAL {
-            ?s dct:keyword ?keyword
+            ?s dcat:keyword ?keyword
         }
         OPTIONAL {
             ?s inq:priority ?prio
