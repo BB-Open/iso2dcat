@@ -73,7 +73,7 @@ prefix foaf: <http://xmlns.com/foaf/0.1/>
 prefix skos: <http://www.w3.org/2004/02/skos/core#>
 prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 
-SELECT DISTINCT ?s ?p ?d ?f ?ft ?license
+SELECT DISTINCT ?s ?p ?d ?f ?ft
     WHERE {{
         VALUES ?p { dct:title dct:format dcat:accessURL dcat:downloadURL }
         ?s dcat:distribution ?d .
@@ -81,9 +81,6 @@ SELECT DISTINCT ?s ?p ?d ?f ?ft ?license
         OPTIONAL {{
            ?f dct:title ?ft
            }}
-        OPTIONAL {{
-            ?d dct:license ?license
-        }}
     }}
 """
 
@@ -333,7 +330,8 @@ class RDF2SOLR(BaseDCM):
             if 'landing' in res:
                 res_dict[s_uri]['dcat_landingpage'] = res['landing']['value']
             if 'modified' in res:
-                res_dict[s_uri]['dct_modified'] = res['modified']['value']
+                modified = res['modified']['value']
+                res_dict[s_uri]['dct_modified'] = modified
             if 'keyword' in res:
                 if 'dcat_keyword' in res_dict[s_uri]:
                     res_dict[s_uri]['dcat_keyword'].append(res['keyword']['value'])
@@ -376,6 +374,7 @@ class RDF2SOLR(BaseDCM):
         self.format_dataservice(res_dict, db_name)
         self.format_endpoints(res_dict, db_name)
         self.format_rightstatements(res_dict, db_name)
+        self.dist_2_json(res_dict)
 
         return res_dict
 
@@ -402,8 +401,6 @@ class RDF2SOLR(BaseDCM):
             datasets[dataset_uri][distribution][predicate] = value
             if 'ft' in res and predicate == 'dct_title':
                 datasets[dataset_uri][distribution][predicate] = res['ft']['value']
-            if 'license' in res:
-                datasets[dataset_uri][distribution]['dct_license'] = res['license']['value']
 
         self.logger.info('Distributions processed')
         self.logger.info('Merge Distributions')
@@ -412,8 +409,8 @@ class RDF2SOLR(BaseDCM):
             if dataset_uri not in res_dict:
                 self.logger.info('Cannot add Distribution to dataset {}'.format(dataset_uri))
                 continue
-            distributions_json = json.dumps(distributions)
-            res_dict[dataset_uri]['dcat_distribution'] = distributions_json
+            # distributions_json = json.dumps(distributions)
+            res_dict[dataset_uri]['dcat_distribution'] = distributions
 
         self.logger.info('Distributions merged')
 
@@ -505,9 +502,9 @@ class RDF2SOLR(BaseDCM):
 
         for res in progressbar.progressbar(results['results']['bindings']):
             dataset_uri = res['s']['value']
+            dist_uri = res['d']['value']
             if dataset_uri not in licenses:
                 licenses[dataset_uri] = {}
-
             if 'dl' in res:
                 license_uri = res['dl']['value']
                 if license_uri not in self.lcm.mapping:
@@ -522,6 +519,8 @@ class RDF2SOLR(BaseDCM):
                 self.logger.info('No Licence for {}'.format(res['s']['value']))
             if license_text:
                 licenses[dataset_uri][license_text] = 1
+            if license_text:
+                res_dict[dataset_uri]['dcat_distribution'][dist_uri]['license'] = license_text
 
         self.logger.info('Licenses processed')
         self.logger.info('Merge Licenses')
@@ -529,9 +528,9 @@ class RDF2SOLR(BaseDCM):
         for dataset_uri, licence in progressbar.progressbar(licenses.items()):
             num_licenses = len(list(licence.keys()))
             if num_licenses == 1:
-                res_dict[dataset_uri]['dct_license_facet'] = list(licence.keys())[0]
+                res_dict[dataset_uri]['dct_license_facet'] = list(licence.keys())
             elif num_licenses > 1:
-                res_dict[dataset_uri]['dct_license_facet'] = list(licence.keys())[0]
+                res_dict[dataset_uri]['dct_license_facet'] = list(licence.keys())
             else:
                 res_dict[dataset_uri]['dct_license_facet'] = "Keine Lizenz"
 
@@ -647,6 +646,11 @@ class RDF2SOLR(BaseDCM):
                 res_dict[dataservice_uri]['dcat_endpointURL'] = json.dumps(links)
 
         self.logger.info('endpointURLs merged')
+
+    def dist_2_json(self, res_dict):
+        for d in res_dict:
+            if 'dcat_distribution' in res_dict[d]:
+                res_dict[d]['dcat_distribution'] = json.dumps(res_dict[d]['dcat_distribution'])
 
 
 def main():
