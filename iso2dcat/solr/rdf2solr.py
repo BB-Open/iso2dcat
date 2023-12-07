@@ -40,7 +40,7 @@ prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 prefix inq: <http://inqbus.de/ns>
 
 
-SELECT DISTINCT ?s ?dt ?dd ?type ?prio
+SELECT DISTINCT ?s ?dt ?dd ?type ?prio ?landing
     WHERE {
         VALUES ?type { dcat:Dataset dcat:DataService }
         ?s a ?type .
@@ -49,6 +49,9 @@ SELECT DISTINCT ?s ?dt ?dd ?type ?prio
         OPTIONAL {
             ?s dct:description ?dd .
             FILTER (lang(?dd) = "" || lang(?dd) = "de")
+        }
+        OPTIONAL {
+            ?s dcat:landingPage ?landing
         }
         OPTIONAL {
             ?s inq:priority ?prio
@@ -317,6 +320,9 @@ class RDF2SOLR(BaseDCM):
                 res_dict[s_uri] = {'id': s_uri}
 
             res_dict[s_uri]['dct_title'] = res['dt']['value']
+
+            if 'landing' in res:
+                res_dict[s_uri]['dcat_landingpage'] = res['landing']['value']
 
             if 'xml:lang' in res['dt']:
                 res_dict[s_uri]['dct_title_lang'] = res['dt']['xml:lang']
