@@ -21,7 +21,7 @@ class ContactPoint(BaseEntity):
         'gmd:postalCode': 'postal-code',
         'gmd:administrativeArea': 'region',
         'gmd:country': 'country-name',
-        'gmd:electronicMailAddress': 'email',
+        'gmd:electronicMailAddress': 'hasEmail',
         'gmd:voice': 'voice',
         'gmd:facsimile': 'fax',
     }
