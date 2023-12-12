@@ -75,7 +75,7 @@ prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 
 SELECT DISTINCT ?s ?p ?d ?f ?ft
     WHERE {{
-        VALUES ?p { dct:title dct:format dcat:accessURL dcat:downloadURL }
+        VALUES ?p { dct:title dct:format dcat:accessURL dcat:downloadURL dct:description }
         ?s dcat:distribution ?d .
         ?d ?p ?f .
         OPTIONAL {{
