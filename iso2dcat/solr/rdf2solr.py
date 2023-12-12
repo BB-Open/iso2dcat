@@ -334,7 +334,7 @@ class RDF2SOLR(BaseDCM):
                 res_dict[s_uri]['dct_modified'] = modified
             if 'keyword' in res and res['keyword']['value'] :
                 if 'dcat_keyword' in res_dict[s_uri]:
-                    if res['keyword']['value'] not in res_dict[s_uri]['dcat_keywords']:
+                    if res['keyword']['value'] not in res_dict[s_uri]['dcat_keyword']:
                         res_dict[s_uri]['dcat_keyword'].append(res['keyword']['value'])
                 else:
                     res_dict[s_uri]['dcat_keyword'] = [res['keyword']['value']]
