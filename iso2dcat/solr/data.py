@@ -1,5 +1,4 @@
 import json
-from pprint import pprint
 
 import progressbar
 import zope
@@ -759,7 +758,4 @@ class DataFormatter(BaseDCM):
 if __name__ == '__main__':
     data_formatter = DataFormatter()
     res = data_formatter.format_data_as_txt()
-    x = list(res.values())
-    for t in range(10):
-        print(x[t])
-        print(80*'=')
+    print(res)
