@@ -758,4 +758,3 @@ class DataFormatter(BaseDCM):
 if __name__ == '__main__':
     data_formatter = DataFormatter()
     res = data_formatter.format_data_as_txt()
-    print(res)
