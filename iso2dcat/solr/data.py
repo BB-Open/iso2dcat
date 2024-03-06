@@ -715,9 +715,9 @@ class DataFormatter(BaseDCM):
 
     def common_fields_to_raw_text(self, type, data):
         if 'dct_modified' in data:
-            res = f"{type} '{data['dct_title']}' {data['dct_modified']}"
+            res = f"'{data['dct_title']}' {data['dct_modified']}"
         else:
-            res = f"{type} '{data['dct_title']}'"
+            res = f"'{data['dct_title']}'"
         if 'dct_description' in data:
             res += f"\n{data['dct_description']}"
         if 'dcat_theme_facet' in data:
@@ -740,8 +740,8 @@ class DataFormatter(BaseDCM):
                 res += '\n' + self.dist_to_raw_text(dist_data)
         if 'dct_publisher' in dataset:
             res += f"\n{dataset['dct_publisher']}"
-        if 'dct_license_facet' in dataset:
-            res += f"\n{dataset['dct_license_facet']}"
+        # if 'dct_license_facet' in dataset:
+        #     res += f"\n{dataset['dct_license_facet']}"
         if 'dct_rightsstatement' in dataset:
             res += f"\n{dataset['dct_rightsstatement']}"
         return res
@@ -851,10 +851,22 @@ class DataFormatter(BaseDCM):
                 txt = self.dataset_to_raw_text(data[dataset])
                 result[dataset] = txt
             else:
-                raise UnknownTypeError(f'Unknown Type {data[dataset]["rdf_typef"]} for {dataset}')
+                raise UnknownTypeError(f'Unknown Type {data[dataset]["rdf_type"]} for {dataset}')
+        return result
+
+    def format_data_as_semantic_txt(self, db_name=None):
+        data = self.format_data_as_dict(db_name, subs2json=False)
+        result = {}
+        for dataset in data:
+            desc = ''
+            if 'dct_description' in data[dataset]:
+                desc += f"\n{data[dataset]['dct_description']}"
+            txt = f"{data[dataset]['dct_title']} {desc}"
+            result[dataset] = txt
         return result
 
 
 if __name__ == '__main__':
     data_formatter = DataFormatter()
-    res = data_formatter.format_data_as_raw_txt()
+    res = data_formatter.format_data_as_semantic_txt()
+    print(res)
