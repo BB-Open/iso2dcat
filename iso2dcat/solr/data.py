@@ -66,8 +66,6 @@ DCAT_THEMES = {
     "INTR": 'Internationale Themen'
 }
 
-
-
 DISTRIBUTIONS_FOR_DATASET = """
 prefix bds: <http://www.bigdata.com/rdf/search#>
 PREFIX dcat: <http://www.w3.org/ns/dcat#>
@@ -584,75 +582,6 @@ class DataFormatter(BaseDCM):
             if 'dcat_distribution' in res_dict[d]:
                 res_dict[d]['dcat_distribution'] = json.dumps(res_dict[d]['dcat_distribution'])
 
-    def format_data_as_dict(self, db_name=None, subs2json=True):
-        self.logger.info('Process Datasets')
-
-        if db_name is None:
-            db_name = self.cfg.RDF2SOLR_SOURCE
-        results = self.rdf4j.query_repository(db_name, ALL_DATASETS)
-        triples = results['results']['bindings']
-        res_dict = {}
-        # For all datasets collect all attributes
-        for res in progressbar.progressbar(triples):
-            s_uri = res['s']['value']
-            if s_uri not in res_dict:
-                res_dict[s_uri] = {'id': s_uri}
-
-            res_dict[s_uri]['dct_title'] = res['dt']['value']
-
-            if 'landing' in res:
-                res_dict[s_uri]['dcat_landingpage'] = res['landing']['value']
-            if 'modified' in res:
-                modified = res['modified']['value']
-                res_dict[s_uri]['dct_modified'] = modified
-            if 'keyword' in res and res['keyword']['value'] :
-                if 'dcat_keyword' in res_dict[s_uri]:
-                    if res['keyword']['value'] not in res_dict[s_uri]['dcat_keyword']:
-                        res_dict[s_uri]['dcat_keyword'].append(res['keyword']['value'])
-                else:
-                    res_dict[s_uri]['dcat_keyword'] = [res['keyword']['value']]
-
-            if 'xml:lang' in res['dt']:
-                res_dict[s_uri]['dct_title_lang'] = res['dt']['xml:lang']
-            else:
-                pass
-
-            if 'dd' in res:
-                res_dict[s_uri]['dct_description'] = res['dd']['value']
-                if 'xml:lang' in res['dd']:
-                    res_dict[s_uri]['dct_description_lang'] = res['dt']['xml:lang']
-                else:
-                    pass
-
-            if 'type' in res:
-                if res['type']['value'] == 'http://www.w3.org/ns/dcat#DataService':
-                    res_dict[s_uri]['rdf_type'] = 'DataService'
-                elif res['type']['value'] == 'http://www.w3.org/ns/dcat#Dataset':
-                    res_dict[s_uri]['rdf_type'] = 'Dataset'
-                else:
-                    a = 10
-            if 'prio' in res:
-                res_dict[s_uri]['inq_priority'] = res['prio']['value']
-
-        for res in res_dict.values():
-            if 'inq_priority' not in res:
-                res['inq_priority'] = 100
-
-        self.logger.info('Datasets processed')
-        self.format_distribution(res_dict, db_name)
-        self.format_publisher(res_dict, db_name)
-        self.format_contact(res_dict, db_name, contact2json=subs2json)
-        self.format_themes(res_dict, db_name)
-        self.format_licenses(res_dict, db_name)
-        self.format_format(res_dict, db_name)
-        self.format_dataservice(res_dict, db_name, links2json=subs2json)
-        self.format_endpoints(res_dict, db_name, links2json=subs2json)
-        self.format_rightstatements(res_dict, db_name)
-        if subs2json:
-            self.dist_2_json(res_dict)
-
-        return res_dict
-
     def dist_to_text(self, dist):
         res = f"Die Distribution trägt den Titel '{dist['dct_title']}'"
         if 'dct_description' in dist:
@@ -712,6 +641,7 @@ class DataFormatter(BaseDCM):
             for contact in data['dcat_contactPoint']:
                 res += '\n' + self.contact_to_text(contact)
         return res
+
     def dataset_to_text(self, dataset):
         res = self.common_fields_to_text('Datensatz', dataset)
         if 'dct_format_facet' in dataset:
@@ -727,6 +657,7 @@ class DataFormatter(BaseDCM):
         if 'dct_rightsstatement' in dataset:
             res += f"\nFür diesen Datensatz gelten folgende rechtliche Aussagen: {dataset['dct_rightsstatement']}"
         return res
+
     def dataservice_to_text(self, dataservice, all_data):
         res = self.common_fields_to_text('Dataservice', dataservice)
 
@@ -740,6 +671,161 @@ class DataFormatter(BaseDCM):
                 res += '\n' + self.dataset_to_text(all_data[dataset['dct_dataset']])
 
         return res
+
+    def dist_to_raw_text(self, dist):
+        res = f"{dist['dct_title']}"
+        if 'dct_description' in dist:
+            res += f"\n{dist['dct_description']}"
+        if 'dct_license' in dist:
+            res += f"\n'{dist['dct_license']}'."
+        if 'dct_format' in dist:
+            res += f"\n{dist['dct_format']}."
+        if 'dcat_downloadURL' in dist:
+            res += f"\n{dist['dcat_downloadURL']}"
+        if 'dcat_accessURL' in dist:
+            res += f"\n{dist['dcat_accessURL']}"
+
+        return res
+
+    def contact_to_raw_text(self, contact):
+        res = ''
+        if 'vcard_fn' in contact:
+            res += f"\n\t{contact['vcard_fn']}"
+        if 'vcard_organization' in contact:
+            res += f"\n\t{contact['vcard_organization']}"
+        if 'dct_description' in contact:
+            res += f"\n\t{contact['dct_description']}"
+        if 'vcard_hasEmail' in contact:
+            res += f"\n\t{contact['vcard_hasEmail']}"
+        if 'vcard_postal-code' in contact:
+            res += f"\n\t{contact['vcard_postal-code']}"
+        if 'vcard_locality' in contact:
+            res += f"\n\t{contact['vcard_locality']}"
+        if 'vcard_street-address' in contact:
+            res += f"\n\t{contact['vcard_street-address']}"
+        if 'vcard_region' in contact:
+            res += f"\n\t{contact['vcard_region']}"
+        if 'vcard_country-name' in contact:
+            res += f"\n\t{contact['vcard_country-name']}"
+        if 'vcard_fax' in contact:
+            res += f"\n\t{contact['vcard_fax']}"
+        if 'vcard_voice' in contact:
+            res += f"\n\t{contact['vcard_voice']}"
+        return res
+
+    def common_fields_to_raw_text(self, type, data):
+        if 'dct_modified' in data:
+            res = f"{type} '{data['dct_title']}' {data['dct_modified']}"
+        else:
+            res = f"{type} '{data['dct_title']}'"
+        if 'dct_description' in data:
+            res += f"\n{data['dct_description']}"
+        if 'dcat_theme_facet' in data:
+            res += f"\n{', '.join(data['dcat_theme_facet'])}."
+        if 'dcat_keyword' in data:
+            res += f"\n{', '.join(data['dcat_keyword'])}."
+        if 'dcat_landingpage' in data:
+            res += f"\n{data['dcat_landingpage']}."
+        if 'dcat_contactPoint' in data:
+            for contact in data['dcat_contactPoint']:
+                res += '\n' + self.contact_to_raw_text(contact)
+        return res
+
+    def dataset_to_raw_text(self, dataset):
+        res = self.common_fields_to_raw_text('Datensatz', dataset)
+        if 'dct_format_facet' in dataset:
+            res += f"\n{', '.join(set(dataset['dct_format_facet']))}"
+        if 'dcat_distribution' in dataset:
+            for dist, dist_data in dataset['dcat_distribution'].items():
+                res += '\n' + self.dist_to_raw_text(dist_data)
+        if 'dct_publisher' in dataset:
+            res += f"\n{dataset['dct_publisher']}"
+        if 'dct_license_facet' in dataset:
+            res += f"\n{dataset['dct_license_facet']}"
+        if 'dct_rightsstatement' in dataset:
+            res += f"\n{dataset['dct_rightsstatement']}"
+        return res
+
+    def dataservice_to_raw_text(self, dataservice, all_data):
+        res = self.common_fields_to_raw_text('Dataservice', dataservice)
+
+        if 'dcat_endpointURL' in dataservice:
+            res += f"\n{', '.join(dataservice['dcat_endpointURL'])}"
+
+        if 'dcat_servesDataset' in dataservice:
+            for dataset in dataservice['dcat_servesDataset']:
+                res += '\n' + self.dataset_to_raw_text(all_data[dataset['dct_dataset']])
+        return res
+
+    def format_data_as_dict(self, db_name=None, subs2json=True):
+        self.logger.info('Process Datasets')
+
+        if db_name is None:
+            db_name = self.cfg.RDF2SOLR_SOURCE
+        results = self.rdf4j.query_repository(db_name, ALL_DATASETS)
+        triples = results['results']['bindings']
+        res_dict = {}
+        # For all datasets collect all attributes
+        for res in progressbar.progressbar(triples):
+            s_uri = res['s']['value']
+            if s_uri not in res_dict:
+                res_dict[s_uri] = {'id': s_uri}
+
+            res_dict[s_uri]['dct_title'] = res['dt']['value']
+
+            if 'landing' in res:
+                res_dict[s_uri]['dcat_landingpage'] = res['landing']['value']
+            if 'modified' in res:
+                modified = res['modified']['value']
+                res_dict[s_uri]['dct_modified'] = modified
+            if 'keyword' in res and res['keyword']['value']:
+                if 'dcat_keyword' in res_dict[s_uri]:
+                    if res['keyword']['value'] not in res_dict[s_uri]['dcat_keyword']:
+                        res_dict[s_uri]['dcat_keyword'].append(res['keyword']['value'])
+                else:
+                    res_dict[s_uri]['dcat_keyword'] = [res['keyword']['value']]
+
+            if 'xml:lang' in res['dt']:
+                res_dict[s_uri]['dct_title_lang'] = res['dt']['xml:lang']
+            else:
+                pass
+
+            if 'dd' in res:
+                res_dict[s_uri]['dct_description'] = res['dd']['value']
+                if 'xml:lang' in res['dd']:
+                    res_dict[s_uri]['dct_description_lang'] = res['dt']['xml:lang']
+                else:
+                    pass
+
+            if 'type' in res:
+                if res['type']['value'] == 'http://www.w3.org/ns/dcat#DataService':
+                    res_dict[s_uri]['rdf_type'] = 'DataService'
+                elif res['type']['value'] == 'http://www.w3.org/ns/dcat#Dataset':
+                    res_dict[s_uri]['rdf_type'] = 'Dataset'
+                else:
+                    a = 10
+            if 'prio' in res:
+                res_dict[s_uri]['inq_priority'] = res['prio']['value']
+
+        for res in res_dict.values():
+            if 'inq_priority' not in res:
+                res['inq_priority'] = 100
+
+        self.logger.info('Datasets processed')
+        self.format_distribution(res_dict, db_name)
+        self.format_publisher(res_dict, db_name)
+        self.format_contact(res_dict, db_name, contact2json=subs2json)
+        self.format_themes(res_dict, db_name)
+        self.format_licenses(res_dict, db_name)
+        self.format_format(res_dict, db_name)
+        self.format_dataservice(res_dict, db_name, links2json=subs2json)
+        self.format_endpoints(res_dict, db_name, links2json=subs2json)
+        self.format_rightstatements(res_dict, db_name)
+        if subs2json:
+            self.dist_2_json(res_dict)
+
+        return res_dict
+
     def format_data_as_txt(self, db_name=None):
         data = self.format_data_as_dict(db_name, subs2json=False)
         result = {}
@@ -754,7 +840,21 @@ class DataFormatter(BaseDCM):
                 raise UnknownTypeError(f'Unknown Type {data[dataset]["rdf_typef"]} for {dataset}')
         return result
 
+    def format_data_as_raw_txt(self, db_name=None):
+        data = self.format_data_as_dict(db_name, subs2json=False)
+        result = {}
+        for dataset in data:
+            if data[dataset]['rdf_type'] == 'DataService':
+                txt = self.dataservice_to_raw_text(data[dataset], data)
+                result[dataset] = txt
+            elif data[dataset]['rdf_type'] == 'Dataset':
+                txt = self.dataset_to_raw_text(data[dataset])
+                result[dataset] = txt
+            else:
+                raise UnknownTypeError(f'Unknown Type {data[dataset]["rdf_typef"]} for {dataset}')
+        return result
+
 
 if __name__ == '__main__':
     data_formatter = DataFormatter()
-    res = data_formatter.format_data_as_txt()
+    res = data_formatter.format_data_as_raw_txt()
