@@ -424,7 +424,10 @@ class DataFormatter(BaseDCM):
 
         for res in progressbar.progressbar(results['results']['bindings']):
             dataset_uri = res['s']['value']
-            dist_uri = res['d']['value']
+            if 'd' in res:
+                dist_uri = res['d']['value']
+            else:
+                dist_uri = None
             if dataset_uri not in licenses:
                 licenses[dataset_uri] = {}
             if 'dl' in res:
@@ -441,7 +444,7 @@ class DataFormatter(BaseDCM):
                 self.logger.info('No Licence for {}'.format(res['s']['value']))
             if license_text:
                 licenses[dataset_uri][license_text] = 1
-            if license_text:
+            if license_text and dist_uri:
                 res_dict[dataset_uri]['dcat_distribution'][dist_uri]['dct_license'] = license_text
 
         self.logger.info('Licenses processed')
